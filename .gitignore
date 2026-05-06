@@ -20,7 +20,9 @@ env/
 venv/
 ENV/
 build/
-dist/
+dist/*
+!dist/adapters/
+!dist/adapters/**
 *.egg-info/
 
 # Node

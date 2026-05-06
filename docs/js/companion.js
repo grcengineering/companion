@@ -1,316 +1,233 @@
-const STORAGE_KEY = "grc_companion_state_v1";
+let canonicalContext = null;
 
-const defaultState = {
-  profile: {
-    role: "",
-    level: "non-technical",
-    goal: "",
-    friction: "",
-    time: "30 minutes"
+const form = document.querySelector("#setup-form");
+const output = document.querySelector("#setup-output");
+const copyButton = document.querySelector("#copy-setup");
+
+const platforms = {
+  "claude-code": {
+    label: "Claude Code",
+    path: "dist/adapters/claude-code/grc-companion/",
+    steps: [
+      "Use the generated Claude Code plugin bundle.",
+      "Install or symlink the bundle according to your Claude Code plugin workflow.",
+      "Start with the generated prompt or an explicit /grc-companion command."
+    ],
+    command: "/grc-companion:retro"
   },
-  messages: [],
-  progress: [
-    { concept: "Evidence as byproduct", status: "not yet covered", last: "Not scheduled" },
-    { concept: "Frameworks as maps", status: "not yet covered", last: "Not scheduled" },
-    { concept: "Human API", status: "not yet covered", last: "Not scheduled" }
-  ],
-  currentPrompt: ""
+  "claude-projects": {
+    label: "Claude Projects",
+    path: "dist/adapters/claude-projects/",
+    steps: [
+      "Create a new Claude Project.",
+      "Upload companion-instructions.md plus the knowledge, profile, and demos folders as project knowledge.",
+      "Start a new chat with the generated prompt."
+    ],
+    command: "Use the generated starter prompt in the Project chat."
+  },
+  cursor: {
+    label: "Cursor",
+    path: "dist/adapters/cursor/.cursor/rules/",
+    steps: [
+      "Copy the generated Cursor rules into your workspace's .cursor/rules directory.",
+      "Open Cursor Composer in the workspace.",
+      "Start with the generated prompt so the Companion can route the learning move."
+    ],
+    command: "Use the generated starter prompt in Cursor Composer."
+  },
+  codex: {
+    label: "Codex",
+    path: "dist/adapters/codex/",
+    steps: [
+      "Use the Codex adapter bundle as the companion context.",
+      "Keep AGENTS.md, brain, skills, commands, knowledge, profile, and demos together.",
+      "Start with the generated prompt inside a Codex session."
+    ],
+    command: "Use the generated starter prompt in Codex."
+  },
+  github: {
+    label: "Just files",
+    path: "brain/, skills/, commands/, profile/, knowledge/, demos/",
+    steps: [
+      "Open the GitHub repository.",
+      "Read brain/persona.md, brain/skill-router.md, and the relevant skill file.",
+      "Use the generated prompt in whichever AI workspace you already trust."
+    ],
+    command: "No adapter command. Use the canonical files directly."
+  },
+  "not-sure": {
+    label: "Not sure",
+    path: "dist/adapters/claude-projects/",
+    steps: [
+      "Start with Claude Projects if you want the lowest-friction non-terminal path.",
+      "Use Claude Code, Cursor, or Codex if you want the Companion where you already build.",
+      "Keep the generated prompt and avoid sensitive company, vendor, customer, or evidence details."
+    ],
+    command: "Use the generated starter prompt first."
+  }
 };
 
-let state = loadState();
-
-const profileForm = document.querySelector("#profile-form");
-const conversation = document.querySelector("#conversation");
-const promptOutput = document.querySelector("#companion-prompt");
-const progressList = document.querySelector("#progress-list");
-const messageTemplate = document.querySelector("#message-template");
-
-function loadState() {
-  const saved = window.localStorage.getItem(STORAGE_KEY);
-  if (!saved) return structuredClone(defaultState);
-
+async function loadCanonicalContext() {
   try {
-    return { ...structuredClone(defaultState), ...JSON.parse(saved) };
+    const response = await fetch("data/companion-context.json", { cache: "no-store" });
+    if (!response.ok) return;
+    canonicalContext = await response.json();
+    buildSetup();
   } catch {
-    return structuredClone(defaultState);
+    // Direct file:// use may block fetch. The static wizard still works without generated context.
   }
 }
 
-function saveState() {
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+function field(name) {
+  if (!form) return "";
+  return new FormData(form).get(name)?.toString().trim() || "";
 }
 
-function hydrateProfile() {
-  for (const [key, value] of Object.entries(state.profile)) {
-    const field = profileForm.elements[key];
-    if (field) field.value = value;
+function selectedPlatform() {
+  return platforms[field("platform")] || platforms["claude-code"];
+}
+
+function inferRoute(text) {
+  const normalized = text.toLowerCase();
+
+  if (/(just|finished|completed|ran|did|spent|after|walkthrough|questionnaire|review)/.test(normalized)) {
+    return {
+      skill: "task-retrospective",
+      command: "/grc-companion:retro",
+      reason: "You described work that already happened, so the best first move is to extract learning from it."
+    };
   }
+
+  if (/(analogy|metaphor|translate|pattern|like|compare|frame|lens)/.test(normalized)) {
+    return {
+      skill: "cross-domain-translator",
+      command: "/grc-companion:translate",
+      reason: "You are asking for a frame shift, so a cross-domain pattern can clarify the GRC move."
+    };
+  }
+
+  if (/(build|make|create|lab|template|artefact|artifact|practice)/.test(normalized)) {
+    return {
+      skill: "lab-builder",
+      command: "/grc-companion:lab",
+      reason: "You are asking to practise by building, so a learning-safe mini-lab is the right move."
+    };
+  }
+
+  if (/(what is|explain|understand|concept|mean|confused)/.test(normalized)) {
+    return {
+      skill: "concept-tutor",
+      command: "/grc-companion:concept",
+      reason: "You are asking for conceptual clarity, so the Companion should teach one concept at a time."
+    };
+  }
+
+  if (/(path|roadmap|curriculum|sequence|learn next)/.test(normalized)) {
+    return {
+      skill: "learning-path-designer",
+      command: "/grc-companion:path",
+      reason: "You are asking for sequencing, so the Companion should design a learning path."
+    };
+  }
+
+  return {
+    skill: "socratic-coach",
+    command: "/grc-companion:scenario",
+    reason: "Your input is open-ended, so the Companion should ask a sharp first question before teaching."
+  };
 }
 
-function profileSummary() {
-  const role = state.profile.role || "GRC practitioner";
-  const goal = state.profile.goal || "build better GRC engineering judgment";
-  const friction = state.profile.friction || "not specified yet";
+function contextSummary() {
+  if (!canonicalContext) {
+    return "Canonical context: use the repository brain, skill router, task extraction, cross-domain transfer, commands, skills, and learning-only boundary.";
+  }
 
-  return `Role: ${role}
-Level: ${state.profile.level}
-Goal: ${goal}
-Current friction: ${friction}
-Time available: ${state.profile.time}`;
+  const skills = canonicalContext.skills
+    .map((skill) => skill.name)
+    .sort()
+    .join(", ");
+
+  return `Canonical context loaded from docs/data/companion-context.json.
+Available learning skills: ${skills}.
+Router source: brain/skill-router.md.`;
 }
 
-function addMessage(role, body) {
-  state.messages.push({ role, body, at: new Date().toISOString() });
-  saveState();
-  renderMessages();
+function buildSetup() {
+  if (!output) return;
+
+  const platform = selectedPlatform();
+  const situation = field("situation") || "I want to learn GRC engineering through a practical, learning-safe session.";
+  const route = inferRoute(situation);
+  const steps = platform.steps.map((step, index) => `${index + 1}. ${step}`).join("\n");
+
+  output.value = `Recommended path: ${platform.label}
+
+Package path:
+${platform.path}
+
+Setup:
+${steps}
+
+Suggested first route:
+${route.command}
+
+Why this route:
+${route.reason}
+
+Starter prompt:
+You are The GRC Companion, a learning-only companion carrying Ayoub Fandi's GRC engineering thinking.
+
+Important boundary:
+- Teach me how to think; do not operate my GRC programme.
+- Do not assess real vendors, prep live audits, author production policies, run controls, or score programme maturity.
+- If I ask for operational work, convert it into a fictional or retrospective learning-safe rep.
+- Do not ask me for company names, customer names, vendor names, secrets, real evidence, or live audit details.
+
+What I am working on, trying to figure out, or learning from:
+${situation}
+
+Use the invisible skill router:
+- Primary expected skill: ${route.skill}
+- If I described completed work, run task-retrospective.
+- If a cross-domain pattern would clarify the idea, use cross-domain-translator as a supporting move.
+- Ask one targeted question if you need more signal.
+- End with a small learning-safe artefact and one explain-back or reflection prompt.
+
+${contextSummary()}
+
+Adapter command note:
+${platform.command}`;
 }
 
-function renderMessages() {
-  conversation.innerHTML = "";
+if (form) {
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    buildSetup();
+  });
 
-  const messages = state.messages.length
-    ? state.messages
-    : [{
-        role: "companion",
-        body: "Start with a learning rep. Choose a skill above or tell me what you want to understand. I will ask before I tell, then help you build a small safe artefact."
-      }];
-
-  messages.forEach((message) => {
-    const node = messageTemplate.content.cloneNode(true);
-    const article = node.querySelector(".message");
-    article.classList.toggle("learner", message.role === "learner");
-    node.querySelector(".message-role").textContent = message.role === "learner" ? "You" : "Companion";
-    node.querySelector(".message-body").textContent = message.body;
-    conversation.appendChild(node);
+  form.addEventListener("input", () => {
+    buildSetup();
   });
 }
 
-function renderProgress() {
-  progressList.innerHTML = "";
+if (copyButton) {
+  copyButton.addEventListener("click", async () => {
+    if (!output.value) buildSetup();
 
-  state.progress.forEach((item) => {
-    const row = document.createElement("div");
-    row.className = "progress-item";
-    row.innerHTML = `<strong>${escapeHtml(item.concept)}</strong><span>${escapeHtml(item.status)} · ${escapeHtml(item.last)}</span>`;
-    progressList.appendChild(row);
+    try {
+      await navigator.clipboard.writeText(output.value);
+      copyButton.textContent = "Copied";
+    } catch {
+      output.focus();
+      output.select();
+      copyButton.textContent = "Select output";
+    }
+
+    setTimeout(() => {
+      copyButton.textContent = "Copy";
+    }, 1400);
   });
 }
 
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function markProgress(concept, status) {
-  const existing = state.progress.find((item) => item.concept === concept);
-  const last = new Date().toLocaleDateString();
-
-  if (existing) {
-    existing.status = status;
-    existing.last = `Reviewed ${last}`;
-  } else {
-    state.progress.unshift({ concept, status, last: `Reviewed ${last}` });
-  }
-
-  saveState();
-  renderProgress();
-}
-
-function setPrompt(prompt) {
-  state.currentPrompt = prompt;
-  promptOutput.value = prompt;
-  saveState();
-}
-
-function skillPrompt(skill, learnerText = "") {
-  const context = profileSummary();
-  const request = learnerText.trim() || state.profile.goal || "Help me choose the next useful GRC engineering learning rep.";
-
-  const base = `You are The GRC Companion, a learning-only companion carrying Ayoub Fandi's GRC engineering thinking.
-
-Hard boundary:
-- Do not operate my GRC programme.
-- Do not assess vendors, prep live audits, author real policies, or run controls.
-- If I ask for operational work, convert it into a fictional learning scenario.
-
-Learner context:
-${context}
-
-Learning method:
-- Ask before telling.
-- Use active recall.
-- Keep the next step one notch beyond my current level.
-- End with a small build or artefact.
-- Ask me to explain the idea back.
-- Close with a short reflection question.
-
-My request:
-${request}`;
-
-  if (skill === "path") {
-    return `${base}
-
-Invoke skill: learning-path-designer.
-
-Create a short learning path with:
-1. A diagnostic active-recall question.
-2. Three milestones.
-3. One small build per milestone.
-4. A spaced review suggestion for next week.
-5. A note on what not to overlearn yet.`;
-  }
-
-  if (skill === "concept") {
-    return `${base}
-
-Invoke skill: concept-tutor.
-
-Teach one concept only. Start by asking me to define it. Then explain it plainly, give one practical example, name one beginner trap, and ask me to explain it back in my own words.`;
-  }
-
-  return `${base}
-
-Invoke skill: lab-builder.
-
-Design a project-based mini-lab that is learning-safe. It should use fictional data or a toy workflow if needed. Include milestones, deliverables, active recall checkpoints, and reflection.`;
-}
-
-function localCompanionResponse(skill, learnerText = "") {
-  const goal = state.profile.goal || learnerText || "GRC engineering judgment";
-
-  if (skill === "path") {
-    markProgress("Frameworks as maps", "touched");
-    return `Before I give you a path: what do you already believe about ${goal}?
-
-Here is the first pass:
-
-1. Model the work. Write the current plain-language version of the problem without framework labels.
-2. Trace the evidence. Identify where proof would naturally appear if the work happened well.
-3. Build a small artefact. Create a one-page decision note, toy register, or workflow map.
-
-Small build for today: a one-page learning map with three columns: concept, why it matters, where it appears in real work.
-
-Explain-back prompt: tell me the difference between learning a framework and learning the operating system it is trying to describe.`;
-  }
-
-  if (skill === "concept") {
-    markProgress("Evidence as byproduct", "touched");
-    return `Active recall first: define the concept in your own words before reading further.
-
-A useful GRC engineering lens: evidence should be a byproduct of real work. If the only proof is a screenshot gathered during audit season, the system is probably optimised for audit performance instead of operational truth.
-
-Beginner trap: treating evidence collection as the job. The better question is where evidence naturally appears when the control is alive.
-
-Small build: choose one fictional control and list three natural evidence sources.
-
-Explain-back prompt: explain this idea to a non-technical manager in four sentences.`;
-  }
-
-  markProgress("Human API", "touched");
-  return `We can turn this into a learning-safe mini-lab.
-
-Lab title: Build a toy GRC evidence map.
-
-Milestone 1: Pick a fictional control and describe the human behaviour it depends on.
-Milestone 2: Draw the Human API: requester, owner, approver, system, evidence trail.
-Milestone 3: Create a tiny artefact: a table with control intent, real-world behaviour, natural evidence, failure mode, and review question.
-
-Active recall checkpoint: before building, write what you think makes evidence trustworthy.
-
-Reflection: what changed in how you think about controls after mapping the people and systems involved?`;
-}
-
-profileForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const data = new FormData(profileForm);
-  state.profile = Object.fromEntries(data.entries());
-  saveState();
-  addMessage("companion", "Profile saved. I will use this context to calibrate the next learning rep.");
-});
-
-document.querySelectorAll("[data-skill]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const skill = button.dataset.skill;
-    const prompt = skillPrompt(skill);
-    setPrompt(prompt);
-    addMessage("companion", localCompanionResponse(skill));
-  });
-});
-
-document.querySelector("#chat-form").addEventListener("submit", (event) => {
-  event.preventDefault();
-  const input = document.querySelector("#learner-message");
-  const text = input.value.trim();
-  if (!text) return;
-
-  addMessage("learner", text);
-  const prompt = skillPrompt("concept", text);
-  setPrompt(prompt);
-  addMessage("companion", localCompanionResponse("concept", text));
-  input.value = "";
-});
-
-document.querySelector("#copy-prompt").addEventListener("click", async () => {
-  if (!promptOutput.value) setPrompt(skillPrompt("path"));
-  await navigator.clipboard.writeText(promptOutput.value);
-});
-
-document.querySelector("#download-session").addEventListener("click", () => {
-  const body = `# GRC Companion Session
-
-## Profile
-
-${profileSummary()}
-
-## Messages
-
-${state.messages.map((message) => `### ${message.role}
-
-${message.body}`).join("\n\n")}
-
-## Companion Prompt
-
-${state.currentPrompt}
-`;
-
-  const blob = new Blob([body], { type: "text/markdown" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "grc-companion-session.md";
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
-});
-
-document.querySelector("#export-profile").addEventListener("click", () => {
-  const blob = new Blob([JSON.stringify(state.profile, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "grc-companion-profile.json";
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
-});
-
-document.querySelector("#reset-progress").addEventListener("click", () => {
-  if (!window.confirm("Reset local profile, conversation, and progress?")) return;
-  state = structuredClone(defaultState);
-  saveState();
-  hydrateProfile();
-  renderMessages();
-  renderProgress();
-  setPrompt("");
-});
-
-hydrateProfile();
-renderMessages();
-renderProgress();
-promptOutput.value = state.currentPrompt;
+buildSetup();
+loadCanonicalContext();

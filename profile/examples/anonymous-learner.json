@@ -1,0 +1,26 @@
+{
+  "version": "0.1.0",
+  "source": "wizard",
+  "role": {
+    "title": "GRC manager",
+    "day_to_day": "Owns SOC 2 readiness, vendor reviews, and executive risk reporting.",
+    "scope": "Small team supporting a growing SaaS company.",
+    "seniority": "mid"
+  },
+  "environment": {
+    "industry": "B2B SaaS",
+    "company_size": "250 employees",
+    "stack": "Cloud-first, spreadsheet-heavy GRC workflows",
+    "regulatory_context": "SOC 2 and customer security reviews"
+  },
+  "frameworks": ["SOC 2", "ISO 27001"],
+  "gaps": ["Evidence quality", "Automation tradeoffs", "Explaining controls to executives"],
+  "goals": ["Build stronger GRC engineering judgment", "Learn through small artefacts"],
+  "learning": {
+    "preferred_modes": ["conversation", "building", "teaching-back"],
+    "time_budget": "1 hour per week",
+    "accessibility_notes": "Prefers voice-friendly prompts and short sessions."
+  },
+  "session_notes": [],
+  "updated_at": "2026-05-06"
+}

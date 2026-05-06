@@ -1,0 +1,10 @@
+{
+  "name": "feynman-explainer",
+  "version": "0.1.0",
+  "type": "learning-skill",
+  "description": "Asks the learner to teach back a concept and identifies gaps.",
+  "learning_principles": ["feynman_technique", "active_recall", "zone_of_proximal_development"],
+  "commands": ["feynman"],
+  "requires_corpus": false,
+  "operational_scope": "forbidden"
+}

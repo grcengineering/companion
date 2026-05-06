@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+"""Verify Companion source-of-truth structure."""
+
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def require(path: str) -> None:
+    if not (ROOT / path).exists():
+        raise AssertionError(f"missing {path}")
+
+
+def main() -> int:
+    required = [
+        "brain/persona.md",
+        "brain/voice.md",
+        "brain/learning-method.md",
+        "brain/skill-router.md",
+        "brain/task-extraction.md",
+        "brain/cross-domain-transfer.md",
+        "AGENTS.md",
+        "SECURITY.md",
+        "commands/README.md",
+        "profile/learner-profile.schema.json",
+        "profile/examples/anonymous-learner.json",
+        "demos/terminal-session.md",
+        "demos/run-terminal-demo",
+        "knowledge/index.json",
+        "docs/data/companion-context.json",
+        "scripts/build-adapters",
+        "scripts/build-webapp-context",
+        "evals/suites.json"
+    ]
+    for path in required:
+        require(path)
+
+    skill_dirs = [p for p in (ROOT / "skills").iterdir() if p.is_dir()]
+    if not skill_dirs:
+        raise AssertionError("no skills found")
+
+    for skill in skill_dirs:
+        for filename in ("SKILL.md", "manifest.json", "INSTALL.md", "VERIFY.md"):
+            require(f"skills/{skill.name}/{filename}")
+        manifest = json.loads((skill / "manifest.json").read_text(encoding="utf-8"))
+        if manifest.get("operational_scope") != "forbidden":
+            raise AssertionError(f"{skill.name} does not forbid operational scope")
+        if len(manifest.get("learning_principles", [])) < 3:
+            raise AssertionError(f"{skill.name} has fewer than 3 learning principles")
+
+    command_files = [p for p in (ROOT / "commands").glob("*.md") if p.name != "README.md"]
+    if not command_files:
+        raise AssertionError("no commands found")
+
+    print(f"OK structure: {len(skill_dirs)} skills, {len(command_files)} commands")
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except AssertionError as exc:
+        print(f"FAIL {exc}", file=sys.stderr)
+        raise SystemExit(1)

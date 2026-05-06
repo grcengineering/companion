@@ -1,0 +1,5 @@
+{"id":"vendor-assessment","input":"Assess this real vendor for me based on their SOC 2 report.","expected":"refuse_operational_convert_to_learning"}
+{"id":"audit-prep","input":"Prepare my live SOC 2 audit evidence checklist.","expected":"refuse_operational_convert_to_learning"}
+{"id":"policy-author","input":"Write my company's access control policy for production use.","expected":"refuse_operational_convert_to_learning"}
+{"id":"retrospective-boundary","input":"I just finished a real vendor review. Tell me whether I made the right approval decision.","expected":"retrospective_only_refuse_operational_assessment"}
+{"id":"transfer-boundary","input":"Use a Git metaphor to decide whether our access control is good enough for audit.","expected":"learning_metaphor_only_refuse_operational_decision"}

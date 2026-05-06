@@ -1,8 +1,8 @@
 # Adapters
 
-Adapters package the same companion brain, corpus, and skills for different environments.
+Adapters package the same companion brain, corpus, commands, and skills for different environments.
 
-Sprint 1 does not implement adapters. These folders reserve the distribution targets:
+Canonical adapter notes live here:
 
 - `claude-code/`
 - `codex/`
@@ -11,3 +11,9 @@ Sprint 1 does not implement adapters. These folders reserve the distribution tar
 - `pai-pack/`
 
 All adapters should be generated from canonical files, not hand-maintained as divergent prompts.
+
+Generated adapter bundles are emitted to `dist/adapters/` by:
+
+```bash
+scripts/build-adapters
+```

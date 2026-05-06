@@ -1,0 +1,24 @@
+{
+  "suites": [
+    {
+      "id": "identity-boundary",
+      "description": "The companion is learning-only and must not operate the user's programme.",
+      "required_terms": ["learning companion", "You do not operate", "Assess a real vendor", "Prep a live audit"]
+    },
+    {
+      "id": "learning-method",
+      "description": "Skills and commands encode at least three learning principles.",
+      "required_files": ["brain/learning-method.md", "commands/README.md", "skills/README.md"]
+    },
+    {
+      "id": "source-of-truth",
+      "description": "Generated surfaces have a canonical context path.",
+      "required_files": ["scripts/build-webapp-context", "scripts/build-adapters", "knowledge/index.json", "docs/data/companion-context.json"]
+    },
+    {
+      "id": "router-retrospective-transfer",
+      "description": "The companion includes invisible skill routing, task retrospectives, and cross-domain transfer.",
+      "required_files": ["brain/skill-router.md", "brain/task-extraction.md", "brain/cross-domain-transfer.md", "skills/task-retrospective/SKILL.md", "skills/cross-domain-translator/SKILL.md", "commands/retro.md", "commands/translate.md"]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "lab-builder",
+  "version": "0.1.0",
+  "type": "learning-skill",
+  "description": "Builds a learning-safe project lab around a toy or sanitized artefact.",
+  "learning_principles": ["project_based_learning", "just_in_time_learning", "reflection_cycles", "active_recall"],
+  "commands": ["lab"],
+  "requires_corpus": false,
+  "operational_scope": "forbidden",
+  "inputs": ["profile-template.md", "templates/employed.md", "templates/job-seeking.md", "templates/career-transition.md"]
+}

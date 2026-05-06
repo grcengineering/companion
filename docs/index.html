@@ -3,164 +3,227 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="The GRC Companion helps GRC practitioners learn, practise, and internalise GRC engineering thinking through guided sessions and small builds.">
-  <link rel="canonical" href="https://grc.engineering/grc-companion/">
+  <meta name="description" content="The GRC Companion is a learning-only companion for GRC practitioners. Pick your AI workspace and generate the right setup instructions.">
+  <link rel="canonical" href="https://grc.engineering/companion/">
   <meta property="og:title" content="The GRC Companion">
-  <meta property="og:description" content="A learning companion for GRC practitioners. Learn concepts, practise judgment, and build small artefacts.">
+  <meta property="og:description" content="A learning-only GRC engineering companion packaged for Claude Code, Claude Projects, Cursor, Codex, and future PAI adapters.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://grc.engineering/grc-companion/">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:url" content="https://grc.engineering/companion/">
+  <meta property="og:image" content="https://grc.engineering/companion/assets/grc-social.png">
+  <meta name="twitter:card" content="summary_large_image">
   <title>The GRC Companion</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/companion.css">
 </head>
 <body>
-  <a class="skip-link" href="#session">Skip to session</a>
+  <a class="skip-link" href="#setup">Skip to setup wizard</a>
 
-  <header class="shell-header">
-    <div>
-      <p class="eyebrow">Learning-only GRC engineering companion</p>
-      <h1>The GRC Companion</h1>
-    </div>
+  <header class="site-header">
+    <a class="wordmark" href="#top" aria-label="The GRC Companion home">
+      <span class="mark" aria-hidden="true"></span>
+      <span>GRC.engineering</span>
+      <span class="wordmark-divider" aria-hidden="true"></span>
+      <span>Companion</span>
+    </a>
     <nav aria-label="Primary">
-      <a href="https://github.com/grcengineering/grc-companion" target="_blank" rel="noopener">GitHub</a>
-      <a href="#progress">Progress</a>
+      <a href="#setup">Setup</a>
+      <a href="#demo">Behaviour</a>
       <a href="#method">Method</a>
+      <a href="#tiers">Load paths</a>
+      <a href="https://github.com/grcengineering/grc-companion" target="_blank" rel="noopener">GitHub</a>
     </nav>
   </header>
 
-  <main class="app-shell">
-    <aside class="profile-panel" aria-labelledby="profile-heading">
-      <div class="panel-heading">
-        <p class="eyebrow">Learner profile</p>
-        <h2 id="profile-heading">Teach from context</h2>
+  <main id="top">
+    <section class="hero installer-hero" id="setup">
+      <div class="hero-grid installer-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Learning-only GRC engineering companion</p>
+          <h1>The GRC Companion</h1>
+          <p class="hero-lede">Teaches you how to think. Does not run your programme. Pick where you work and generate the right package path plus first prompt.</p>
+          <div class="boundary-strip" aria-label="Companion boundary">
+            <span>No vendor approvals</span>
+            <span>No live audit prep</span>
+            <span>No policy authorship</span>
+          </div>
+        </div>
+
+        <section class="setup-card" aria-label="Companion setup wizard">
+          <div class="setup-card-header">
+            <span class="mini-label">Static setup wizard</span>
+            <strong>No backend. No account. No secrets.</strong>
+          </div>
+
+          <form id="setup-form" class="setup-form">
+            <fieldset>
+              <legend>Where do you want to use it?</legend>
+              <div class="platform-grid">
+                <label class="platform-option">
+                  <input type="radio" name="platform" value="claude-code" checked>
+                  <span>Claude Code</span>
+                </label>
+                <label class="platform-option">
+                  <input type="radio" name="platform" value="claude-projects">
+                  <span>Claude Projects</span>
+                </label>
+                <label class="platform-option">
+                  <input type="radio" name="platform" value="cursor">
+                  <span>Cursor</span>
+                </label>
+                <label class="platform-option">
+                  <input type="radio" name="platform" value="codex">
+                  <span>Codex</span>
+                </label>
+                <label class="platform-option">
+                  <input type="radio" name="platform" value="github">
+                  <span>Just files</span>
+                </label>
+                <label class="platform-option">
+                  <input type="radio" name="platform" value="not-sure">
+                  <span>Not sure</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <label class="situation-field">
+              What are you working on, trying to figure out, or learning from?
+              <textarea name="situation" rows="5" placeholder="I just spent four hours on a vendor questionnaire and want to do this better next time."></textarea>
+            </label>
+
+            <div class="button-row">
+              <button type="submit" class="primary-action">Build my setup</button>
+              <button type="button" id="copy-setup" class="secondary-action">Copy</button>
+            </div>
+          </form>
+        </section>
       </div>
-
-      <form id="profile-form" class="profile-form">
-        <label>
-          Role
-          <input id="role" name="role" type="text" autocomplete="organization-title" placeholder="TPRM lead, analyst, manager">
-        </label>
-
-        <label>
-          Current level
-          <select id="level" name="level">
-            <option value="non-technical">Non-technical</option>
-            <option value="early">Early practitioner</option>
-            <option value="mid">Mid-level practitioner</option>
-            <option value="senior">Senior practitioner</option>
-          </select>
-        </label>
-
-        <label>
-          Current learning goal
-          <textarea id="goal" name="goal" rows="3" placeholder="Understand evidence automation, learn SOC 2, build a portfolio lab"></textarea>
-        </label>
-
-        <label>
-          Current friction
-          <textarea id="friction" name="friction" rows="3" placeholder="What feels confusing, manual, political, or hard?"></textarea>
-        </label>
-
-        <label>
-          Time available
-          <select id="time" name="time">
-            <option value="15 minutes">15 minutes</option>
-            <option value="30 minutes">30 minutes</option>
-            <option value="1 hour">1 hour</option>
-            <option value="2 hours">2 hours</option>
-          </select>
-        </label>
-
-        <div class="button-row">
-          <button type="submit" class="primary-action">Save profile</button>
-          <button type="button" id="export-profile" class="secondary-action">Export</button>
-        </div>
-      </form>
-
-      <div class="boundary-box">
-        <h3>Boundary</h3>
-        <p>This companion teaches. It will not assess vendors, prep live audits, author real policies, or operate your programme.</p>
-      </div>
-    </aside>
-
-    <section id="session" class="session-panel" aria-labelledby="session-heading">
-      <div class="session-intro">
-        <div>
-          <p class="eyebrow">Tier 0 webapp</p>
-          <h2 id="session-heading">Start a learning rep</h2>
-          <p>The companion asks before it tells, keeps practice small, and turns concepts into artefacts you can build safely.</p>
-        </div>
-        <div class="status-pill" id="memory-status">Anonymous local memory</div>
-      </div>
-
-      <div class="skill-grid" aria-label="Learning skills">
-        <button type="button" class="skill-card" data-skill="path">
-          <span>Learning path</span>
-          <small>Sequence the next few reps</small>
-        </button>
-        <button type="button" class="skill-card" data-skill="concept">
-          <span>Concept tutor</span>
-          <small>Learn one idea properly</small>
-        </button>
-        <button type="button" class="skill-card" data-skill="lab">
-          <span>Lab builder</span>
-          <small>Build a small artefact</small>
-        </button>
-      </div>
-
-      <div class="conversation" id="conversation" aria-live="polite"></div>
-
-      <form id="chat-form" class="chat-form">
-        <label for="learner-message">What do you want to learn or practise?</label>
-        <div class="chat-input-row">
-          <textarea id="learner-message" rows="3" placeholder="Example: I want to understand why screenshots are weak evidence."></textarea>
-          <button type="submit" class="primary-action">Respond</button>
-        </div>
-      </form>
-
-      <section class="prompt-output" aria-labelledby="prompt-heading">
-        <div>
-          <p class="eyebrow">Use with your AI tool</p>
-          <h2 id="prompt-heading">Companion prompt</h2>
-        </div>
-        <textarea id="companion-prompt" readonly rows="12"></textarea>
-        <div class="button-row">
-          <button type="button" id="copy-prompt" class="primary-action">Copy prompt</button>
-          <button type="button" id="download-session" class="secondary-action">Download session</button>
-        </div>
-      </section>
     </section>
 
-    <aside id="progress" class="progress-panel" aria-labelledby="progress-heading">
-      <div class="panel-heading">
-        <p class="eyebrow">Progress tracker</p>
-        <h2 id="progress-heading">What is sticking</h2>
+    <section class="section setup-output-section">
+      <div class="setup-output-copy">
+        <p class="eyebrow">Generated setup</p>
+        <h2>Your package path and first prompt.</h2>
+        <p>This output is static. The actual Companion behaviour runs inside the adapter or AI workspace you choose.</p>
       </div>
+      <textarea id="setup-output" class="setup-output" readonly rows="20" aria-label="Generated setup instructions"></textarea>
+    </section>
 
-      <div class="progress-list" id="progress-list"></div>
+    <section class="section demo-section" id="demo">
+      <div class="demo-copy">
+        <p class="eyebrow">Behaviour proof</p>
+        <h2>It refuses operations, then turns the moment into learning.</h2>
+        <p>The adapter should behave like this transcript: hold the boundary, infer the learning move, and produce a practical rep.</p>
+        <a class="secondary-action light" href="https://github.com/grcengineering/grc-companion/blob/main/demos/terminal-session.md" target="_blank" rel="noopener">Read transcript</a>
+      </div>
+      <div class="demo-reel" aria-label="Terminal demo reel">
+        <div class="reel-chrome">
+          <span></span>
+          <span></span>
+          <span></span>
+          <strong>demo/run-terminal-demo</strong>
+        </div>
+        <pre><code>$ grc-companion
 
-      <section id="method" class="method-card">
-        <h3>Learning method</h3>
-        <ul>
-          <li>Active recall before explanation</li>
-          <li>One-step stretch beyond current ability</li>
-          <li>Small build or artefact every session</li>
-          <li>Feynman explain-back</li>
-          <li>Reflection before closing</li>
-        </ul>
-      </section>
+Learner:
+Assess this vendor's SOC 2 report for me and tell me if we should approve them.
 
-      <button type="button" id="reset-progress" class="danger-action">Reset local memory</button>
-    </aside>
+Companion:
+I won't assess a real vendor or make an approval recommendation.
+That would move from learning into operating your programme.
+
+I can turn this into a fictional practice rep.
+
+Active recall:
+What makes vendor evidence trustworthy?
+
+Mini-lab:
+Build a 5-column evidence-quality checklist:
+claim | evidence | source | freshness | failure mode</code></pre>
+      </div>
+    </section>
+
+    <section class="section flow-section" id="method">
+      <div class="flow-copy">
+        <p class="eyebrow">Invisible skills</p>
+        <h2>The learner speaks naturally. The Companion routes the learning move.</h2>
+        <p>The router decides whether the moment needs tutoring, a retrospective, a lab, an explain-back, recall, reflection, or a cross-domain lens.</p>
+      </div>
+      <div class="learning-flow" aria-label="Learning flow">
+        <div class="flow-step">
+          <span>Listen</span>
+          <strong>Analyse the learner's message.</strong>
+          <p>Goal, timing, stuckness, and boundary risk.</p>
+        </div>
+        <div class="flow-step">
+          <span>Route</span>
+          <strong>Pick the learning move.</strong>
+          <p>Skills stay as files. Skill buttons disappear.</p>
+        </div>
+        <div class="flow-step">
+          <span>Teach</span>
+          <strong>Ask, pressure, build.</strong>
+          <p>Active recall, small artefacts, and explain-backs.</p>
+        </div>
+        <div class="flow-step">
+          <span>Transfer</span>
+          <strong>Extract the reusable pattern.</strong>
+          <p>Retrospectives and adjacent-domain lenses compound judgment.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section architecture">
+      <div class="section-kicker">Runtime scaffolding</div>
+      <div class="architecture-grid">
+        <div class="architecture-card brain-card">
+          <span>brain/</span>
+          <h3>Router, extraction, transfer</h3>
+          <p>The intelligence lives in versioned companion contracts, not in the static website.</p>
+        </div>
+        <div class="architecture-card">
+          <span>skills/</span>
+          <h3>Learning behaviours</h3>
+          <p>Task retrospectives and cross-domain translation now sit beside tutor, lab, recall, and reflection skills.</p>
+        </div>
+        <div class="architecture-card">
+          <span>commands/</span>
+          <h3>Power-user entry points</h3>
+          <p>`/retro` and `/translate` exist for explicit use, while default routing stays invisible.</p>
+        </div>
+        <div class="architecture-card">
+          <span>docs/</span>
+          <h3>Static installer</h3>
+          <p>GitHub Pages helps the learner choose a package and first prompt. It does not run the Companion.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section tiers" id="tiers">
+      <div class="section-kicker">Load paths</div>
+      <div class="tier-grid">
+        <article>
+          <span>Tier 0</span>
+          <h3>Static setup wizard</h3>
+          <p>Public page at <strong>grc.engineering/companion</strong> with package routing and first prompt generation.</p>
+        </article>
+        <article>
+          <span>Tier 1</span>
+          <h3>Portable adapters</h3>
+          <p>Generated bundles for Claude Code, Claude Projects, Cursor, and Codex.</p>
+        </article>
+        <article>
+          <span>Tier 2</span>
+          <h3>PAI pack</h3>
+          <p>Roadmap once adapter behaviour and learner signal stabilise.</p>
+        </article>
+      </div>
+    </section>
   </main>
 
-  <template id="message-template">
-    <article class="message">
-      <div class="message-role"></div>
-      <div class="message-body"></div>
-    </article>
-  </template>
+  <footer class="site-footer">
+    <p>The GRC Companion teaches. It does not operate your programme.</p>
+    <a href="https://github.com/grcengineering/grc-companion" target="_blank" rel="noopener">View source</a>
+  </footer>
 
   <script src="js/companion.js"></script>
 </body>

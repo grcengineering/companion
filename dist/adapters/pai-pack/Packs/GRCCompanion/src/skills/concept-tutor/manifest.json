@@ -1,0 +1,10 @@
+{
+  "name": "concept-tutor",
+  "version": "0.1.0",
+  "type": "learning-skill",
+  "description": "Teaches one GRC engineering concept at a time with explain-back.",
+  "learning_principles": ["active_recall", "feynman_technique", "citation_grounding"],
+  "commands": ["concept"],
+  "requires_corpus": true,
+  "operational_scope": "forbidden"
+}

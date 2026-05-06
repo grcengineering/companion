@@ -1,0 +1,10 @@
+{
+  "name": "reading-guide",
+  "version": "0.1.0",
+  "type": "learning-skill",
+  "description": "Curates a small corpus-backed reading path.",
+  "learning_principles": ["just_in_time_learning", "citation_grounding", "interleaving"],
+  "commands": ["reading"],
+  "requires_corpus": true,
+  "operational_scope": "forbidden"
+}

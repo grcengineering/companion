@@ -1,0 +1,19 @@
+{
+  "name": "grc-companion",
+  "description": "Learning-only GRC engineering companion: concept tutoring, practice scenarios, recall, reflection, and mini-labs.",
+  "version": "0.1.0",
+  "author": {
+    "name": "GRC Engineering",
+    "url": "https://grc.engineering"
+  },
+  "repository": "https://github.com/grcengineering/grc-companion",
+  "license": "MIT",
+  "keywords": [
+    "grc",
+    "learning",
+    "governance",
+    "risk",
+    "compliance",
+    "education"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "practice-scenario",
+  "version": "0.1.0",
+  "type": "learning-skill",
+  "description": "Creates fictional GRC scenarios and grades learner reasoning.",
+  "learning_principles": ["generative_struggle", "interleaving", "reflection_cycles"],
+  "commands": ["scenario"],
+  "requires_corpus": true,
+  "operational_scope": "forbidden"
+}

@@ -10,11 +10,27 @@ Status: in progress.
   - `learning-path-designer`
   - `concept-tutor`
   - `lab-builder`
-- Launch a static Tier 0 webapp at `grc.engineering/grc-companion/`.
-- Store anonymous learner profile and progress locally in the browser.
+- Add learner profile schema, profile wizard, profile refresher, and terminal behaviour demo.
+- Launch a static Tier 0 setup wizard at `grc.engineering/companion/` with `grc.engineering/grc-companion/` kept as a legacy path.
+
+## Redesign Sprint: Installer Wizard + Runtime Intelligence
+
+- Keep GitHub Pages static.
+- Replace the website prompt form with an adapter setup wizard.
+- Add invisible skill routing through `brain/skill-router.md`.
+- Add `task-retrospective` for learning from completed work.
+- Add `cross-domain-translator` for adjacent-domain pattern transfer.
+- Add `/retro` and `/translate` command contracts.
+- Regenerate adapter bundles from the same canonical brain, skills, commands, and corpus.
 
 ## Sprint 2: Learning Depth
 
+- Promote generated adapter bundles from preview to install-tested releases.
+- Add install and verification wizards for each adapter surface.
+- Harden profile workflow:
+  - install-tested `profile-wizard`
+  - install-tested `profile-refresher`
+  - visible proposed profile diffs
 - Add remaining learning skills:
   - `practice-scenario`
   - `socratic-coach`

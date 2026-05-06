@@ -1,0 +1,11 @@
+{
+  "name": "task-retrospective",
+  "version": "0.1.0",
+  "type": "learning-skill",
+  "description": "Extracts reusable GRC learning patterns from work the learner already completed.",
+  "learning_principles": ["reflection_cycles", "active_recall", "project_based_learning", "citation_grounding"],
+  "commands": ["retro"],
+  "requires_corpus": true,
+  "operational_scope": "forbidden",
+  "inputs": ["brain/task-extraction.md", "brain/skill-router.md"]
+}

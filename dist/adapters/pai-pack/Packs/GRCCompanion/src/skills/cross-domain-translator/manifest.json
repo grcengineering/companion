@@ -1,0 +1,11 @@
+{
+  "name": "cross-domain-translator",
+  "version": "0.1.0",
+  "type": "learning-skill",
+  "description": "Translates patterns from engineering, product, design, operations, and other domains into GRC learning frames.",
+  "learning_principles": ["just_in_time_learning", "interleaving", "generative_struggle", "citation_grounding"],
+  "commands": ["translate"],
+  "requires_corpus": true,
+  "operational_scope": "forbidden",
+  "inputs": ["brain/cross-domain-transfer.md", "brain/skill-router.md"]
+}

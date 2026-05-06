@@ -1,11 +1,17 @@
 # GitHub Pages Output
 
-This folder is the deployable static Tier 0 webapp for GitHub Pages.
+This folder is the deployable static Tier 0 setup wizard for GitHub Pages.
 
 The target public URL is:
+
+```text
+https://grc.engineering/companion/
+```
+
+The legacy GitHub Pages project path remains:
 
 ```text
 https://grc.engineering/grc-companion/
 ```
 
-To get that path on GitHub Pages, rename the repository to `grc-companion` while keeping Pages configured to publish from `/docs`.
+The page has no backend. It helps the learner choose an adapter path and generate the first Companion prompt.

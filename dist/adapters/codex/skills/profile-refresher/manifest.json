@@ -1,0 +1,11 @@
+{
+  "name": "profile-refresher",
+  "version": "0.1.0",
+  "type": "learning-skill",
+  "description": "Runs a three-prompt seasonal learner profile re-check.",
+  "learning_principles": ["reflection_cycles", "spaced_repetition", "active_recall"],
+  "commands": ["refresh-profile"],
+  "requires_corpus": false,
+  "operational_scope": "forbidden",
+  "outputs": ["profile/learner-profile.schema.json"]
+}

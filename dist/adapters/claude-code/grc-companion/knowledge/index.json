@@ -1,0 +1,112 @@
+{
+  "entries": [
+    {
+      "id": "knowledge:README",
+      "title": "Knowledge Corpus",
+      "path": "knowledge/README.md",
+      "type": "knowledge",
+      "summary": "This folder is the citation-grounded source material for The GRC Companion.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:case-studies:README",
+      "title": "Case Studies",
+      "path": "knowledge/case-studies/README.md",
+      "type": "case-studies",
+      "summary": "Case studies ground abstract GRC engineering concepts in practical examples.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:case-studies:tprm-soc2-parsing:README",
+      "title": "Example: Automated SOC 2 Document Parsing",
+      "path": "knowledge/case-studies/tprm-soc2-parsing/README.md",
+      "type": "case-studies",
+      "summary": "**Scenario:** Employed TPRM Lead automates vendor document review to save time",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:case-studies:tprm-soc2-parsing:persona_used",
+      "title": "GRC Baseline Context - SOC 2 Parsing Example",
+      "path": "knowledge/case-studies/tprm-soc2-parsing/persona_used.md",
+      "type": "case-studies",
+      "summary": "*This is the actual baseline context the learner submitted to generate their personalized lab.*",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:case-studies:tprm-soc2-parsing:prompt_used",
+      "title": "User Prompt - SOC 2 Parsing Example",
+      "path": "knowledge/case-studies/tprm-soc2-parsing/prompt_used.md",
+      "type": "case-studies",
+      "summary": "*This is the exact prompt the learner submitted (after filling out their baseline context) that generated the 12-week learning lab.*",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:frameworks:README",
+      "title": "Framework References",
+      "path": "knowledge/frameworks/README.md",
+      "type": "frameworks",
+      "summary": "Framework material belongs here only when it supports learning.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:glossary:README",
+      "title": "Glossary",
+      "path": "knowledge/glossary/README.md",
+      "type": "glossary",
+      "summary": "Plain-language GRC explanations for learners.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:glossary:control",
+      "title": "Control",
+      "path": "knowledge/glossary/control.md",
+      "type": "glossary",
+      "summary": "A control is a designed way to prevent, detect, correct, or govern a risk.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:glossary:evidence",
+      "title": "Evidence",
+      "path": "knowledge/glossary/evidence.md",
+      "type": "glossary",
+      "summary": "Evidence is proof that a control, process, or decision happened in the real operating system.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:linkedin:README",
+      "title": "LinkedIn Corpus",
+      "path": "knowledge/linkedin/README.md",
+      "type": "linkedin",
+      "summary": "Structured LinkedIn posts belong here after ingestion from the existing JSONL source.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:newsletters:README",
+      "title": "Newsletters",
+      "path": "knowledge/newsletters/README.md",
+      "type": "newsletters",
+      "summary": "Structured exports from `grcengineer.com` belong here.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:research:showcase-research",
+      "title": "Deep-Dive Research: Best Practices for Showcasing Prompt Generators & Learning Tools",
+      "path": "knowledge/research/showcase-research.md",
+      "type": "research",
+      "summary": "**Research Date:** October 31, 2025 **Purpose:** Identify proven strategies to demonstrate the GRC Lab Builder's value without requiring users to test it themselves **Sources Analyzed:** 20+ tools across prompt generators, learning platforms, SaaS demos, and template galleries",
+      "topics": [],
+      "learning_uses": []
+    }
+  ]
+}

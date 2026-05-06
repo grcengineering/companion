@@ -1,0 +1,10 @@
+{
+  "name": "socratic-coach",
+  "version": "0.1.0",
+  "type": "learning-skill",
+  "description": "Uses question-led discovery before explanation.",
+  "learning_principles": ["generative_struggle", "active_recall", "zone_of_proximal_development"],
+  "commands": [],
+  "requires_corpus": false,
+  "operational_scope": "forbidden"
+}

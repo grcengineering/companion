@@ -9,10 +9,16 @@ The companion helps users learn, practise, and internalise GRC engineering think
 Target URL:
 
 ```text
+https://grc.engineering/companion/
+```
+
+Legacy project-site URL:
+
+```text
 https://grc.engineering/grc-companion/
 ```
 
-Because this is hosted on GitHub Pages, the clean deployment path is to rename the repository to `grc-companion`. GitHub Pages project sites inherit the repository name in the URL path when served under the account custom domain.
+Because this is hosted on GitHub Pages, the public website stays static. It is an installer and orientation wizard, not the Companion runtime.
 
 ## Architecture
 
@@ -20,22 +26,25 @@ Because this is hosted on GitHub Pages, the clean deployment path is to rename t
 grc-companion/
 ├── brain/          Companion persona, voice, learning method, primitives
 ├── knowledge/      Structured corpus and case studies for citation grounding
+├── profile/        Learner-owned profile schema and examples
 ├── skills/         Learning skills only
+├── commands/       Portable learning-only command contracts
+├── demos/          Behavioural examples and terminal transcripts
 ├── webapp/         Tier 0 product surface notes/source spec
 ├── adapters/       Tier 1 and Tier 2 distribution targets
-├── docs/           GitHub Pages deployable static webapp
+├── docs/           GitHub Pages deployable static landing page
 └── scripts/        Corpus and adapter build entry points
 ```
 
 ## Tiers
 
-**Tier 0: Webapp**
+**Tier 0: Static Setup Wizard**
 
-The first shipped surface. Static, local-first, and GitHub Pages-compatible. Anonymous learners can create a profile, run a guided learning session, generate a lab, and save progress in browser storage.
+The first shipped surface. Static and GitHub Pages-compatible. It helps a learner pick Claude Code, Claude Projects, Cursor, Codex, or the raw files, then generates setup instructions and a starter prompt.
 
 **Tier 1: Portable Skill Pack**
 
-Roadmap for platform-specific adapters: Claude Code, Codex, Cursor, and Claude Projects.
+Platform-specific adapters: Claude Code, Codex, Cursor, and Claude Projects.
 
 **Tier 2: PAI Pack**
 
@@ -46,8 +55,17 @@ Roadmap. Ships only after Tier 0 has active learners and Tier 1 stabilises.
 - Repo restructured around `brain`, `knowledge`, `skills`, `webapp`, and `adapters`
 - Companion brain populated with persona, voice, learning method, and primitives
 - Existing lab-builder prompts migrated into `skills/lab-builder`
+- Profile wizard and refresher skills added for learner-owned context
 - SOC 2 parsing example migrated into `knowledge/case-studies`
-- Tier 0 static webapp scaffolded in `docs`
+- Tier 0 static setup wizard scaffolded in `docs`
+
+## Redesign Scope
+
+- Skills are invisible by default through `brain/skill-router.md`.
+- `task-retrospective` extracts learning from work the learner already completed.
+- `cross-domain-translator` uses adjacent-domain patterns to clarify GRC concepts.
+- The website routes users toward the right package and first prompt instead of pretending to run the Companion.
+- The actual Companion behaviour runs through generated adapters and canonical repo contracts.
 
 Deferred:
 
@@ -70,6 +88,34 @@ Then visit:
 ```text
 http://localhost:8080/
 ```
+
+## Build Derived Context
+
+The canonical files live in `brain/`, `skills/`, `commands/`, and `knowledge/`. Generated surfaces are rebuilt with:
+
+```bash
+scripts/build-knowledge-index
+scripts/build-webapp-context
+scripts/build-adapters
+scripts/verify-structure
+scripts/run-evals
+```
+
+Generated outputs:
+
+- `knowledge/index.json`
+- `docs/data/companion-context.json`
+- `dist/adapters/`
+
+## Behaviour Demo
+
+Run the terminal transcript:
+
+```bash
+demos/run-terminal-demo
+```
+
+The demo shows the expected refusal pattern: the Companion does not assess a real vendor, then converts the request into a fictional learning rep.
 
 ## Non-Goals
 

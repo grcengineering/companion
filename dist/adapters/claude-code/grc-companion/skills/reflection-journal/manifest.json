@@ -1,0 +1,10 @@
+{
+  "name": "reflection-journal",
+  "version": "0.1.0",
+  "type": "learning-skill",
+  "description": "Guides post-session reflection and captures learner state.",
+  "learning_principles": ["reflection_cycles", "spaced_repetition", "generative_struggle"],
+  "commands": ["reflect"],
+  "requires_corpus": false,
+  "operational_scope": "forbidden"
+}

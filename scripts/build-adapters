@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+"""Build portable adapter bundles from canonical source files."""
+
+from __future__ import annotations
+
+import json
+import shutil
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+DIST = ROOT / "dist" / "adapters"
+
+
+def reset(path: Path) -> None:
+    if path.exists():
+        shutil.rmtree(path)
+    path.mkdir(parents=True)
+
+
+def copy_tree(src: Path, dest: Path) -> None:
+    if dest.exists():
+        shutil.rmtree(dest)
+    shutil.copytree(src, dest, ignore=shutil.ignore_patterns("__pycache__", ".DS_Store"))
+
+
+def write(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+
+
+def brain_bundle() -> str:
+    parts = []
+    ordered = [
+        ROOT / "brain" / "persona.md",
+        ROOT / "brain" / "voice.md",
+        ROOT / "brain" / "learning-method.md",
+        ROOT / "brain" / "skill-router.md",
+        ROOT / "brain" / "task-extraction.md",
+        ROOT / "brain" / "cross-domain-transfer.md",
+    ]
+    for path in ordered:
+        if path.exists():
+            parts.append(path.read_text(encoding="utf-8"))
+    return "\n\n".join(parts)
+
+
+def build_claude_code() -> None:
+    out = DIST / "claude-code" / "grc-companion"
+    reset(out)
+    write(
+        out / ".claude-plugin" / "plugin.json",
+        json.dumps(
+            {
+                "name": "grc-companion",
+                "description": "Learning-only GRC engineering companion: concept tutoring, practice scenarios, recall, reflection, and mini-labs.",
+                "version": "0.1.0",
+                "author": {"name": "GRC Engineering", "url": "https://grc.engineering"},
+                "repository": "https://github.com/grcengineering/grc-companion",
+                "license": "MIT",
+                "keywords": ["grc", "learning", "governance", "risk", "compliance", "education"]
+            },
+            indent=2,
+        )
+        + "\n",
+    )
+    copy_tree(ROOT / "commands", out / "commands")
+    copy_tree(ROOT / "skills", out / "skills")
+    copy_tree(ROOT / "brain", out / "brain")
+    copy_tree(ROOT / "knowledge", out / "knowledge")
+    copy_tree(ROOT / "profile", out / "profile")
+    copy_tree(ROOT / "demos", out / "demos")
+    write(out / "README.md", "# GRC Companion Claude Code Adapter\n\nInstall as a Claude Code plugin directory.\n")
+
+
+def build_codex() -> None:
+    out = DIST / "codex"
+    reset(out)
+    copy_tree(ROOT / "brain", out / "brain")
+    copy_tree(ROOT / "skills", out / "skills")
+    copy_tree(ROOT / "commands", out / "commands")
+    copy_tree(ROOT / "knowledge", out / "knowledge")
+    copy_tree(ROOT / "profile", out / "profile")
+    copy_tree(ROOT / "demos", out / "demos")
+    write(
+        out / "AGENTS.md",
+        "# The GRC Companion\n\nUse this adapter as a learning-only GRC companion. Do not operate the user's programme. Route requests through `commands/` and `skills/`.\n",
+    )
+
+
+def build_cursor() -> None:
+    out = DIST / "cursor" / ".cursor" / "rules"
+    reset(out)
+    write(
+        out / "grc-companion.mdc",
+        f"---\ndescription: Learning-only GRC Companion rules\nalwaysApply: false\n---\n\n{brain_bundle()}\n",
+    )
+
+
+def build_claude_projects() -> None:
+    out = DIST / "claude-projects"
+    reset(out)
+    bundle = [
+        "# The GRC Companion Project Instructions",
+        brain_bundle(),
+        "## Commands",
+    ]
+    for command in sorted((ROOT / "commands").glob("*.md")):
+        if command.name != "README.md":
+            bundle.append(command.read_text(encoding="utf-8"))
+    write(out / "companion-instructions.md", "\n\n".join(bundle))
+    copy_tree(ROOT / "knowledge", out / "knowledge")
+    copy_tree(ROOT / "profile", out / "profile")
+    copy_tree(ROOT / "demos", out / "demos")
+
+
+def build_pai_pack() -> None:
+    out = DIST / "pai-pack" / "Packs" / "GRCCompanion"
+    reset(out)
+    write(
+        out / "README.md",
+        "# GRC Companion PAI Pack\n\nRoadmap adapter generated from the canonical companion files.\n",
+    )
+    write(
+        out / "src" / "SKILL.md",
+        "---\nname: GRCCompanion\npack-id: grc-companion-v0.1.0\nversion: 0.1.0\ntype: skill\nplatform: claude-code\n---\n\n"
+        + (ROOT / "brain" / "persona.md").read_text(encoding="utf-8"),
+    )
+    copy_tree(ROOT / "skills", out / "src" / "skills")
+    copy_tree(ROOT / "commands", out / "src" / "commands")
+    copy_tree(ROOT / "knowledge", out / "src" / "knowledge")
+    copy_tree(ROOT / "profile", out / "src" / "profile")
+    copy_tree(ROOT / "demos", out / "src" / "demos")
+
+
+def main() -> None:
+    DIST.mkdir(parents=True, exist_ok=True)
+    build_claude_code()
+    build_codex()
+    build_cursor()
+    build_claude_projects()
+    build_pai_pack()
+    print(f"wrote adapter bundles under {DIST.relative_to(ROOT)}")
+
+
+if __name__ == "__main__":
+    main()

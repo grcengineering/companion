@@ -1,0 +1,10 @@
+{
+  "name": "recall-quiz",
+  "version": "0.1.0",
+  "type": "learning-skill",
+  "description": "Runs active recall checks and lightweight spaced review.",
+  "learning_principles": ["active_recall", "spaced_repetition", "interleaving"],
+  "commands": ["recall"],
+  "requires_corpus": false,
+  "operational_scope": "forbidden"
+}

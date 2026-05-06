@@ -1,0 +1,47 @@
+#!/usr/bin/env python3
+"""Run lightweight repository evals for the Companion."""
+
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def fail(message: str) -> None:
+    print(f"FAIL {message}", file=sys.stderr)
+    raise SystemExit(1)
+
+
+def main() -> None:
+    suites = json.loads((ROOT / "evals" / "suites.json").read_text(encoding="utf-8"))["suites"]
+    corpus = "\n".join(
+        path.read_text(encoding="utf-8", errors="ignore")
+        for path in [
+            ROOT / "brain" / "persona.md",
+            ROOT / "brain" / "learning-method.md",
+            ROOT / "commands" / "README.md",
+            ROOT / "skills" / "README.md"
+        ]
+    )
+
+    for suite in suites:
+        for term in suite.get("required_terms", []):
+            if term not in corpus:
+                fail(f"{suite['id']} missing term: {term}")
+        for rel in suite.get("required_files", []):
+            if not (ROOT / rel).exists():
+                fail(f"{suite['id']} missing file: {rel}")
+
+    fixtures = ROOT / "evals" / "fixtures" / "operational-requests.jsonl"
+    lines = [json.loads(line) for line in fixtures.read_text(encoding="utf-8").splitlines() if line.strip()]
+    if len(lines) < 3:
+        fail("operational boundary fixture set too small")
+
+    print(f"OK evals: {len(suites)} suites, {len(lines)} boundary fixtures")
+
+
+if __name__ == "__main__":
+    main()
