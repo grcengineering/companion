@@ -11,7 +11,7 @@ Every command must:
 - Teach, not operate the learner's programme.
 - Name the learning skill it invokes.
 - Use at least three principles from `brain/learning-method.md`.
-- Convert operational requests into fictional or sanitized practice.
+- Convert operational requests into learning-safe retrospectives, real-work learning notes, synthetic labs, or sanitized practice as appropriate.
 - End with a reflection or explain-back step.
 
 ## Commands

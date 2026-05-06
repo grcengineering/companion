@@ -11,7 +11,7 @@ const platforms = {
     steps: [
       "Use the generated Claude Code plugin bundle.",
       "Install or symlink the bundle according to your Claude Code plugin workflow.",
-      "Start with the generated prompt or an explicit /grc-companion command."
+      "Start with the generated system prompt or point the Companion at local files, diffs, terminal output, or notes you want to learn from."
     ],
     command: "/grc-companion:retro"
   },
@@ -21,9 +21,9 @@ const platforms = {
     steps: [
       "Create a new Claude Project.",
       "Upload companion-instructions.md plus the knowledge, profile, and demos folders as project knowledge.",
-      "Start a new chat with the generated prompt."
+      "Start a new chat with the generated system prompt and upload only the artefacts you intentionally want to use as learning material."
     ],
-    command: "Use the generated starter prompt in the Project chat."
+    command: "Use the generated system prompt in the Project chat."
   },
   cursor: {
     label: "Cursor",
@@ -31,9 +31,9 @@ const platforms = {
     steps: [
       "Copy the generated Cursor rules into your workspace's .cursor/rules directory.",
       "Open Cursor Composer in the workspace.",
-      "Start with the generated prompt so the Companion can route the learning move."
+      "Use the generated system prompt with project files, diffs, notes, and outputs already in Cursor as learning material when you ask for a retrospective."
     ],
-    command: "Use the generated starter prompt in Cursor Composer."
+    command: "Use the generated system prompt in Cursor Composer."
   },
   codex: {
     label: "Codex",
@@ -41,9 +41,9 @@ const platforms = {
     steps: [
       "Use the Codex adapter bundle as the companion context.",
       "Keep AGENTS.md, brain, skills, commands, knowledge, profile, and demos together.",
-      "Start with the generated prompt inside a Codex session."
+      "Start with the generated system prompt inside a Codex session and reference local repo files or outputs you want to learn from."
     ],
-    command: "Use the generated starter prompt in Codex."
+    command: "Use the generated system prompt in Codex."
   },
   github: {
     label: "Just files",
@@ -51,7 +51,7 @@ const platforms = {
     steps: [
       "Open the GitHub repository.",
       "Read brain/persona.md, brain/skill-router.md, and the relevant skill file.",
-      "Use the generated prompt in whichever AI workspace you already trust."
+      "Use the generated system prompt in whichever AI workspace you already trust, then provide real artefacts locally inside that workspace."
     ],
     command: "No adapter command. Use the canonical files directly."
   },
@@ -61,9 +61,9 @@ const platforms = {
     steps: [
       "Start with Claude Projects if you want the lowest-friction non-terminal path.",
       "Use Claude Code, Cursor, or Codex if you want the Companion where you already build.",
-      "Keep the generated prompt and avoid sensitive company, vendor, customer, or evidence details."
+      "Use the public website for setup only; bring the generated system prompt and real work into the local AI workspace you already use when you are ready to learn from it."
     ],
-    command: "Use the generated starter prompt first."
+    command: "Use the generated system prompt first."
   }
 };
 
@@ -89,6 +89,14 @@ function selectedPlatform() {
 
 function inferRoute(text) {
   const normalized = text.toLowerCase();
+
+  if (/(file|notes|diff|terminal|output|transcript|draft|questionnaire|walkthrough|evidence|policy|control|review)/.test(normalized)) {
+    return {
+      skill: "task-retrospective",
+      command: "/grc-companion:retro",
+      reason: "You are bringing real work or local outputs, so the best first move is to learn from the actual material without taking over the decision."
+    };
+  }
 
   if (/(just|finished|completed|ran|did|spent|after|walkthrough|questionnaire|review)/.test(normalized)) {
     return {
@@ -156,7 +164,7 @@ function buildSetup() {
   if (!output) return;
 
   const platform = selectedPlatform();
-  const situation = field("situation") || "I want to learn GRC engineering through a practical, learning-safe session.";
+  const situation = field("situation") || "I want to learn from real GRC work I already do, with synthetic labs when I need extra practice.";
   const route = inferRoute(situation);
   const steps = platform.steps.map((step, index) => `${index + 1}. ${step}`).join("\n");
 
@@ -164,6 +172,12 @@ function buildSetup() {
 
 Package path:
 ${platform.path}
+
+What this gives you:
+- A local learning companion that can use your actual GRC working experience as material.
+- Retrospectives on real notes, files, diffs, terminal output, questionnaires, policies, controls, and review artefacts you intentionally provide.
+- Synthetic labs, scenarios, and explain-backs when you need extra reps or cannot use real material.
+- Ayoub Fandi's GRC Engineering lens, primitives, corpus, and cross-domain patterns layered onto your day-to-day work.
 
 Setup:
 ${steps}
@@ -174,24 +188,26 @@ ${route.command}
 Why this route:
 ${route.reason}
 
-Starter prompt:
+System prompt:
 You are The GRC Companion, a learning-only companion carrying Ayoub Fandi's GRC engineering thinking.
 
 Important boundary:
-- Teach me how to think; do not operate my GRC programme.
-- Do not assess real vendors, prep live audits, author production policies, run controls, or score programme maturity.
-- If I ask for operational work, convert it into a fictional or retrospective learning-safe rep.
-- Do not ask me for company names, customer names, vendor names, secrets, real evidence, or live audit details.
+- Teach me how to think and improve my judgment; do not take over operational decisions.
+- You may use real local artefacts I intentionally provide inside this workspace as learning material: notes, drafts, files, diffs, terminal output, questionnaires, policy changes, or review outputs.
+- Do not approve or reject vendors, prep or certify a live audit position, author production policy as final, run controls, or score programme maturity.
+- Do not ship, sync, or ask me to paste sensitive artefacts into the public website. Keep learning from the local context available in this AI workspace.
+- Use synthetic examples, fictional scenarios, or toy labs when real work is unavailable, too sensitive, or when I ask for extra practice.
 
 What I am working on, trying to figure out, or learning from:
 ${situation}
 
 Use the invisible skill router:
 - Primary expected skill: ${route.skill}
-- If I described completed work, run task-retrospective.
+- If I described completed work or referenced local outputs, run task-retrospective on the actual material available.
 - If a cross-domain pattern would clarify the idea, use cross-domain-translator as a supporting move.
+- If I need more reps, create a lab or scenario based on the pattern, not as a replacement for the real work.
 - Ask one targeted question if you need more signal.
-- End with a small learning-safe artefact and one explain-back or reflection prompt.
+- End with a small learning-safe artefact, a profile/progress update if useful, and one explain-back or reflection prompt.
 
 ${contextSummary()}
 

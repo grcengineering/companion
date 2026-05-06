@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="The GRC Companion is a learning-only companion for GRC practitioners. Pick your AI workspace and generate the right setup instructions.">
+  <meta name="description" content="The GRC Companion turns your real GRC work into learning loops, enriched by GRC Engineering thinking, corpus, labs, and local adapter workflows.">
   <link rel="canonical" href="https://grc.engineering/companion/">
   <meta property="og:title" content="The GRC Companion">
-  <meta property="og:description" content="A learning-only GRC engineering companion packaged for Claude Code, Claude Projects, Cursor, Codex, and future PAI adapters.">
+  <meta property="og:description" content="Learn from your actual GRC work experience, synthetic labs, and the GRC Engineering corpus inside Claude Code, Claude Projects, Cursor, Codex, and future PAI adapters.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://grc.engineering/companion/">
   <meta property="og:image" content="https://grc.engineering/companion/assets/grc-social.png">
@@ -38,25 +38,25 @@
     <section class="hero installer-hero" id="setup">
       <div class="hero-grid installer-grid">
         <div class="hero-copy">
-          <p class="eyebrow">Learning-only GRC engineering companion</p>
+          <p class="eyebrow">Learn from real GRC work + GRC Engineering context</p>
           <h1>The GRC Companion</h1>
-          <p class="hero-lede">Teaches you how to think. Does not run your programme. Pick where you work and generate the right package path plus first prompt.</p>
+          <p class="hero-lede">Turn vendor reviews, audit walkthroughs, questionnaires, policy work, control discussions, and terminal output into learning loops. It runs where you already use Claude or Codex, so your local work becomes the curriculum.</p>
           <div class="boundary-strip" aria-label="Companion boundary">
-            <span>No vendor approvals</span>
-            <span>No live audit prep</span>
-            <span>No policy authorship</span>
+            <span>Real-work retrospectives</span>
+            <span>Synthetic labs when useful</span>
+            <span>GRC Engineering corpus</span>
           </div>
         </div>
 
         <section class="setup-card" aria-label="Companion setup wizard">
           <div class="setup-card-header">
-            <span class="mini-label">Static setup wizard</span>
-            <strong>No backend. No account. No secrets.</strong>
+            <span class="mini-label">Choose your local workspace</span>
+            <strong>Install it where your GRC work already happens.</strong>
           </div>
 
           <form id="setup-form" class="setup-form">
             <fieldset>
-              <legend>Where do you want to use it?</legend>
+              <legend>Where do you want the Companion to learn with you?</legend>
               <div class="platform-grid">
                 <label class="platform-option">
                   <input type="radio" name="platform" value="claude-code" checked>
@@ -87,7 +87,7 @@
 
             <label class="situation-field">
               What are you working on, trying to figure out, or learning from?
-              <textarea name="situation" rows="5" placeholder="I just spent four hours on a vendor questionnaire and want to do this better next time."></textarea>
+              <textarea name="situation" rows="5" placeholder="I just spent four hours on a vendor questionnaire and want to learn from the notes, friction, and decisions I made."></textarea>
             </label>
 
             <div class="button-row">
@@ -102,17 +102,42 @@
     <section class="section setup-output-section">
       <div class="setup-output-copy">
         <p class="eyebrow">Generated setup</p>
-        <h2>Your package path and first prompt.</h2>
-        <p>This output is static. The actual Companion behaviour runs inside the adapter or AI workspace you choose.</p>
+        <h2>Your local package path and system prompt.</h2>
+        <p>This website does not upload your artefacts. The actual Companion runs inside the AI workspace you choose and can learn from the local files, transcripts, diffs, notes, and outputs you intentionally provide there.</p>
       </div>
       <textarea id="setup-output" class="setup-output" readonly rows="20" aria-label="Generated setup instructions"></textarea>
+    </section>
+
+    <section class="section experience-section">
+      <div class="section-kicker">What it learns from</div>
+      <div class="manifesto-copy">
+        <h2>Your day-to-day work becomes the material.</h2>
+        <p>The Companion is not a generic prompt wrapper. It uses the same things you already bring to Claude or Codex: review notes, questionnaire drafts, policy changes, control conversations, terminal output, project files, and learning gaps. It extracts the patterns, connects them to GRC Engineering thinking, and turns the next rep into practice.</p>
+      </div>
+      <div class="manifesto-grid" aria-label="Learning material">
+        <article>
+          <span>Actual work</span>
+          <h3>Retrospectives on real experience</h3>
+          <p>Use local outputs from vendor reviews, audits, policies, controls, and stakeholder conversations as learning material without asking the website to store them.</p>
+        </article>
+        <article>
+          <span>Practice</span>
+          <h3>Labs when you need reps</h3>
+          <p>When real work is unavailable or too sensitive, the Companion creates synthetic labs, scenarios, explain-backs, and drills to build the same judgment.</p>
+        </article>
+        <article>
+          <span>Context</span>
+          <h3>Ayoub's GRC engineering lens</h3>
+          <p>The brain, primitives, newsletters, examples, and cross-domain patterns give your experience a sharper learning frame.</p>
+        </article>
+      </div>
     </section>
 
     <section class="section demo-section" id="demo">
       <div class="demo-copy">
         <p class="eyebrow">Behaviour proof</p>
-        <h2>It refuses operations, then turns the moment into learning.</h2>
-        <p>The adapter should behave like this transcript: hold the boundary, infer the learning move, and produce a practical rep.</p>
+        <h2>It learns from the work without taking over the decision.</h2>
+        <p>The adapter should behave like this transcript: use the learner's real local work as material, hold the approval/audit boundary, infer the learning move, and produce a practical rep.</p>
         <a class="secondary-action light" href="https://github.com/grcengineering/grc-companion/blob/main/demos/terminal-session.md" target="_blank" rel="noopener">Read transcript</a>
       </div>
       <div class="demo-reel" aria-label="Terminal demo reel">
@@ -125,34 +150,36 @@
         <pre><code>$ grc-companion
 
 Learner:
-Assess this vendor's SOC 2 report for me and tell me if we should approve them.
+Use my vendor-review-notes.md to help me learn from the review.
+Do not decide whether the vendor should be approved.
 
 Companion:
-I won't assess a real vendor or make an approval recommendation.
-That would move from learning into operating your programme.
+I can use that local file as learning material.
+I will not make an approval recommendation.
 
-I can turn this into a fictional practice rep.
+Learning move:
+Task retrospective on the review you already performed.
 
 Active recall:
-What makes vendor evidence trustworthy?
+What signal actually helped you move the review forward?
 
-Mini-lab:
-Build a 5-column evidence-quality checklist:
-claim | evidence | source | freshness | failure mode</code></pre>
+Output:
+A learning note, a reusable evidence-quality checklist,
+and one profile update about where you are getting stuck.</code></pre>
       </div>
     </section>
 
     <section class="section flow-section" id="method">
       <div class="flow-copy">
         <p class="eyebrow">Invisible skills</p>
-        <h2>The learner speaks naturally. The Companion routes the learning move.</h2>
-        <p>The router decides whether the moment needs tutoring, a retrospective, a lab, an explain-back, recall, reflection, or a cross-domain lens.</p>
+        <h2>The learner brings the work. The Companion routes the learning move.</h2>
+        <p>The router decides whether the moment needs a real-work retrospective, a lab, tutoring, an explain-back, recall, reflection, or a cross-domain lens.</p>
       </div>
       <div class="learning-flow" aria-label="Learning flow">
         <div class="flow-step">
           <span>Listen</span>
-          <strong>Analyse the learner's message.</strong>
-          <p>Goal, timing, stuckness, and boundary risk.</p>
+          <strong>Analyse the local context.</strong>
+          <p>Goal, timing, files, outputs, stuckness, and boundary risk.</p>
         </div>
         <div class="flow-step">
           <span>Route</span>
@@ -161,8 +188,8 @@ claim | evidence | source | freshness | failure mode</code></pre>
         </div>
         <div class="flow-step">
           <span>Teach</span>
-          <strong>Ask, pressure, build.</strong>
-          <p>Active recall, small artefacts, and explain-backs.</p>
+          <strong>Ask, extract, build.</strong>
+          <p>Real-work retrospectives, active recall, small artefacts, and explain-backs.</p>
         </div>
         <div class="flow-step">
           <span>Transfer</span>
@@ -177,13 +204,13 @@ claim | evidence | source | freshness | failure mode</code></pre>
       <div class="architecture-grid">
         <div class="architecture-card brain-card">
           <span>brain/</span>
-          <h3>Router, extraction, transfer</h3>
-          <p>The intelligence lives in versioned companion contracts, not in the static website.</p>
+          <h3>Router, extraction, local learning</h3>
+          <p>The intelligence lives in versioned companion contracts: skill routing, local work learning, task extraction, and transfer.</p>
         </div>
         <div class="architecture-card">
           <span>skills/</span>
           <h3>Learning behaviours</h3>
-          <p>Task retrospectives and cross-domain translation now sit beside tutor, lab, recall, and reflection skills.</p>
+          <p>Real-work retrospectives sit beside synthetic labs, concept tutoring, recall, reflection, and cross-domain translation.</p>
         </div>
         <div class="architecture-card">
           <span>commands/</span>
@@ -193,7 +220,7 @@ claim | evidence | source | freshness | failure mode</code></pre>
         <div class="architecture-card">
           <span>docs/</span>
           <h3>Static installer</h3>
-          <p>GitHub Pages helps the learner choose a package and first prompt. It does not run the Companion.</p>
+          <p>GitHub Pages helps the learner choose a package and system prompt. Your real artefacts stay in the local AI workspace you choose.</p>
         </div>
       </div>
     </section>
@@ -204,7 +231,7 @@ claim | evidence | source | freshness | failure mode</code></pre>
         <article>
           <span>Tier 0</span>
           <h3>Static setup wizard</h3>
-          <p>Public page at <strong>grc.engineering/companion</strong> with package routing and first prompt generation.</p>
+          <p>Public page at <strong>grc.engineering/companion</strong> with package routing and system prompt generation. It does not upload your work.</p>
         </article>
         <article>
           <span>Tier 1</span>

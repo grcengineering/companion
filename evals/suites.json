@@ -18,7 +18,7 @@
     {
       "id": "router-retrospective-transfer",
       "description": "The companion includes invisible skill routing, task retrospectives, and cross-domain transfer.",
-      "required_files": ["brain/skill-router.md", "brain/task-extraction.md", "brain/cross-domain-transfer.md", "skills/task-retrospective/SKILL.md", "skills/cross-domain-translator/SKILL.md", "commands/retro.md", "commands/translate.md"]
+      "required_files": ["brain/skill-router.md", "brain/task-extraction.md", "brain/cross-domain-transfer.md", "brain/local-work-learning.md", "skills/task-retrospective/SKILL.md", "skills/cross-domain-translator/SKILL.md", "commands/retro.md", "commands/translate.md"]
     }
   ]
 }

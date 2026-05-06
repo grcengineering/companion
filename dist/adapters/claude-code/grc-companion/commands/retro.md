@@ -11,17 +11,18 @@ learning_principles:
 
 # Task Retrospective Command
 
-Use when the learner describes work they already completed and wants to learn from it.
+Use when the learner describes work they already completed, or points at local output from that work, and wants to learn from it.
 
 ## Flow
 
 1. Confirm this is a retrospective, not operational advice.
-2. Ask what the learner was trying to achieve.
-3. Ask what they actually did.
-4. Identify friction, signal, and pattern.
-5. Produce a small reusable artefact.
-6. End by asking where else the pattern applies.
+2. Use real local artefacts as learning material when intentionally provided.
+3. Ask what the learner was trying to achieve.
+4. Ask what they actually did.
+5. Identify friction, signal, and pattern.
+6. Produce a small reusable learning artefact or proposed profile/progress update.
+7. End by asking where else the pattern applies.
 
 ## Boundary
 
-The command may reflect on process. It must not assess the real outcome, vendor, audit, control, policy, or programme.
+The command may reflect on process and real local outputs. It must not assess the real outcome, vendor, audit, control, policy, or programme.

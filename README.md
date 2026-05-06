@@ -2,7 +2,9 @@
 
 A learning companion for GRC practitioners, built from the original GRC Engineering Lab Builder.
 
-The companion helps users learn, practise, and internalise GRC engineering thinking. It is explicitly not an operational GRC tool: it does not assess vendors, prep audits, author real policies, run controls, or operate a user's programme.
+The companion helps users learn, practise, and internalise GRC engineering thinking from both synthetic labs and their actual day-to-day GRC work. In local adapters, the learner can intentionally point it at review notes, drafts, files, diffs, terminal output, questionnaires, policies, controls, and other work artefacts so the Companion can extract learning opportunities.
+
+It is not an operational GRC decision-maker: it does not approve vendors, certify audit positions, author final production policies, run controls, or operate a user's programme. It helps the practitioner get better at doing those things.
 
 ## Public Surface
 
@@ -40,7 +42,7 @@ grc-companion/
 
 **Tier 0: Static Setup Wizard**
 
-The first shipped surface. Static and GitHub Pages-compatible. It helps a learner pick Claude Code, Claude Projects, Cursor, Codex, or the raw files, then generates setup instructions and a starter prompt.
+The first shipped surface. Static and GitHub Pages-compatible. It helps a learner pick Claude Code, Claude Projects, Cursor, Codex, or the raw files, then generates setup instructions and a system prompt.
 
 **Tier 1: Portable Skill Pack**
 
@@ -64,7 +66,8 @@ Roadmap. Ships only after Tier 0 has active learners and Tier 1 stabilises.
 - Skills are invisible by default through `brain/skill-router.md`.
 - `task-retrospective` extracts learning from work the learner already completed.
 - `cross-domain-translator` uses adjacent-domain patterns to clarify GRC concepts.
-- The website routes users toward the right package and first prompt instead of pretending to run the Companion.
+- The website routes users toward the right package and system prompt instead of pretending to run the Companion.
+- Local adapters can learn from real local work artefacts the learner intentionally provides; the public website does not upload those artefacts.
 - The actual Companion behaviour runs through generated adapters and canonical repo contracts.
 
 Deferred:
@@ -115,7 +118,7 @@ Run the terminal transcript:
 demos/run-terminal-demo
 ```
 
-The demo shows the expected refusal pattern: the Companion does not assess a real vendor, then converts the request into a fictional learning rep.
+The demo shows the expected boundary pattern: the Companion can use real local review notes as learning material, but it does not make the vendor approval decision.
 
 ## Non-Goals
 

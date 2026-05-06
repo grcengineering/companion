@@ -23,6 +23,7 @@ def main() -> int:
         "brain/skill-router.md",
         "brain/task-extraction.md",
         "brain/cross-domain-transfer.md",
+        "brain/local-work-learning.md",
         "AGENTS.md",
         "SECURITY.md",
         "commands/README.md",

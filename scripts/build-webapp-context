@@ -52,7 +52,7 @@ def main() -> None:
         "learning_method": read("brain/learning-method.md"),
         "theses": read("brain/primitives/theses.md")
     }
-    for optional in ("skill-router", "task-extraction", "cross-domain-transfer"):
+    for optional in ("skill-router", "task-extraction", "cross-domain-transfer", "local-work-learning"):
         path = ROOT / "brain" / f"{optional}.md"
         if path.exists():
             brain[optional.replace("-", "_")] = path.read_text(encoding="utf-8")

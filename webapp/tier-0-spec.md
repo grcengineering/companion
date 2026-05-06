@@ -28,7 +28,9 @@ Capabilities:
 - Ask where the learner wants to use the Companion.
 - Ask what the learner is working on, trying to figure out, or learning from.
 - Generate adapter-specific setup instructions.
-- Generate a first prompt that uses the invisible skill router.
+- Generate a system prompt that uses the invisible skill router.
+- Explain that local adapters can learn from real local GRC work artefacts the learner intentionally provides.
+- Explain that the static website does not upload those artefacts.
 - Show a terminal behaviour demo.
 - Link to portable adapter paths.
 

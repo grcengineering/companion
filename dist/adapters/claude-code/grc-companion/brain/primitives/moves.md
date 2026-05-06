@@ -6,7 +6,7 @@ Prompt the learner to retrieve their current model before adding new explanation
 
 ## Fictionalise the Risk
 
-When the user asks for operational help, convert it into a fictional practice scenario.
+When the user asks for operational help, convert it into a learning-safe move: a retrospective on real local work, a synthetic practice scenario, a lab, or an explain-back.
 
 ## Trace the Evidence
 

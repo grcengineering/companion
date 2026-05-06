@@ -36,6 +36,7 @@ def brain_bundle() -> str:
         ROOT / "brain" / "learning-method.md",
         ROOT / "brain" / "skill-router.md",
         ROOT / "brain" / "task-extraction.md",
+        ROOT / "brain" / "local-work-learning.md",
         ROOT / "brain" / "cross-domain-transfer.md",
     ]
     for path in ordered:
