@@ -1,159 +1,76 @@
-# GRC Engineering Lab Builder
+# The GRC Companion
 
-> **Create personalized GRC learning labs tailored to YOUR context, experience, and goals**
+A learning companion for GRC practitioners, built from the original GRC Engineering Lab Builder.
 
-Traditional GRC training is one-size-fits-none. This framework generates custom learning experiences that match your technical level, work with your actual systems, and address your specific challenges - whether you're in healthcare using Excel or fintech automating SOC 2 with Python.
+The companion helps users learn, practise, and internalise GRC engineering thinking. It is explicitly not an operational GRC tool: it does not assess vendors, prep audits, author real policies, run controls, or operate a user's programme.
 
----
+## Public Surface
 
-## 🌐 **Web App Available!**
+Target URL:
 
-**The easiest way to generate your prompts:** [**Launch Web App →**](https://grcengineering.github.io/grc_engineering_lab_builder/)
-
-✨ Fill out simple forms → Get copy-paste-ready prompts → Use with Claude or ChatGPT
-
-✅ No file editing • No markdown knowledge needed • Works on mobile
-
----
-
-## 🚀 Quick Start (5 minutes to your first lab)
-
-### Option 1: Use the Web App (Recommended) ✨
-
-1. **[Open the web app →](https://grcengineering.github.io/grc_engineering_lab_builder/)**
-2. Fill out your GRC profile (10-15 questions)
-3. Choose your scenario (Employed, Job Seeking, or Transitioning)
-4. Copy the generated prompts
-5. Paste into Claude or ChatGPT → Get your lab!
-
-### Option 2: Use Markdown Files (Advanced)
-
-<details>
-<summary>Click to expand markdown workflow</summary>
-
-#### 1️⃣ Complete Your GRC Profile
-
-Open **[your_grc_profile.md](your_grc_profile.md)** and fill in your personal details in the "✏️ YOUR INFORMATION" section.
-
-#### 2️⃣ Choose Your Objective
-
-| Your Situation | Use This Prompt | What You'll Build |
-|----------------|-----------------|-------------------|
-| ✅ **Current GRC professional** | [employed.md](user_prompts/employed.md) | Executive artifacts, dashboards, automation |
-| 🔍 **Looking for your first GRC job** | [job_seeking.md](user_prompts/job_seeking.md) | Portfolio projects, interview prep, demos |
-| 🔄 **Transitioning into GRC** | [career_transition.md](user_prompts/career_transition.md) | Quick wins, credibility builders, stakeholder tools |
-
-#### 3️⃣ Generate Your Lab
-
-1. Open ChatGPT, Claude, or any AI assistant
-2. Paste your completed GRC profile
-3. Paste your chosen user prompt
-4. Submit → Get your personalized learning lab!
-
-**[See how to set this up in different AI tools →](user_prompts/README.md)**
-
-</details>
-
----
-
-## 💡 What You'll Get
-
-Every lab generates:
-- ✅ **Custom learning path** for your exact context
-- ✅ **Real work artifacts** (slide decks, dashboards, templates)
-- ✅ **Reusable frameworks** you can use forever
-- ✅ **Application coaching** for your specific challenges
-
----
-
-## 📦 See a Real Example
-
-This shows what the AI generates when you submit your profile + prompt:
-
-| Example | Situation | Lab Goal | Sample Deliverables Built | Result |
-|---------|-----------|----------|---------------------------|--------|
-| [SOC 2 Document Analysis](examples/01_employed_soc2_parsing/) | Employed TPRM Lead, 500+ vendors | Automate manual SOC 2 reviews | • PDF text extraction scripts<br>• Regex patterns for section finding<br>• CSV data output pipeline<br>• Google Sheets API integration<br>• Risk scoring calculator<br>• Executive dashboard | 75% time reduction (3 hours → 30 min per review) |
-
-**→ [See the full example](examples/01_employed_soc2_parsing/)**
-
-This is exactly what you'll receive - a complete, multi-week learning plan with real code, templates, and frameworks you can use immediately.
-
-*While this example uses Python + Google Sheets, the framework generates labs for any tool stack (Excel, OneTrust, ServiceNow, etc.), any framework (HIPAA, NIST, ISO, PCI), and any industry - tailored to what YOU actually use at work.*
-
----
-
-## 🎯 How It Works
-
-```
-Your Baseline Context + Specific Goal = Personalized Lab
+```text
+https://grc.engineering/grc-companion/
 ```
 
-**Example:**
-- **You:** TPRM Lead, 500+ vendors, manual reviews taking 3+ hours each
-- **Goal:** Learn to parse SOC 2 documents programmatically
-- **Lab Output:** 12-week progressive build from zero coding to full automation
-- **Result:** Reduce review time from 3 hours to 30 minutes
+Because this is hosted on GitHub Pages, the clean deployment path is to rename the repository to `grc-companion`. GitHub Pages project sites inherit the repository name in the URL path when served under the account custom domain.
 
-The lab matches your:
-- ✅ Technical skill level (no prior Python experience needed)
-- ✅ Business systems (works with Google Drive, spreadsheets you already use)
-- ✅ Time constraints (3 hours/week commitment)
-- ✅ Real work context (actual vendor documents, your workflow)
+## Architecture
 
----
+```text
+grc-companion/
+├── brain/          Companion persona, voice, learning method, primitives
+├── knowledge/      Structured corpus and case studies for citation grounding
+├── skills/         Learning skills only
+├── webapp/         Tier 0 product surface notes/source spec
+├── adapters/       Tier 1 and Tier 2 distribution targets
+├── docs/           GitHub Pages deployable static webapp
+└── scripts/        Corpus and adapter build entry points
+```
 
-## ❓ FAQ
+## Tiers
 
-**Q: I'm not technical. Will this work for me?**
-A: Yes! You specify your technical level in the baseline. Labs adapt from "never coded" to "advanced scripting."
+**Tier 0: Webapp**
 
-**Q: Which AI tool should I use?**
-A: ChatGPT (GPT-5), Claude, or Google Gemini all work great. [Setup guides here](user_prompts/README.md).
+The first shipped surface. Static, local-first, and GitHub Pages-compatible. Anonymous learners can create a profile, run a guided learning session, generate a lab, and save progress in browser storage.
 
-**Q: How long does a lab take?**
-A: You control it. Specify your time commitment (e.g., "2 hours/week" or "intensive weekend") and the lab adapts.
+**Tier 1: Portable Skill Pack**
 
-**Q: Can I use the artifacts I build?**
-A: Absolutely! They're yours. Use for work, portfolio, interviews, presentations—anything.
+Roadmap for platform-specific adapters: Claude Code, Codex, Cursor, and Claude Projects.
 
-**Q: Do I need to share my company's confidential information?**
-A: No. The baseline context is about your environment structure, not specific data. You control what you share.
+**Tier 2: PAI Pack**
 
-**Q: Do I need specific tools or technical skills?**
-A: No. You specify what you have (Excel, GRC platforms, coding skills, etc.) and your technical level. Labs adapt to YOUR environment - from non-technical process improvements to advanced automation.
+Roadmap. Ships only after Tier 0 has active learners and Tier 1 stabilises.
 
----
+## Sprint 1 Scope
 
-## 🎓 Ready to Start?
+- Repo restructured around `brain`, `knowledge`, `skills`, `webapp`, and `adapters`
+- Companion brain populated with persona, voice, learning method, and primitives
+- Existing lab-builder prompts migrated into `skills/lab-builder`
+- SOC 2 parsing example migrated into `knowledge/case-studies`
+- Tier 0 static webapp scaffolded in `docs`
 
-1. **[Complete your GRC profile](your_grc_profile.md)** ← Start here
-2. **[Choose your user prompt](user_prompts/)**
-3. **[See examples](examples/)**
+Deferred:
 
----
+- Real signed-in cross-device profile
+- Scheduler/reminder infrastructure
+- Tier 1 adapters
+- Tier 2 PAI Pack
+- Operational GRC skills
 
-## 🤝 Contributing
+## Local Preview
 
-Have a great lab example to share? Found a better prompt structure? Contributions are welcome!
+Open [docs/index.html](docs/index.html) directly in a browser, or serve the folder with any static server:
 
-1. Fork the repository
-2. Create your feature branch 
-3. Submit a pull request
+```bash
+python3 -m http.server 8080 --directory docs
+```
 
-We're especially interested in:
-- New example labs from different GRC contexts
-- Improved prompt templates
-- Additional use cases and scenarios
-- Bug fixes and documentation improvements
+Then visit:
 
----
+```text
+http://localhost:8080/
+```
 
-## 📄 License
+## Non-Goals
 
-MIT License - Free to use, modify, and share. 
-
----
-
-*Built for GRC practitioners by GRC practitioners. Open source, free forever.*
-
-**Questions?** Open an issue or discussion on GitHub.
+The companion refuses operational work. It may teach a user how to think through a vendor review, audit prep pattern, policy design principle, or trust-center architecture, but it should not perform those activities on behalf of the user.

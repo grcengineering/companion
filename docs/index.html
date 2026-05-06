@@ -1,242 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Generate personalized GRC learning labs using AI. Fill out simple forms and get expert prompts for Claude or ChatGPT.">
-    <title>GRC Engineering Lab Builder - Generate Personalized Learning Labs</title>
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/landing.css">
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="The GRC Companion helps GRC practitioners learn, practise, and internalise GRC engineering thinking through guided sessions and small builds.">
+  <link rel="canonical" href="https://grc.engineering/grc-companion/">
+  <meta property="og:title" content="The GRC Companion">
+  <meta property="og:description" content="A learning companion for GRC practitioners. Learn concepts, practise judgment, and build small artefacts.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://grc.engineering/grc-companion/">
+  <meta name="twitter:card" content="summary">
+  <title>The GRC Companion</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/companion.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <span class="logo-icon">🧪</span>
-                    <span class="logo-text">GRC Engineering Lab Builder</span>
-                </div>
-                <nav class="nav">
-                    <a href="https://github.com/grcengineering/grc_engineering_lab_builder" target="_blank" class="nav-link">
-                        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
-                        </svg>
-                        GitHub
-                    </a>
-                </nav>
-            </div>
+  <a class="skip-link" href="#session">Skip to session</a>
+
+  <header class="shell-header">
+    <div>
+      <p class="eyebrow">Learning-only GRC engineering companion</p>
+      <h1>The GRC Companion</h1>
+    </div>
+    <nav aria-label="Primary">
+      <a href="https://github.com/grcengineering/grc-companion" target="_blank" rel="noopener">GitHub</a>
+      <a href="#progress">Progress</a>
+      <a href="#method">Method</a>
+    </nav>
+  </header>
+
+  <main class="app-shell">
+    <aside class="profile-panel" aria-labelledby="profile-heading">
+      <div class="panel-heading">
+        <p class="eyebrow">Learner profile</p>
+        <h2 id="profile-heading">Teach from context</h2>
+      </div>
+
+      <form id="profile-form" class="profile-form">
+        <label>
+          Role
+          <input id="role" name="role" type="text" autocomplete="organization-title" placeholder="TPRM lead, analyst, manager">
+        </label>
+
+        <label>
+          Current level
+          <select id="level" name="level">
+            <option value="non-technical">Non-technical</option>
+            <option value="early">Early practitioner</option>
+            <option value="mid">Mid-level practitioner</option>
+            <option value="senior">Senior practitioner</option>
+          </select>
+        </label>
+
+        <label>
+          Current learning goal
+          <textarea id="goal" name="goal" rows="3" placeholder="Understand evidence automation, learn SOC 2, build a portfolio lab"></textarea>
+        </label>
+
+        <label>
+          Current friction
+          <textarea id="friction" name="friction" rows="3" placeholder="What feels confusing, manual, political, or hard?"></textarea>
+        </label>
+
+        <label>
+          Time available
+          <select id="time" name="time">
+            <option value="15 minutes">15 minutes</option>
+            <option value="30 minutes">30 minutes</option>
+            <option value="1 hour">1 hour</option>
+            <option value="2 hours">2 hours</option>
+          </select>
+        </label>
+
+        <div class="button-row">
+          <button type="submit" class="primary-action">Save profile</button>
+          <button type="button" id="export-profile" class="secondary-action">Export</button>
         </div>
-    </header>
+      </form>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container container-narrow text-center">
-            <h1 class="hero-title animate-fade-in-up">
-                Upskill yourself with custom GRC labs 100% tailored to YOU.
-            </h1>
-            <p class="hero-subtitle animate-fade-in-up animate-delay-1">Generate hyper-personalized GRC engineering lab prompts in under 10 minutes. Build anything you want no matter if you're new, seasoned or shifting careers.</p>
+      <div class="boundary-box">
+        <h3>Boundary</h3>
+        <p>This companion teaches. It will not assess vendors, prep live audits, author real policies, or operate your programme.</p>
+      </div>
+    </aside>
 
-            <div class="hero-actions animate-fade-in-up animate-delay-2">
-                <a href="generator.html" class="btn btn-primary btn-large">🚀 Generate My Prompts Now</a>
-                <a href="#how-it-works" class="btn btn-secondary btn-large">How It Works ↓</a>
-            </div>
-
-            <div class="hero-meta animate-fade-in animate-delay-3">
-                <span class="hero-meta-item">✅ No API keys needed</span>
-                <span class="hero-meta-item">✅ Free forever</span>
-                <span class="hero-meta-item">✅ Works with Claude, ChatGPT, Gemini</span>
-            </div>
+    <section id="session" class="session-panel" aria-labelledby="session-heading">
+      <div class="session-intro">
+        <div>
+          <p class="eyebrow">Tier 0 webapp</p>
+          <h2 id="session-heading">Start a learning rep</h2>
+          <p>The companion asks before it tells, keeps practice small, and turns concepts into artefacts you can build safely.</p>
         </div>
+        <div class="status-pill" id="memory-status">Anonymous local memory</div>
+      </div>
 
-        <!-- Floating Product Preview -->
-        <div class="product-preview animate-fade-in animate-delay-4">
-            <div class="preview-card">
-                <div class="preview-header">
-                    <div class="preview-dots">
-                        <div class="preview-dot"></div>
-                        <div class="preview-dot"></div>
-                        <div class="preview-dot"></div>
-                    </div>
-                    <span class="preview-title">Generated Prompt</span>
-                </div>
-                <div class="preview-content">
-                    You are an expert GRC instructor helping a <strong>TPRM Lead</strong> at a Series C SaaS company build automation for SOC 2 vendor reviews.
-                </div>
-                <div class="preview-code">
-                    # Lab Objective<br>
-                    Automate manual vendor review process using Python and Excel
-                </div>
-                <div class="preview-code">
-                    # Your Background<br>
-                    Intermediate technical skills • 5-10 hours/week available
-                </div>
-                <span class="preview-badge">✨ Personalized to YOUR context</span>
-            </div>
+      <div class="skill-grid" aria-label="Learning skills">
+        <button type="button" class="skill-card" data-skill="path">
+          <span>Learning path</span>
+          <small>Sequence the next few reps</small>
+        </button>
+        <button type="button" class="skill-card" data-skill="concept">
+          <span>Concept tutor</span>
+          <small>Learn one idea properly</small>
+        </button>
+        <button type="button" class="skill-card" data-skill="lab">
+          <span>Lab builder</span>
+          <small>Build a small artefact</small>
+        </button>
+      </div>
+
+      <div class="conversation" id="conversation" aria-live="polite"></div>
+
+      <form id="chat-form" class="chat-form">
+        <label for="learner-message">What do you want to learn or practise?</label>
+        <div class="chat-input-row">
+          <textarea id="learner-message" rows="3" placeholder="Example: I want to understand why screenshots are weak evidence."></textarea>
+          <button type="submit" class="primary-action">Respond</button>
         </div>
+      </form>
+
+      <section class="prompt-output" aria-labelledby="prompt-heading">
+        <div>
+          <p class="eyebrow">Use with your AI tool</p>
+          <h2 id="prompt-heading">Companion prompt</h2>
+        </div>
+        <textarea id="companion-prompt" readonly rows="12"></textarea>
+        <div class="button-row">
+          <button type="button" id="copy-prompt" class="primary-action">Copy prompt</button>
+          <button type="button" id="download-session" class="secondary-action">Download session</button>
+        </div>
+      </section>
     </section>
 
-    <!-- How It Works Section -->
-    <section id="how-it-works" class="section">
-        <div class="container">
-            <h2 class="text-center mb-xl">How It Works</h2>
+    <aside id="progress" class="progress-panel" aria-labelledby="progress-heading">
+      <div class="panel-heading">
+        <p class="eyebrow">Progress tracker</p>
+        <h2 id="progress-heading">What is sticking</h2>
+      </div>
 
-            <div class="steps-grid">
-                <div class="step-card">
-                    <div class="step-number">1</div>
-                    <h3 class="step-title">Fill Your Profile</h3>
-                    <p class="step-description">Answer 10-15 questions about your role, technical skills, tools, and challenges</p>
-                </div>
+      <div class="progress-list" id="progress-list"></div>
 
-                <div class="step-card">
-                    <div class="step-number">2</div>
-                    <h3 class="step-title">Choose Scenario</h3>
-                    <p class="step-description">Employed and want to advance? Job seeking? Transitioning to GRC?</p>
-                </div>
+      <section id="method" class="method-card">
+        <h3>Learning method</h3>
+        <ul>
+          <li>Active recall before explanation</li>
+          <li>One-step stretch beyond current ability</li>
+          <li>Small build or artefact every session</li>
+          <li>Feynman explain-back</li>
+          <li>Reflection before closing</li>
+        </ul>
+      </section>
 
-                <div class="step-card">
-                    <div class="step-number">3</div>
-                    <h3 class="step-title">Get Prompts</h3>
-                    <p class="step-description">Receive two expertly-formatted prompts ready to copy and paste</p>
-                </div>
+      <button type="button" id="reset-progress" class="danger-action">Reset local memory</button>
+    </aside>
+  </main>
 
-                <div class="step-card">
-                    <div class="step-number">4</div>
-                    <h3 class="step-title">Use with AI</h3>
-                    <p class="step-description">Paste into Claude Projects or ChatGPT and receive your custom learning lab</p>
-                </div>
-            </div>
-        </div>
-    </section>
+  <template id="message-template">
+    <article class="message">
+      <div class="message-role"></div>
+      <div class="message-body"></div>
+    </article>
+  </template>
 
-    <!-- Benefits Section -->
-    <section class="section bg-surface">
-        <div class="container">
-            <h2 class="text-center mb-xl">Why Use This?</h2>
-
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <div class="benefit-icon">🔑</div>
-                    <h3 class="benefit-title">No API Keys</h3>
-                    <p class="benefit-description">Use your own AI account. No API keys, no signup, no hassle.</p>
-                </div>
-
-                <div class="benefit-card">
-                    <div class="benefit-icon">💰</div>
-                    <h3 class="benefit-title">Free Forever</h3>
-                    <p class="benefit-description">Static website hosted free on GitHub Pages. Zero infrastructure costs.</p>
-                </div>
-
-                <div class="benefit-card">
-                    <div class="benefit-icon">🔒</div>
-                    <h3 class="benefit-title">Privacy First</h3>
-                    <p class="benefit-description">Your data never leaves your browser. No servers, no tracking.</p>
-                </div>
-
-                <div class="benefit-card">
-                    <div class="benefit-icon">🤖</div>
-                    <h3 class="benefit-title">Any AI Tool</h3>
-                    <p class="benefit-description">Works with Claude, ChatGPT, Gemini, or any AI assistant you prefer.</p>
-                </div>
-
-                <div class="benefit-card">
-                    <div class="benefit-icon">🔄</div>
-                    <h3 class="benefit-title">Can Iterate</h3>
-                    <p class="benefit-description">You control the conversation. Refine and adjust with the AI.</p>
-                </div>
-
-                <div class="benefit-card">
-                    <div class="benefit-icon">📚</div>
-                    <h3 class="benefit-title">Learn Prompting</h3>
-                    <p class="benefit-description">See how expert prompts are structured. Improve your own prompting skills.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Example Section -->
-    <section class="section">
-        <div class="container container-narrow">
-            <h2 class="text-center mb-xl">Real Example</h2>
-
-            <div class="testimonial-card">
-                <div class="testimonial-quote">
-                    <p class="testimonial-text">"Generated my SOC 2 automation lab in 3 minutes. Completed it in 12 weeks. Saved 15 hours/week."</p>
-                    <p class="testimonial-author">— TPRM Lead, Series C SaaS</p>
-                </div>
-
-                <div class="testimonial-results">
-                    <div class="result-item">
-                        <div class="result-label">Before</div>
-                        <div class="result-value-large">3 hours</div>
-                        <div class="result-caption">per SOC 2 review</div>
-                    </div>
-                    <div class="result-arrow">→</div>
-                    <div class="result-item">
-                        <div class="result-label">After</div>
-                        <div class="result-value-large">30 min</div>
-                        <div class="result-caption">75% faster</div>
-                    </div>
-                </div>
-
-                <div class="testimonial-stats">
-                    <div class="stat-item">
-                        <div class="stat-value">15 hrs/week</div>
-                        <div class="stat-label">Time Saved</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">12 weeks</div>
-                        <div class="stat-label">Implementation</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">3 minutes</div>
-                        <div class="stat-label">Lab Generation</div>
-                    </div>
-                </div>
-
-                <div class="testimonial-footer">
-                    <a href="https://github.com/grcengineering/grc_engineering_lab_builder/tree/main/examples/01_TPRM_soc2_parsing" target="_blank" class="btn btn-teal">📖 Read Full Case Study</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="section cta-section">
-        <div class="container container-narrow text-center">
-            <h2 class="cta-title">Ready to Build Your Learning Lab?</h2>
-            <p class="cta-subtitle">Generate your personalized prompts in 5 minutes</p>
-            <a href="generator.html" class="btn btn-primary btn-large">🚀 Start Now</a>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <p class="footer-text">Open Source • MIT License</p>
-                <div class="footer-links">
-                    <a href="https://github.com/grcengineering/grc_engineering_lab_builder" target="_blank" class="footer-link">GitHub</a>
-                    <span class="footer-divider">•</span>
-                    <a href="../README.md" class="footer-link">Documentation</a>
-                    <span class="footer-divider">•</span>
-                    <a href="https://github.com/grcengineering/grc_engineering_lab_builder/tree/main/examples/01_TPRM_soc2_parsing" target="_blank" class="footer-link">Examples</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Scroll Animations -->
-    <script src="js/scroll-animations.js"></script>
+  <script src="js/companion.js"></script>
 </body>
 </html>
