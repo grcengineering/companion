@@ -2,10 +2,22 @@
   "name": "lab-builder",
   "version": "0.1.0",
   "type": "learning-skill",
-  "description": "Builds a learning-safe project lab around a toy or sanitized artefact.",
-  "learning_principles": ["project_based_learning", "just_in_time_learning", "reflection_cycles", "active_recall"],
-  "commands": ["lab"],
+  "description": "Builds learning-safe mini-labs around toy or sanitized artefacts. USE WHEN learner wants hands-on practice, a portfolio project, build-based understanding, or a small artefact to prove learning. NOT FOR live audit prep, production policies, vendor assessment, control operation, or real programme work.",
+  "learning_principles": [
+    "project_based_learning",
+    "just_in_time_learning",
+    "reflection_cycles",
+    "active_recall"
+  ],
+  "commands": [
+    "lab"
+  ],
   "requires_corpus": false,
   "operational_scope": "forbidden",
-  "inputs": ["profile-template.md", "templates/employed.md", "templates/job-seeking.md", "templates/career-transition.md"]
+  "inputs": [
+    "assets/profile-template.md",
+    "assets/templates/employed.md",
+    "assets/templates/job-seeking.md",
+    "assets/templates/career-transition.md"
+  ]
 }

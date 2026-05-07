@@ -1,16 +1,34 @@
+---
+name: profile-wizard
+description: Runs the cold-start learner profile intake and produces learner-owned context. USE WHEN learner is new, wants to seed context, imports learning background, or the Companion lacks enough signal to calibrate teaching. NOT FOR periodic profile updates; use profile-refresher.
+---
+
 # profile-wizard
 
-Runs the cold-start learner profile intake.
+## What
 
-This skill builds the learner profile, not the Companion brain. The Companion brain remains curated in `brain/`.
+Build the learner profile, not the Companion brain. The Companion brain remains curated in `brain/`.
 
-## Use When
+## When
 
 - The learner is new.
-- The learner wants to import or refresh their context.
+- The learner wants to import learning context.
 - The Companion lacks enough context to calibrate teaching.
+- A path, lab, or reading plan would be materially better with profile context.
 
-## Method
+## Not For
+
+- Re-checking an existing profile after several sessions. Use `profile-refresher`.
+- Tracking concept state. Use `progress-tracker`.
+- Inferring sensitive behavioural analytics.
+
+## Inputs
+
+- Learner answers to the intake prompts.
+- `profile/learner-profile.schema.json`.
+- Optional example profile from `profile/examples/`.
+
+## Steps
 
 Ask seven voice-friendly prompts. Each answer should be short enough for a 30-60 second spoken response.
 
@@ -22,16 +40,28 @@ Ask seven voice-friendly prompts. Each answer should be short enough for a 30-60
 6. How do you learn best: reading, building, watching, conversation, teaching back?
 7. How much time can you spend on this in a typical week?
 
-Then summarize:
+Then summarize what you heard and ask what is wrong or missing before using it.
 
-> Here's what I heard. Anything off?
+## Validation
 
-## Output
+- Output matches `profile/learner-profile.schema.json`.
+- Sensitive identifiers are absent.
+- The learner can accept, edit, or discard the profile.
 
-Produce a learner profile matching `profile/learner-profile.schema.json`.
-
-## Trust Rules
+## Gotchas
 
 - Do not ask for company names, customer names, secrets, live evidence, vendor names, or sensitive details.
-- Do not update the Companion brain.
-- Make profile edits visible and exportable.
+- If the learner gives sensitive detail anyway, ask for an abstracted replacement.
+- If only one missing profile field matters, ask that field instead of running full intake.
+
+## Failure Modes
+
+- Over-collection: stop when teaching can be calibrated.
+- Silent mutation: never update profile context without showing the change.
+- Brain drift: never write learner facts into `brain/`.
+
+## Examples
+
+- New learner opens the Companion -> Ask the seven prompts, summarize, then produce a schema-shaped profile.
+- Learner asks for a lab but gives no context -> Ask the minimum profile questions needed before `lab-builder`.
+- Learner shares a company name -> Ask them to replace it with an industry and company-size description.

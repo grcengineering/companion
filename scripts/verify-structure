@@ -4,15 +4,35 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+SKILL_NAME_RE = re.compile(r"^[a-z]+(?:-[a-z]+)*$")
 
 
 def require(path: str) -> None:
     if not (ROOT / path).exists():
         raise AssertionError(f"missing {path}")
+
+
+def skill_frontmatter(path: Path) -> tuple[dict[str, str], str]:
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---\n"):
+        raise AssertionError(f"{path.relative_to(ROOT)} missing YAML frontmatter")
+    parts = text.split("---", 2)
+    if len(parts) < 3:
+        raise AssertionError(f"{path.relative_to(ROOT)} has invalid YAML frontmatter")
+    data: dict[str, str] = {}
+    for line in parts[1].splitlines():
+        if ":" in line:
+            key, value = line.split(":", 1)
+            data[key.strip()] = value.strip()
+    for required in ("name", "description"):
+        if not data.get(required):
+            raise AssertionError(f"{path.relative_to(ROOT)} missing frontmatter field: {required}")
+    return data, parts[2]
 
 
 def main() -> int:
@@ -34,6 +54,7 @@ def main() -> int:
         "knowledge/index.json",
         "docs/data/companion-context.json",
         "scripts/build-adapters",
+        "scripts/sync-skill-manifests",
         "scripts/build-webapp-context",
         "evals/suites.json"
     ]
@@ -47,7 +68,36 @@ def main() -> int:
     for skill in skill_dirs:
         for filename in ("SKILL.md", "manifest.json", "INSTALL.md", "VERIFY.md"):
             require(f"skills/{skill.name}/{filename}")
+        frontmatter, body = skill_frontmatter(skill / "SKILL.md")
+        if frontmatter["name"] != skill.name:
+            raise AssertionError(f"{skill.name} frontmatter name does not match directory")
+        if not SKILL_NAME_RE.fullmatch(frontmatter["name"]):
+            raise AssertionError(f"{skill.name} frontmatter name must be lowercase hyphenated words")
+        description = frontmatter["description"]
+        for phrase in ("USE WHEN", "NOT FOR"):
+            if phrase not in description:
+                raise AssertionError(f"{skill.name} description missing {phrase}")
+        required_sections = [
+            "## What",
+            "## When",
+            "## Not For",
+            "## Inputs",
+            "## Steps",
+            "## Validation",
+            "## Gotchas",
+            "## Failure Modes",
+            "## Examples",
+        ]
+        for section in required_sections:
+            if section not in body:
+                raise AssertionError(f"{skill.name} missing {section}")
+        if "placeholder" in body.lower():
+            raise AssertionError(f"{skill.name} still contains placeholder text")
         manifest = json.loads((skill / "manifest.json").read_text(encoding="utf-8"))
+        if manifest.get("name") != frontmatter["name"]:
+            raise AssertionError(f"{skill.name} manifest name is out of sync with SKILL.md")
+        if manifest.get("description") != frontmatter["description"]:
+            raise AssertionError(f"{skill.name} manifest description is out of sync with SKILL.md")
         if manifest.get("operational_scope") != "forbidden":
             raise AssertionError(f"{skill.name} does not forbid operational scope")
         if len(manifest.get("learning_principles", [])) < 3:

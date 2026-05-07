@@ -26,11 +26,11 @@ Create a comprehensive learning lab that builds a skill or toy tool I can safely
 
 ## PROJECT FOCUS
 
-Learning Objective: Build [DELIVERABLE - e.g., "automated SOC 2 review process", "executive risk dashboard", "vendor risk scoring framework", "control testing workflow", "board presentation template", "GRC automation script"]
+Learning Objective: Build a learning-safe prototype of [DELIVERABLE - e.g., "SOC 2 review helper", "executive risk dashboard mockup", "vendor risk scoring model", "control testing workflow map", "board presentation template", "GRC automation script"]
 
-Business Problem I'm Solving: [SPECIFIC_PROBLEM - e.g., "Spending 15 hours/week on manual vendor reviews", "CFO wants data-driven risk reporting and I have spreadsheets", "Board keeps asking questions I can't answer quickly", "Control testing is ad-hoc and inconsistent", "Can't scale current processes as company grows"]
+Work Pattern I'm Practising Against: [SPECIFIC_PATTERN - e.g., "Manual vendor reviews take too long", "Risk reporting is spreadsheet-heavy", "Leadership questions are hard to answer quickly", "Control testing feels inconsistent", "Current process patterns do not scale"]
 
-Impact I Want to Achieve: [MEASURABLE_GOAL - e.g., "Reduce vendor review time from 3 hours to 45 minutes each", "Create dashboard that updates automatically for quarterly board meetings", "Cut manual data entry from 10 hours/week to 1 hour/week", "Establish repeatable framework I can train team on"]
+Learning Impact I Want to Demonstrate: [MEASURABLE_GOAL - e.g., "Estimate how review time might drop in a toy workflow", "Create a dashboard mockup using synthetic data", "Show how manual entry could be reduced in a prototype", "Explain a repeatable framework I could review with my team"]
 
 Strategic Value: [WHY_THIS_MATTERS - e.g., "Will free up 60% of my time for strategic work", "Demonstrates value for upcoming promotion conversation", "Positions me as technical leader on the team", "Solves pain point leadership keeps complaining about"]
 
@@ -42,7 +42,7 @@ Role & Responsibilities: [CURRENT_ROLE - e.g., "TPRM Analyst managing 500+ vendo
 
 Time Spent on Manual Work: [BREAKDOWN - e.g., "20 hours/week on vendor reviews, 10 hours on reporting, 5 hours on evidence collection", "Most time on repetitive document analysis", "Constantly firefighting instead of strategic work"]
 
-Current Tools & Processes: [WHAT_EXISTS - e.g., "Google Sheets for tracking, manual PDF reviews", "OneTrust GRC platform but not using it effectively", "Excel-based control library and risk register", "No automation, everything manual"]
+Current Tool Shape: [WHAT_EXISTS - e.g., "Google Sheets-style tracking", "GRC platform exports", "Excel-based control library pattern", "Manual review workflow"]
 
 Team & Resources: [CONTEXT - e.g., "Team of 1 (just me)", "Team of 3 but I'm only technical person", "Matrixed team across security/legal/compliance", "Budget exists but need to prove ROI first"]
 
@@ -60,8 +60,8 @@ Other Commitments: [CONSTRAINTS - e.g., "Busy season coming up", "Audit prep hap
 
 The lab should result in:
 
-### Core Working Solution
-[MAIN_DELIVERABLE - e.g., "Python script that parses SOC 2 PDFs and outputs structured data", "PowerBI dashboard connected to GRC platform", "Risk scoring model in Excel with documentation", "Automated workflow using Google Apps Script", "Control testing playbook with templates"]
+### Core Learning Prototype
+[MAIN_DELIVERABLE - e.g., "Python script that parses sample SOC 2-like text and outputs structured data", "dashboard using synthetic risk rows", "risk scoring model in Excel with toy inputs", "automated workflow using sample data", "control testing playbook template for practice"]
 
 ### Documentation for Stakeholders
 Create materials to share this work:
@@ -76,8 +76,8 @@ Guidance for presenting this work including:
 - **To my team:** [PEER_LEVEL - e.g., "Technical walkthrough and training", "How they can use it or adapt it", "Collaborative improvement ideas"]
 
 ### Success Metrics
-Define how I'll measure impact:
-- **Quantitative:** [HARD_METRICS - e.g., "Time savings: 15 hours/week → 3 hours/week", "Vendor review time: 3 hours → 45 minutes", "Error rate reduction: 15% → 2%"]
+Define how I'll measure learning impact:
+- **Quantitative:** [HARD_METRICS - e.g., "Estimated time savings in toy workflow", "sample review time before/after", "error reduction in synthetic data"]
 - **Qualitative:** [SOFT_BENEFITS - e.g., "Faster response to ad-hoc leadership questions", "More consistent risk scoring across analysts", "Freed up time for strategic projects"]
 - **Career Impact:** [VISIBILITY - e.g., "Positioned for promotion", "Recognized as technical leader", "Invited to contribute to other initiatives"]
 
@@ -86,18 +86,18 @@ Define how I'll measure impact:
 ## SUCCESS CRITERIA
 
 I'll know this lab is successful if:
-- [ ] I deliver a working solution I actually use in my job
+- [ ] I deliver a learning prototype I can review before adapting at work
 - [ ] Leadership recognizes the value (bonus/promotion/expanded scope)
 - [ ] The solution is maintainable (doesn't break after 2 weeks)
 - [ ] I learn skills I can apply to other problems
-- [ ] Time saved is measurable and significant
+- [ ] Potential time savings are estimated and clearly caveated
 - [ ] I feel more effective and less overwhelmed in my role
 
 ---
 
 ## PROJECT ASPIRATIONS
 
-What Would Make This a "Home Run": [IDEAL_OUTCOME - e.g., "Leadership asks me to roll this out company-wide", "I present this at all-hands and get recognition", "This becomes the standard way we do this process", "I teach this to other teams and become internal expert"]
+What Would Make This a "Home Run": [IDEAL_OUTCOME - e.g., "Leadership asks me to explore a reviewed pilot", "I present this as a learning prototype", "This becomes the basis for a properly governed project", "I teach the underlying pattern to other teams"]
 
 Biggest Fear/Concern: [HONEST_WORRY - e.g., "I'll spend time on this and leadership won't care", "It'll break and I won't know how to fix it", "I'll get pulled into other fires and never finish", "Someone will say we already tried this and it didn't work"]
 ```
@@ -108,8 +108,8 @@ Biggest Fear/Concern: [HONEST_WORRY - e.g., "I'll spend time on this and leaders
 
 A complete learning lab that produces:
 
-✅ **Working solution** you deploy in your actual job
-✅ **Time savings** you can quantify for leadership
+✅ **Learning prototype** you can review before adapting
+✅ **Time savings hypothesis** you can discuss with leadership
 ✅ **Documentation** for stakeholders at every level
 ✅ **Presentation materials** for manager/executive audiences
 ✅ **Success metrics** that demonstrate impact
@@ -120,7 +120,7 @@ A complete learning lab that produces:
 
 ## 📝 Tips for Success
 
-**Solve Real Problems:** Don't build something because it's interesting technically. Build what you actually need. If you're dreading a task, automate it.
+**Practise Real Patterns Safely:** Don't build something because it's interesting technically. Practise against the pattern that matters, using toy or sanitized data.
 
 **Start With Quick Wins:** Pick a problem that drives you crazy and takes 5+ hours/week. Time savings are easy to measure and leadership notices.
 
@@ -137,7 +137,7 @@ A complete learning lab that produces:
 1. Complete your [profile-template.md](../profile-template.md)
 2. Fill out ALL [BRACKETED] sections above
 3. Copy both into ChatGPT, Claude, or your preferred AI assistant
-4. Receive your personalized learning lab that solves real work problems!
+4. Receive your personalized learning lab for practising real work patterns safely.
 
 ---
 

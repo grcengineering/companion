@@ -2,9 +2,15 @@
   "name": "reading-guide",
   "version": "0.1.0",
   "type": "learning-skill",
-  "description": "Curates a small corpus-backed reading path.",
-  "learning_principles": ["just_in_time_learning", "citation_grounding", "interleaving"],
-  "commands": ["reading"],
+  "description": "Curates a small corpus-backed reading path ordered by the learner's current goal. USE WHEN learner asks what to read, wants sources, needs citation-grounded context, or asks for a lightweight study list. NOT FOR full curriculum sequencing; use learning-path-designer.",
+  "learning_principles": [
+    "just_in_time_learning",
+    "citation_grounding",
+    "interleaving"
+  ],
+  "commands": [
+    "reading"
+  ],
   "requires_corpus": true,
   "operational_scope": "forbidden"
 }

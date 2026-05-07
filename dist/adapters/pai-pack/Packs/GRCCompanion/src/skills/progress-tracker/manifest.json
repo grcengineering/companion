@@ -2,9 +2,15 @@
   "name": "progress-tracker",
   "version": "0.1.0",
   "type": "learning-skill",
-  "description": "Tracks concepts as not covered, touched, practised, or internalised.",
-  "learning_principles": ["spaced_repetition", "reflection_cycles", "active_recall"],
-  "commands": ["progress"],
+  "description": "Tracks learning progress across concepts as not covered, touched, practised, or internalised. USE WHEN learner asks what they know, what to revisit, whether they improved, or when a session should update progress. NOT FOR scoring programme maturity or compliance capability.",
+  "learning_principles": [
+    "spaced_repetition",
+    "reflection_cycles",
+    "active_recall"
+  ],
+  "commands": [
+    "progress"
+  ],
   "requires_corpus": false,
   "operational_scope": "forbidden"
 }

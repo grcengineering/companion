@@ -18,6 +18,25 @@ def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def skill_frontmatter(path: Path) -> dict:
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---\n"):
+        raise SystemExit(f"{path.relative_to(ROOT)} missing YAML frontmatter")
+    try:
+        frontmatter = text.split("---", 2)[1]
+    except IndexError as exc:
+        raise SystemExit(f"{path.relative_to(ROOT)} has invalid YAML frontmatter") from exc
+    data = {}
+    for line in frontmatter.splitlines():
+        if ":" in line:
+            key, value = line.split(":", 1)
+            data[key.strip()] = value.strip()
+    for required in ("name", "description"):
+        if not data.get(required):
+            raise SystemExit(f"{path.relative_to(ROOT)} missing frontmatter field: {required}")
+    return data
+
+
 def command_summary(path: Path) -> dict:
     text = path.read_text(encoding="utf-8")
     name = path.stem
@@ -41,6 +60,7 @@ def main() -> None:
     skills = []
     for manifest in sorted((ROOT / "skills").glob("*/manifest.json")):
         data = load_json(manifest)
+        data.update(skill_frontmatter(manifest.parent / "SKILL.md"))
         data["path"] = manifest.parent.relative_to(ROOT).as_posix()
         skills.append(data)
 

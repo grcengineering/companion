@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+"""Sync skill compatibility manifests from SKILL.md frontmatter."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def skill_frontmatter(path: Path) -> dict[str, str]:
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---\n"):
+        raise SystemExit(f"{path.relative_to(ROOT)} missing YAML frontmatter")
+    parts = text.split("---", 2)
+    if len(parts) < 3:
+        raise SystemExit(f"{path.relative_to(ROOT)} has invalid YAML frontmatter")
+    data: dict[str, str] = {}
+    for line in parts[1].splitlines():
+        if ":" in line:
+            key, value = line.split(":", 1)
+            data[key.strip()] = value.strip()
+    for required in ("name", "description"):
+        if not data.get(required):
+            raise SystemExit(f"{path.relative_to(ROOT)} missing frontmatter field: {required}")
+    return data
+
+
+def main() -> None:
+    count = 0
+    for skill in sorted((ROOT / "skills").iterdir()):
+        if not skill.is_dir():
+            continue
+        manifest_path = skill / "manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        frontmatter = skill_frontmatter(skill / "SKILL.md")
+        manifest["name"] = frontmatter["name"]
+        manifest["description"] = frontmatter["description"]
+        manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+        count += 1
+    print(f"synced {count} skill manifests from SKILL.md frontmatter")
+
+
+if __name__ == "__main__":
+    main()

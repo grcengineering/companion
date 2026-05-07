@@ -2,10 +2,18 @@
   "name": "profile-wizard",
   "version": "0.1.0",
   "type": "learning-skill",
-  "description": "Runs the seven-prompt cold-start learner profile intake.",
-  "learning_principles": ["active_recall", "just_in_time_learning", "zone_of_proximal_development"],
-  "commands": ["profile"],
+  "description": "Runs the cold-start learner profile intake and produces learner-owned context. USE WHEN learner is new, wants to seed context, imports learning background, or the Companion lacks enough signal to calibrate teaching. NOT FOR periodic profile updates; use profile-refresher.",
+  "learning_principles": [
+    "active_recall",
+    "just_in_time_learning",
+    "zone_of_proximal_development"
+  ],
+  "commands": [
+    "profile"
+  ],
   "requires_corpus": false,
   "operational_scope": "forbidden",
-  "outputs": ["profile/learner-profile.schema.json"]
+  "outputs": [
+    "profile/learner-profile.schema.json"
+  ]
 }

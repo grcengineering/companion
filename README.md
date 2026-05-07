@@ -98,6 +98,7 @@ The canonical files live in `brain/`, `skills/`, `commands/`, and `knowledge/`. 
 
 ```bash
 scripts/build-knowledge-index
+scripts/sync-skill-manifests
 scripts/build-webapp-context
 scripts/build-adapters
 scripts/verify-structure
@@ -107,6 +108,7 @@ scripts/run-evals
 Generated outputs:
 
 - `knowledge/index.json`
+- `skills/*/manifest.json`
 - `docs/data/companion-context.json`
 - `dist/adapters/`
 

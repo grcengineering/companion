@@ -2,9 +2,15 @@
   "name": "reflection-journal",
   "version": "0.1.0",
   "type": "learning-skill",
-  "description": "Guides post-session reflection and captures learner state.",
-  "learning_principles": ["reflection_cycles", "spaced_repetition", "generative_struggle"],
-  "commands": ["reflect"],
+  "description": "Guides post-session reflection and captures learner state. USE WHEN a learning session is ending, learner asks to summarize takeaways, needs to name what changed, or wants a next review prompt. NOT FOR tracking durable concept status alone; use progress-tracker.",
+  "learning_principles": [
+    "reflection_cycles",
+    "spaced_repetition",
+    "generative_struggle"
+  ],
+  "commands": [
+    "reflect"
+  ],
   "requires_corpus": false,
   "operational_scope": "forbidden"
 }

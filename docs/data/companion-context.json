@@ -151,7 +151,7 @@
       "name": "concept-tutor",
       "version": "0.1.0",
       "type": "learning-skill",
-      "description": "Teaches one GRC engineering concept at a time with explain-back.",
+      "description": "Teaches one GRC engineering concept at a time with retrieval and explain-back. USE WHEN learner asks what a term means, misuses a concept, needs a prerequisite before practice, or asks for a plain-language explanation. NOT FOR grading the learner's own explanation; use feynman-explainer.",
       "learning_principles": [
         "active_recall",
         "feynman_technique",
@@ -168,7 +168,7 @@
       "name": "cross-domain-translator",
       "version": "0.1.0",
       "type": "learning-skill",
-      "description": "Translates patterns from engineering, product, design, operations, and other domains into GRC learning frames.",
+      "description": "Translates adjacent-domain patterns into GRC learning frames. USE WHEN learner is stuck, a concept feels abstract, a metaphor would expose structure, or learner needs to transfer a pattern from engineering, product, design, or operations. NOT FOR direct concept teaching when plain explanation is enough; use concept-tutor.",
       "learning_principles": [
         "just_in_time_learning",
         "interleaving",
@@ -190,7 +190,7 @@
       "name": "feynman-explainer",
       "version": "0.1.0",
       "type": "learning-skill",
-      "description": "Asks the learner to teach back a concept and identifies gaps.",
+      "description": "Grades the learner's teach-back explanation and identifies gaps in clarity, assumptions, and transfer. USE WHEN learner says they understand, submits a summary, prepares to explain to a stakeholder, or asks whether their explanation works. NOT FOR first-pass concept teaching; use concept-tutor.",
       "learning_principles": [
         "feynman_technique",
         "active_recall",
@@ -207,7 +207,7 @@
       "name": "lab-builder",
       "version": "0.1.0",
       "type": "learning-skill",
-      "description": "Builds a learning-safe project lab around a toy or sanitized artefact.",
+      "description": "Builds learning-safe mini-labs around toy or sanitized artefacts. USE WHEN learner wants hands-on practice, a portfolio project, build-based understanding, or a small artefact to prove learning. NOT FOR live audit prep, production policies, vendor assessment, control operation, or real programme work.",
       "learning_principles": [
         "project_based_learning",
         "just_in_time_learning",
@@ -220,10 +220,10 @@
       "requires_corpus": false,
       "operational_scope": "forbidden",
       "inputs": [
-        "profile-template.md",
-        "templates/employed.md",
-        "templates/job-seeking.md",
-        "templates/career-transition.md"
+        "assets/profile-template.md",
+        "assets/templates/employed.md",
+        "assets/templates/job-seeking.md",
+        "assets/templates/career-transition.md"
       ],
       "path": "skills/lab-builder"
     },
@@ -231,7 +231,7 @@
       "name": "learning-path-designer",
       "version": "0.1.0",
       "type": "learning-skill",
-      "description": "Designs a custom learning path based on role, gaps, goals, and time available.",
+      "description": "Designs a custom learning path based on role, gaps, goals, and time available. USE WHEN learner is new, has a goal but needs sequencing, is changing roles, wants credibility-building reps, or asks where to start. NOT FOR curating sources only; use reading-guide.",
       "learning_principles": [
         "active_recall",
         "zone_of_proximal_development",
@@ -249,7 +249,7 @@
       "name": "practice-scenario",
       "version": "0.1.0",
       "type": "learning-skill",
-      "description": "Creates fictional GRC scenarios and grades learner reasoning.",
+      "description": "Creates fictional GRC scenarios and grades learner reasoning, assumptions, and tradeoffs. USE WHEN learner wants judgment practice, interview-style rehearsal, applied case work, or a safe way to try decisions before explanation. NOT FOR analyzing a real vendor, audit, control, policy, or programme.",
       "learning_principles": [
         "generative_struggle",
         "interleaving",
@@ -266,7 +266,7 @@
       "name": "profile-refresher",
       "version": "0.1.0",
       "type": "learning-skill",
-      "description": "Runs a three-prompt seasonal learner profile re-check.",
+      "description": "Runs a lightweight re-check of an existing learner profile and proposes a visible diff. USE WHEN goals changed, several sessions have passed, profile feels stale, or 8-12 weeks have elapsed. NOT FOR cold-start intake; use profile-wizard.",
       "learning_principles": [
         "reflection_cycles",
         "spaced_repetition",
@@ -286,7 +286,7 @@
       "name": "profile-wizard",
       "version": "0.1.0",
       "type": "learning-skill",
-      "description": "Runs the seven-prompt cold-start learner profile intake.",
+      "description": "Runs the cold-start learner profile intake and produces learner-owned context. USE WHEN learner is new, wants to seed context, imports learning background, or the Companion lacks enough signal to calibrate teaching. NOT FOR periodic profile updates; use profile-refresher.",
       "learning_principles": [
         "active_recall",
         "just_in_time_learning",
@@ -306,7 +306,7 @@
       "name": "progress-tracker",
       "version": "0.1.0",
       "type": "learning-skill",
-      "description": "Tracks concepts as not covered, touched, practised, or internalised.",
+      "description": "Tracks learning progress across concepts as not covered, touched, practised, or internalised. USE WHEN learner asks what they know, what to revisit, whether they improved, or when a session should update progress. NOT FOR scoring programme maturity or compliance capability.",
       "learning_principles": [
         "spaced_repetition",
         "reflection_cycles",
@@ -323,7 +323,7 @@
       "name": "reading-guide",
       "version": "0.1.0",
       "type": "learning-skill",
-      "description": "Curates a small corpus-backed reading path.",
+      "description": "Curates a small corpus-backed reading path ordered by the learner's current goal. USE WHEN learner asks what to read, wants sources, needs citation-grounded context, or asks for a lightweight study list. NOT FOR full curriculum sequencing; use learning-path-designer.",
       "learning_principles": [
         "just_in_time_learning",
         "citation_grounding",
@@ -340,7 +340,7 @@
       "name": "recall-quiz",
       "version": "0.1.0",
       "type": "learning-skill",
-      "description": "Runs active recall checks and lightweight spaced review.",
+      "description": "Runs active recall checks and lightweight spaced review across prior or selected topics. USE WHEN learner wants to test memory, revisit older concepts, prepare for explain-back, or close a session with retrieval. NOT FOR teaching a brand-new concept first; use concept-tutor.",
       "learning_principles": [
         "active_recall",
         "spaced_repetition",
@@ -357,7 +357,7 @@
       "name": "reflection-journal",
       "version": "0.1.0",
       "type": "learning-skill",
-      "description": "Guides post-session reflection and captures learner state.",
+      "description": "Guides post-session reflection and captures learner state. USE WHEN a learning session is ending, learner asks to summarize takeaways, needs to name what changed, or wants a next review prompt. NOT FOR tracking durable concept status alone; use progress-tracker.",
       "learning_principles": [
         "reflection_cycles",
         "spaced_repetition",
@@ -374,7 +374,7 @@
       "name": "socratic-coach",
       "version": "0.1.0",
       "type": "learning-skill",
-      "description": "Uses question-led discovery before explanation.",
+      "description": "Uses question-led discovery so the learner reaches the answer before explanation. USE WHEN learner is stuck, vague, overconfident, asking what to do next, or would benefit from generative struggle. NOT FOR full fictional case practice; use practice-scenario.",
       "learning_principles": [
         "generative_struggle",
         "active_recall",
@@ -389,7 +389,7 @@
       "name": "task-retrospective",
       "version": "0.1.0",
       "type": "learning-skill",
-      "description": "Extracts reusable GRC learning patterns from work the learner already completed.",
+      "description": "Extracts reusable GRC learning patterns from work the learner already completed. USE WHEN learner describes finished work, points at local output, wants to learn from friction, or asks what to do better next time after acting. NOT FOR live advice, vendor decisions, audit positions, control assessment, or programme operation.",
       "learning_principles": [
         "reflection_cycles",
         "active_recall",

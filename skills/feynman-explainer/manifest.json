@@ -2,9 +2,15 @@
   "name": "feynman-explainer",
   "version": "0.1.0",
   "type": "learning-skill",
-  "description": "Asks the learner to teach back a concept and identifies gaps.",
-  "learning_principles": ["feynman_technique", "active_recall", "zone_of_proximal_development"],
-  "commands": ["feynman"],
+  "description": "Grades the learner's teach-back explanation and identifies gaps in clarity, assumptions, and transfer. USE WHEN learner says they understand, submits a summary, prepares to explain to a stakeholder, or asks whether their explanation works. NOT FOR first-pass concept teaching; use concept-tutor.",
+  "learning_principles": [
+    "feynman_technique",
+    "active_recall",
+    "zone_of_proximal_development"
+  ],
+  "commands": [
+    "feynman"
+  ],
   "requires_corpus": false,
   "operational_scope": "forbidden"
 }

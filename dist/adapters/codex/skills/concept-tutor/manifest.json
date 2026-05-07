@@ -2,9 +2,15 @@
   "name": "concept-tutor",
   "version": "0.1.0",
   "type": "learning-skill",
-  "description": "Teaches one GRC engineering concept at a time with explain-back.",
-  "learning_principles": ["active_recall", "feynman_technique", "citation_grounding"],
-  "commands": ["concept"],
+  "description": "Teaches one GRC engineering concept at a time with retrieval and explain-back. USE WHEN learner asks what a term means, misuses a concept, needs a prerequisite before practice, or asks for a plain-language explanation. NOT FOR grading the learner's own explanation; use feynman-explainer.",
+  "learning_principles": [
+    "active_recall",
+    "feynman_technique",
+    "citation_grounding"
+  ],
+  "commands": [
+    "concept"
+  ],
   "requires_corpus": true,
   "operational_scope": "forbidden"
 }

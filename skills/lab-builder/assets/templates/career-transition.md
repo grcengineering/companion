@@ -52,20 +52,20 @@ Skepticism I'm Facing:
 - [CONCERN_1 - e.g., "You don't have formal GRC background", "You're too technical for this strategic role", "Can you really handle executive communication?", "Previous person had 10 years GRC experience"]
 - [CONCERN_2 - e.g., "Will you understand the business side?", "This isn't just a security role", "You've never done TPRM before"]
 
-First 90-Day Expectations: [SUCCESS_CRITERIA - e.g., "Complete 20 vendor assessments", "Build initial risk register", "Present GRC program roadmap to executives", "Document current control gaps", "Establish vendor tiering methodology"]
+First 90-Day Learning Expectations: [SUCCESS_CRITERIA - e.g., "Learn vendor assessment workflow", "Build a toy risk register", "Practise explaining a GRC roadmap", "Understand control gap terminology", "Create a fictional vendor tiering model"]
 
-Immediate Pressure Points: [URGENT_NEEDS - e.g., "Audit starting in 6 weeks and I need to prep", "Board asking for risk metrics I don't have", "500+ vendors need classification by Q1", "Control testing backlog from previous person"]
+Immediate Learning Pressure Points: [URGENT_NEEDS - e.g., "I need to understand audit walkthrough basics", "I need to explain risk metrics more clearly", "I need to learn vendor classification patterns", "I need to understand control testing queues"]
 
 ---
 
 ## CREDIBILITY-BUILDING STRATEGY
 
-Quick Win Opportunities I See:
-- [OPPORTUNITY_1 - e.g., "Manual vendor review process I could automate", "No risk dashboard exists - I could build one", "Documentation is messy - I could organize it", "Process gaps I've already identified"]
-- [OPPORTUNITY_2 - e.g., "Stakeholder who needs help with specific problem", "Low-hanging fruit project that's been delayed", "My technical skills solve an existing pain point"]
+Learning-Safe Quick Win Opportunities I See:
+- [OPPORTUNITY_1 - e.g., "Manual vendor review pattern I could prototype against", "No risk dashboard example exists - I could mock one up", "Documentation patterns are messy - I could create a toy organizer", "Process gaps I want to understand"]
+- [OPPORTUNITY_2 - e.g., "Stakeholder pattern I need to learn", "Low-risk practice project", "My technical skills could help me prototype a learning artefact"]
 
 What Would Build Credibility Fast:
-- [WIN_1 - e.g., "Automate something time-consuming the team dreads", "Create executive-ready artifact they've been asking for", "Solve problem that previous person couldn't", "Deliver something ahead of schedule"]
+- [WIN_1 - e.g., "Prototype an approach to something time-consuming", "Create an executive-style mock artefact", "Show structured thinking on a known problem", "Deliver a learning-safe artefact ahead of schedule"]
 - [WIN_2 - e.g., "Build relationship with skeptical stakeholder", "Demonstrate I can learn GRC frameworks quickly", "Show I bring fresh valuable perspective"]
 
 ---
@@ -84,15 +84,15 @@ The lab should result in:
 
 ### 30-60-90 Day Roadmap
 A concrete plan showing:
-- **First 30 days:** [FOCUS - e.g., "Learn systems, build relationships, deliver 1-2 quick wins", "Complete listening tour and identify improvement opportunities", "Master immediate job requirements (vendor assessments, tool usage)"]
-- **Days 31-60:** [FOCUS - e.g., "Implement process improvement with measurable impact", "Build credibility artifact (dashboard, framework, automation)", "Establish myself as go-to person for specific area"]
+- **First 30 days:** [FOCUS - e.g., "Learn systems, build relationships, deliver 1-2 learning-safe artefacts", "Complete listening tour and identify improvement opportunities", "Understand immediate job patterns (vendor assessments, tool usage)"]
+- **Days 31-60:** [FOCUS - e.g., "Prototype process improvement with synthetic examples", "Build credibility artefact (dashboard mockup, framework, toy automation)", "Establish myself as a thoughtful learner in a specific area"]
 - **Days 61-90:** [FOCUS - e.g., "Present strategic value to leadership", "Position for expanded scope or next challenge", "Transition from learning to leading"]
 
 ### Quick Win Project Plan
 Detailed execution plan for #1 quick win including:
 - **Objective:** Clear success criteria
 - **Execution steps:** What I do Monday morning
-- **Resources needed:** Tools, data, stakeholder approval
+- **Resources needed:** Tools, sample data, review or feedback
 - **Stakeholder communication:** Who to tell, when, how
 - **Success metrics:** How I measure and document impact
 - **Timeline:** Weekly milestones
@@ -160,7 +160,7 @@ My Biggest Fear:
 - [HONEST_WORRY - e.g., "I'll make mistake that exposes my inexperience", "Stakeholders will never accept me as credible", "I'm in over my head and shouldn't have taken this role", "I'll fail during audit and prove skeptics right"]
 
 What Would Make Me Feel Confident:
-- [CONFIDENCE_BUILDER - e.g., "Successfully completing several vendor assessments", "Getting positive unsolicited feedback", "Being asked to lead project or train others", "Delivering something that impresses the skeptics"]
+- [CONFIDENCE_BUILDER - e.g., "Successfully explaining several vendor assessment patterns", "Getting positive unsolicited feedback", "Being asked to share a learning artefact", "Delivering something that clarifies my thinking"]
 ```
 
 ---
