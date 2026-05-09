@@ -1,0 +1,446 @@
+#!/usr/bin/env python3
+"""Cluster private candidates and draft review briefs.
+
+This script emits one YAML brief per cluster. It intentionally does not draft
+full cards; briefs are private review artifacts for later human distillation.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+from collections import Counter, defaultdict
+from pathlib import Path
+from typing import Any
+
+ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_CANDIDATES = ROOT / "_candidates" / "candidates.jsonl"
+DEFAULT_OUT_DIR = ROOT / "_briefs"
+
+CARD_TYPES = ("thesis", "concept", "metaphor", "anti_pattern", "reading_reference")
+
+GENERIC_DYNAMIC_PHRASES = {
+    "automation",
+    "compliance",
+    "engineering",
+    "governance",
+    "in partnership with",
+    "risk management",
+    "security",
+    "the business",
+    "the first",
+    "the future",
+    "the most",
+    "the other",
+    "the podcast",
+    "the real",
+    "the same",
+    "you can",
+    "you know",
+    "you want",
+}
+
+BANNED_DYNAMIC_PARTS = {
+    "beehiiv",
+    "cdn",
+    "cgi",
+    "grcengineer com",
+    "http",
+    "https",
+    "image",
+    "linkedin",
+    "lnkd",
+    "media",
+    "newsletter utm",
+    "source grcengineer",
+    "utm",
+    "www",
+}
+
+DYNAMIC_SIGNAL_TERMS = {
+    "assurance",
+    "audit",
+    "automation",
+    "compliance",
+    "control",
+    "evidence",
+    "framework",
+    "grc",
+    "policy",
+    "quantification",
+    "questionnaire",
+    "register",
+    "risk",
+    "security",
+    "technical debt",
+    "theatre",
+    "translation",
+    "trust",
+    "vendor",
+}
+
+
+def useful_phrase(phrase: str) -> bool:
+    return (
+        phrase
+        and phrase not in GENERIC_DYNAMIC_PHRASES
+        and not phrase.startswith("the ")
+        and not phrase.startswith("you ")
+        and not any(part in phrase for part in BANNED_DYNAMIC_PARTS)
+        and any(term in phrase for term in DYNAMIC_SIGNAL_TERMS)
+    )
+
+CLUSTERS: dict[str, dict[str, Any]] = {
+    "evidence-as-byproduct": {
+        "title": "Evidence should be a byproduct of work",
+        "type": "thesis",
+        "terms": ["evidence byproduct", "byproduct of work", "evidence collection", "collect evidence", "evidence naturally", "evidence"],
+        "primitive": "brain/primitives/theses.md::evidence should be a byproduct of how work happens",
+        "why": "This is a core GRC Engineering thesis: useful assurance comes from how work actually happens, not from after-the-fact evidence theatre.",
+        "related": ["compliance-theatre", "continuous-assurance", "grc-as-git"],
+    },
+    "compliance-theatre": {
+        "title": "Compliance theatre",
+        "type": "anti_pattern",
+        "terms": ["compliance theatre", "checkbox", "audit theatre", "performative", "spreadsheet", "evidence theatre", "theatre"],
+        "primitive": "brain/persona.md::anti-patterns refused",
+        "why": "Recurring criticism of GRC work that optimizes for appearing compliant instead of improving how the organisation operates.",
+        "related": ["audit-driven-thinking", "evidence-as-byproduct", "tool-first-automation"],
+    },
+    "audit-driven-thinking": {
+        "title": "Audit-driven thinking",
+        "type": "anti_pattern",
+        "terms": ["audit driven", "audit-driven", "auditor", "audit prep", "audit evidence", "for auditors"],
+        "primitive": "brain/persona.md::audit-driven programme design",
+        "why": "The Companion needs to help learners distinguish learning from audit appeasement, especially when real work is framed around audits.",
+        "related": ["compliance-theatre", "framework-translation", "evidence-as-byproduct"],
+    },
+    "grc-as-git": {
+        "title": "GRC as Git",
+        "type": "metaphor",
+        "terms": ["grc as git", "git", "version", "diff", "branch", "merge", "review history"],
+        "primitive": "brain/primitives/metaphors.md::GRC as Git",
+        "why": "Versioning, diffs, review, and history repeatedly show up as transferable engineering patterns for GRC evidence and policy work.",
+        "related": ["evidence-as-byproduct", "continuous-assurance", "policy-as-interface"],
+    },
+    "human-api": {
+        "title": "Human API",
+        "type": "metaphor",
+        "terms": ["human api", "api", "interface", "interfaces", "between teams", "stakeholder"],
+        "primitive": "brain/primitives/metaphors.md::Human API",
+        "why": "GRC often fails at team boundaries. This metaphor turns stakeholder workflows into interfaces learners can inspect and improve.",
+        "related": ["framework-translation", "policy-as-interface", "stakeholder-experience"],
+    },
+    "framework-translation": {
+        "title": "Framework translation layer",
+        "type": "concept",
+        "terms": ["translation layer", "translate", "framework", "frameworks", "operating language", "requirements"],
+        "primitive": "brain/primitives/metaphors.md::translation layer",
+        "why": "A central GRC Engineering move is translating framework language into work people and systems can actually perform.",
+        "related": ["human-api", "audit-driven-thinking", "policy-as-interface"],
+    },
+    "tool-first-automation": {
+        "title": "Tool-first automation",
+        "type": "anti_pattern",
+        "terms": ["tool first", "tool-first", "automation", "automate", "custom integration", "diy", "technical debt", "breaks"],
+        "primitive": "brain/persona.md::tool-first automation without understanding the underlying work",
+        "why": "The corpus repeatedly warns that automation amplifies weak operating models when the learner has not understood the work first.",
+        "related": ["enterprise-grc-automation", "compliance-theatre", "risk-as-code"],
+    },
+    "enterprise-grc-automation": {
+        "title": "Enterprise GRC automation",
+        "type": "concept",
+        "terms": ["enterprise", "scale", "coordination", "automation", "implementation", "infrastructure"],
+        "primitive": "brain/primitives/theses.md::GRC should fit the organisation",
+        "why": "Enterprise examples show why GRC engineering must account for coordination, infrastructure, ownership, and change management.",
+        "related": ["tool-first-automation", "continuous-assurance", "stakeholder-experience"],
+    },
+    "risk-as-code": {
+        "title": "Risk as code",
+        "type": "concept",
+        "terms": ["risk as code", "risk", "risk levels", "risk quantification", "random.choice", "critical"],
+        "primitive": "brain/primitives/theses.md::useful GRC is risk reasoning, not framework worship",
+        "why": "Risk appears as the place where GRC engineering has to avoid automating easy compliance while leaving hard judgment untouched.",
+        "related": ["tool-first-automation", "control-design", "compliance-theatre"],
+    },
+    "control-design": {
+        "title": "Control design",
+        "type": "concept",
+        "terms": ["control design", "control", "controls", "control owner", "control failure", "operating effectiveness"],
+        "primitive": "brain/primitives/moves.md::ask what human behaviour the control depends on",
+        "why": "Control language recurs across the corpus and is a practical bridge from theory to daily GRC work.",
+        "related": ["policy-as-interface", "evidence-as-byproduct", "continuous-assurance"],
+    },
+    "policy-as-interface": {
+        "title": "Policy as interface",
+        "type": "metaphor",
+        "terms": ["policy", "policies", "interface", "affordance", "human api", "practice"],
+        "primitive": "brain/persona.md::policy without practice",
+        "why": "Policies matter when they shape behaviour. Treating them as interfaces supports better learning than treating them as documents.",
+        "related": ["human-api", "framework-translation", "control-design"],
+    },
+    "continuous-assurance": {
+        "title": "Continuous assurance",
+        "type": "concept",
+        "terms": ["continuous assurance", "continuous", "real-time", "monitoring", "evidence", "pipeline"],
+        "primitive": "brain/cross-domain-transfer.md::CI/CD",
+        "why": "The corpus often contrasts periodic audit collection with assurance that emerges continuously from operational systems.",
+        "related": ["evidence-as-byproduct", "grc-as-git", "enterprise-grc-automation"],
+    },
+    "vendor-review-learning": {
+        "title": "Vendor review as learning material",
+        "type": "concept",
+        "terms": ["vendor", "third party", "questionnaire", "security review", "soc 2", "soc2", "tprm"],
+        "primitive": "brain/local-work-learning.md::real local work as learning material",
+        "why": "Vendor reviews are common day-to-day GRC work and should become retrospectives that build judgment without making approval decisions.",
+        "related": ["evidence-as-byproduct", "control-design", "task-retrospective"],
+    },
+    "ai-grc-workflows": {
+        "title": "AI in GRC workflows",
+        "type": "concept",
+        "terms": ["ai", "llm", "claude", "chatgpt", "agent", "tokens", "prompt"],
+        "primitive": "brain/local-work-learning.md::local adapters learn from actual work",
+        "why": "The Companion itself sits in AI workflows, so recurring AI/GRC material should be distilled carefully into learning guidance.",
+        "related": ["tool-first-automation", "enterprise-grc-automation", "local-work-learning"],
+    },
+}
+
+
+def slugify(value: str) -> str:
+    value = value.lower()
+    value = re.sub(r"[^a-z0-9]+", "-", value)
+    return value.strip("-") or "untitled"
+
+
+def read_candidates(path: Path) -> list[dict[str, Any]]:
+    records = []
+    with path.open(encoding="utf-8") as handle:
+        for line_no, line in enumerate(handle, 1):
+            if not line.strip():
+                continue
+            try:
+                records.append(json.loads(line))
+            except json.JSONDecodeError as exc:
+                raise SystemExit(f"{path}:{line_no}: invalid JSONL: {exc}") from exc
+    return records
+
+
+def candidate_text(candidate: dict[str, Any]) -> str:
+    return " ".join(
+        [
+            str(candidate.get("snippet", "")),
+            " ".join(map(str, candidate.get("phrases", []))),
+            str(candidate.get("source_title", "")),
+        ]
+    ).lower()
+
+
+def assign_seed_clusters(candidate: dict[str, Any]) -> list[str]:
+    text = candidate_text(candidate)
+    matches = []
+    for slug, cluster in CLUSTERS.items():
+        score = sum(1 for term in cluster["terms"] if term in text)
+        if score:
+            matches.append((slug, score))
+    matches.sort(key=lambda item: (-item[1], item[0]))
+    return [slug for slug, _ in matches[:3]]
+
+
+def dynamic_phrase_clusters(candidates: list[dict[str, Any]], min_sources: int) -> dict[str, list[dict[str, Any]]]:
+    phrase_sources: dict[str, set[str]] = defaultdict(set)
+    phrase_candidates: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for candidate in candidates:
+        for phrase in candidate.get("phrases", [])[:8]:
+            phrase = str(phrase).lower().strip()
+            if len(phrase) < 8 or len(phrase) > 54:
+                continue
+            if not useful_phrase(phrase):
+                continue
+            phrase_sources[phrase].add(str(candidate.get("source_id")))
+            phrase_candidates[phrase].append(candidate)
+
+    clusters = {}
+    for phrase, sources in phrase_sources.items():
+        if len(sources) >= min_sources:
+            clusters[f"phrase-{slugify(phrase)}"] = phrase_candidates[phrase]
+    return clusters
+
+
+def proposed_type(cluster_slug: str, members: list[dict[str, Any]]) -> str:
+    if cluster_slug in CLUSTERS:
+        return CLUSTERS[cluster_slug]["type"]
+    counts = Counter(member.get("proposed_type", "concept") for member in members)
+    return max(CARD_TYPES, key=lambda card_type: (counts[card_type], -CARD_TYPES.index(card_type)))
+
+
+def top_phrases(members: list[dict[str, Any]]) -> list[str]:
+    counts = Counter()
+    source_seen: dict[str, set[str]] = defaultdict(set)
+    for member in members:
+        source_id = str(member.get("source_id"))
+        for phrase in member.get("phrases", [])[:10]:
+            phrase = str(phrase).lower().strip()
+            if (
+                not phrase
+                or phrase in source_seen[source_id]
+                or not useful_phrase(phrase)
+            ):
+                continue
+            counts[phrase] += 1
+            source_seen[source_id].add(phrase)
+    return [phrase for phrase, _ in counts.most_common(10)]
+
+
+def best_evidence(members: list[dict[str, Any]], limit: int) -> list[dict[str, str]]:
+    selected = []
+    seen_sources = set()
+    sorted_members = sorted(
+        members,
+        key=lambda item: (len(item.get("phrases", [])), len(str(item.get("snippet", "")))),
+        reverse=True,
+    )
+    for member in sorted_members:
+        source_id = str(member.get("source_id"))
+        if source_id in seen_sources:
+            continue
+        snippet = re.sub(r"\s+", " ", str(member.get("snippet", ""))).strip()
+        selected.append({"source_id": source_id, "snippet": snippet[:360]})
+        seen_sources.add(source_id)
+        if len(selected) >= limit:
+            break
+    return selected
+
+
+def yaml_scalar(value: Any, *, allow_block: bool = True, content_indent: int = 2) -> str:
+    text = str(value).replace("\r", "").strip()
+    if not text:
+        return '""'
+    if allow_block and ("\n" in text or len(text) > 92):
+        prefix = " " * content_indent
+        indented = "\n".join(f"{prefix}{line}" if line else "" for line in text.splitlines())
+        return "|\n" + indented
+    escaped = text.replace("\\", "\\\\").replace('"', '\\"')
+    return f'"{escaped}"'
+
+
+def brief_yaml(brief: dict[str, Any]) -> str:
+    lines = [
+        f"brief_id: {yaml_scalar(brief['brief_id'])}",
+        f"proposed_type: {yaml_scalar(brief['proposed_type'])}",
+        f"proposed_title: {yaml_scalar(brief['proposed_title'])}",
+        f"proposed_slug: {yaml_scalar(brief['proposed_slug'])}",
+        "source_evidence:",
+    ]
+    for evidence in brief["source_evidence"]:
+        lines.append(f"  - source_id: {yaml_scalar(evidence['source_id'], allow_block=False)}")
+        lines.append(f"    snippet: {yaml_scalar(evidence['snippet'], content_indent=6)}")
+    lines.append("recurring_phrases:")
+    for phrase in brief["recurring_phrases"]:
+        lines.append(f"  - {yaml_scalar(phrase)}")
+    lines.extend(
+        [
+            f"suggested_brain_primitive: {yaml_scalar(brief['suggested_brain_primitive'])}",
+            f"why_it_matters: {yaml_scalar(brief['why_it_matters'], content_indent=2)}",
+            "suggested_related_cards:",
+        ]
+    )
+    for related in brief["suggested_related_cards"]:
+        lines.append(f"  - {yaml_scalar(related)}")
+    return "\n".join(lines) + "\n"
+
+
+def build_seed_groups(candidates: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+    groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for candidate in candidates:
+        for slug in assign_seed_clusters(candidate):
+            groups[slug].append(candidate)
+    return groups
+
+
+def draft_briefs(
+    candidates: list[dict[str, Any]],
+    min_sources: int,
+    evidence_limit: int,
+    include_dynamic: bool,
+) -> list[dict[str, Any]]:
+    groups = build_seed_groups(candidates)
+    if include_dynamic:
+        for slug, members in dynamic_phrase_clusters(candidates, min_sources).items():
+            groups.setdefault(slug, members)
+
+    briefs = []
+    for slug, members in sorted(groups.items()):
+        source_count = len({str(member.get("source_id")) for member in members})
+        if source_count < min_sources:
+            continue
+
+        if slug in CLUSTERS:
+            meta = CLUSTERS[slug]
+            title = meta["title"]
+            brain_primitive = meta["primitive"]
+            why = meta["why"]
+            related = [item for item in meta["related"] if item in groups]
+        else:
+            phrase = slug.removeprefix("phrase-").replace("-", " ")
+            title = phrase.title()
+            brain_primitive = members[0].get("suggested_brain_primitive", "concept: candidate primitive")
+            why = "This phrase recurs across multiple corpus sources and may represent a reusable Companion learning card."
+            related = []
+
+        brief_type = proposed_type(slug, members)
+        if brief_type not in CARD_TYPES:
+            brief_type = "concept"
+
+        briefs.append(
+            {
+                "brief_id": f"brief-{slug}",
+                "proposed_type": brief_type,
+                "proposed_title": title,
+                "proposed_slug": slug,
+                "source_evidence": best_evidence(members, evidence_limit),
+                "recurring_phrases": top_phrases(members),
+                "suggested_brain_primitive": brain_primitive,
+                "why_it_matters": why,
+                "suggested_related_cards": related[:8],
+            }
+        )
+
+    return briefs
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Draft private corpus distillation briefs.")
+    parser.add_argument("--candidates", type=Path, default=DEFAULT_CANDIDATES)
+    parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
+    parser.add_argument("--min-sources", type=int, default=8)
+    parser.add_argument("--evidence-limit", type=int, default=5)
+    parser.add_argument("--no-dynamic", action="store_true", help="Only emit seed-cluster briefs.")
+    args = parser.parse_args()
+
+    if not args.candidates.exists():
+        raise SystemExit(f"missing {args.candidates}; run scripts/extract-candidates first")
+
+    candidates = read_candidates(args.candidates)
+    briefs = draft_briefs(
+        candidates,
+        min_sources=args.min_sources,
+        evidence_limit=args.evidence_limit,
+        include_dynamic=not args.no_dynamic,
+    )
+
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    for stale in args.out_dir.glob("*.yaml"):
+        stale.unlink()
+    for brief in briefs:
+        path = args.out_dir / f"{brief['brief_id']}.yaml"
+        path.write_text(brief_yaml(brief), encoding="utf-8")
+
+    by_type = Counter(brief["proposed_type"] for brief in briefs)
+    print(f"read {len(candidates)} candidates")
+    print(f"wrote {len(briefs)} briefs to {args.out_dir.relative_to(ROOT) if args.out_dir.is_relative_to(ROOT) else args.out_dir}")
+    print("types:", ", ".join(f"{key}={by_type[key]}" for key in CARD_TYPES))
+
+
+if __name__ == "__main__":
+    main()

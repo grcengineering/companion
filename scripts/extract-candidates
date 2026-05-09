@@ -1,0 +1,394 @@
+#!/usr/bin/env python3
+"""Extract private corpus candidate snippets for Companion card distillation.
+
+This script does not draft cards. It normalizes newsletters and LinkedIn
+corpora into small evidence-bearing candidate records for `scripts/draft-briefs`.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import re
+from collections import Counter
+from pathlib import Path
+from typing import Any, Iterable
+
+ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_DATA_DIR = Path.home() / ".claude" / "skills" / "GRC_CONTENT" / "Data"
+DEFAULT_OUT = ROOT / "_candidates" / "candidates.jsonl"
+
+CARD_TYPES = ("thesis", "concept", "metaphor", "anti_pattern", "reading_reference")
+
+STOPWORDS = {
+    "about", "after", "again", "against", "also", "because", "being", "between",
+    "been", "best", "could", "does", "dont", "every", "from", "have", "into",
+    "just", "know", "like", "more", "most", "need", "only", "over", "really",
+    "should", "than", "that", "their", "there",
+    "these", "they", "this", "through", "what", "when", "where", "which", "while",
+    "with", "without", "would", "want", "your", "youre", "youve", "the", "and",
+    "for", "not", "are", "can", "will", "all", "was", "our", "has", "grc",
+    "engineering",
+}
+
+GENERIC_PHRASES = {
+    "ayoub fandi",
+    "engineer newsletter",
+    "in partnership with",
+    "linkedin post",
+    "the business",
+    "the first",
+    "the future",
+    "the most",
+    "the other",
+    "the real",
+    "the same",
+    "you can",
+    "you know",
+    "you want",
+}
+
+BANNED_PHRASE_PARTS = {
+    "beehiiv",
+    "cdn",
+    "cgi",
+    "grcengineer com",
+    "http",
+    "https",
+    "image",
+    "linkedin com",
+    "lnkd",
+    "media",
+    "utm",
+    "www",
+}
+
+RELEVANCE_TERMS = {
+    "grc", "compliance", "control", "controls", "risk", "audit", "auditor",
+    "evidence", "policy", "policies", "vendor", "soc", "iso", "cmmc", "fedramp",
+    "trust", "governance", "security", "assurance", "framework", "questionnaire",
+}
+
+KNOWN_PHRASES = [
+    "grc engineering",
+    "compliance theatre",
+    "audit driven",
+    "audit-driven",
+    "evidence collection",
+    "evidence as a byproduct",
+    "byproduct of work",
+    "policy without practice",
+    "tool first",
+    "tool-first",
+    "human api",
+    "grc as git",
+    "translation layer",
+    "risk as code",
+    "compliance as code",
+    "trust center",
+    "continuous assurance",
+    "vendor review",
+    "security questionnaire",
+    "control design",
+    "technical debt",
+    "stakeholder experience",
+    "framework translation",
+    "risk quantification",
+]
+
+TYPE_TERMS = {
+    "thesis": {
+        "should", "must", "is not", "is about", "future", "principle", "truth",
+        "means", "matters", "why", "real grc", "good grc",
+    },
+    "concept": {
+        "evidence", "control", "risk", "policy", "framework", "assurance",
+        "trust", "audit", "governance", "questionnaire", "certification",
+    },
+    "metaphor": {
+        "git", "api", "plumbing", "translation layer", "interface", "operating system",
+        "bridge", "factory", "pipeline", "teams", "basketball",
+    },
+    "anti_pattern": {
+        "theatre", "checkbox", "spreadsheet", "random.choice", "diy", "breaks",
+        "broken", "tool-first", "audit-driven", "waste", "recreate", "trivial",
+    },
+    "reading_reference": {
+        "newsletter", "deep-dive", "guide", "framework", "methodology", "read",
+        "article", "post", "drops", "series",
+    },
+}
+
+
+def clean_text(value: str) -> str:
+    value = re.sub(r"!\[[^\]]*\]\([^)]*\)", " ", value)
+    value = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", value)
+    value = re.sub(r"https?://\S+", " ", value)
+    value = value.replace("| |", " ")
+    value = re.sub(r"\s+", " ", value.replace("\u200c", " ")).strip()
+    return value
+
+
+def stable_id(*parts: str) -> str:
+    return hashlib.sha1("::".join(parts).encode("utf-8")).hexdigest()[:16]
+
+
+def iter_jsonl(path: Path) -> Iterable[dict[str, Any]]:
+    """Read ordinary JSONL and newline-containing JSON objects.
+
+    Some local corpus exports store one object per record but keep literal
+    newlines inside JSON strings, so strict line-by-line parsing is too brittle.
+    """
+
+    current: list[str] = []
+
+    def parse_record(raw: str, line_no: int) -> dict[str, Any] | None:
+        raw = raw.strip()
+        if not raw:
+            return None
+        try:
+            obj = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            try:
+                obj = json.loads(raw.replace("\n", "\\n"))
+            except json.JSONDecodeError:
+                raise SystemExit(f"{path}:{line_no}: invalid JSON record: {exc}") from exc
+        return obj if isinstance(obj, dict) else None
+
+    start_line = 1
+    with path.open(encoding="utf-8") as handle:
+        for line_no, line in enumerate(handle, 1):
+            if line.startswith("{") and current:
+                parsed = parse_record("".join(current), start_line)
+                if parsed is not None:
+                    yield parsed
+                current = [line]
+                start_line = line_no
+            else:
+                if not current:
+                    start_line = line_no
+                current.append(line)
+    if current:
+        parsed = parse_record("".join(current), start_line)
+        if parsed is not None:
+            yield parsed
+
+
+def load_sources(data_dir: Path) -> list[dict[str, Any]]:
+    sources: list[dict[str, Any]] = []
+
+    newsletters = data_dir / "newsletters.jsonl"
+    if newsletters.exists():
+        for obj in iter_jsonl(newsletters):
+            text = clean_text(" ".join(str(obj.get(k, "")) for k in ("title", "subtitle", "content")))
+            sources.append(
+                {
+                    "source_id": obj.get("id") or stable_id("newsletter", text[:120]),
+                    "source_type": "newsletter",
+                    "title": clean_text(str(obj.get("title") or "Untitled newsletter")),
+                    "timestamp": obj.get("timestamp"),
+                    "text": text,
+                    "topics": obj.get("topics") or [],
+                    "key_phrases": obj.get("key_phrases") or [],
+                }
+            )
+
+    current_linkedin = data_dir / "linkedin-posts.jsonl"
+    if current_linkedin.exists():
+        for obj in iter_jsonl(current_linkedin):
+            body = obj.get("content") or obj.get("text") or ""
+            text = clean_text(str(body))
+            title = clean_text(str(obj.get("id") or obj.get("published_at") or "LinkedIn post"))
+            sources.append(
+                {
+                    "source_id": obj.get("id") or stable_id("linkedin", text[:120]),
+                    "source_type": "linkedin",
+                    "title": title,
+                    "timestamp": obj.get("timestamp") or obj.get("published_at"),
+                    "text": text,
+                    "topics": obj.get("topics") or [],
+                    "key_phrases": obj.get("key_phrases") or [],
+                }
+            )
+
+    historical = data_dir / "linkedin-posts-historical-corpus.json"
+    if historical.exists():
+        raw = json.loads(historical.read_text(encoding="utf-8"))
+        items = raw.values() if isinstance(raw, dict) else raw
+        for index, obj in enumerate(items):
+            if not isinstance(obj, dict):
+                continue
+            text = clean_text(str(obj.get("text") or obj.get("caption") or ""))
+            url = str(obj.get("url") or "")
+            sources.append(
+                {
+                    "source_id": obj.get("id") or url or f"historical-linkedin-{index:04d}",
+                    "source_type": "linkedin_historical",
+                    "title": clean_text(url.rsplit("/", 1)[-1] or f"Historical LinkedIn post {index + 1}"),
+                    "timestamp": obj.get("published_at") or obj.get("timestamp"),
+                    "text": text,
+                    "topics": [],
+                    "key_phrases": [],
+                }
+            )
+
+    return sources
+
+
+def relevance_score(text: str, topics: list[Any], key_phrases: list[Any]) -> int:
+    haystack = " ".join([text, " ".join(map(str, topics)), " ".join(map(str, key_phrases))]).lower()
+    score = sum(1 for term in RELEVANCE_TERMS if term in haystack)
+    score += sum(2 for phrase in KNOWN_PHRASES if phrase in haystack)
+    return score
+
+
+def split_snippets(text: str) -> list[str]:
+    rough = re.split(r"(?:\n\s*\n|(?<=\.)\s+(?=[A-Z0-9\"']))", text)
+    snippets: list[str] = []
+    buffer: list[str] = []
+    size = 0
+    for part in rough:
+        part = clean_text(part)
+        if not part:
+            continue
+        buffer.append(part)
+        size += len(part)
+        if size >= 420:
+            snippets.append(clean_text(" ".join(buffer)))
+            buffer = []
+            size = 0
+    if buffer:
+        snippets.append(clean_text(" ".join(buffer)))
+    return [snippet[:900] for snippet in snippets if len(snippet) >= 120]
+
+
+def words(text: str) -> list[str]:
+    return re.findall(r"[a-z][a-z0-9'-]{2,}", text.lower())
+
+
+def extract_phrases(text: str, provided: list[Any]) -> list[str]:
+    found = Counter()
+    lower = text.lower()
+    for phrase in KNOWN_PHRASES:
+        if phrase in lower:
+            found[phrase.replace("audit-driven", "audit driven").replace("tool-first", "tool first")] += 4
+    for phrase in provided:
+        cleaned = clean_text(str(phrase)).lower()
+        token_count = len(words(cleaned))
+        if (
+            8 <= len(cleaned) <= 80
+            and token_count >= 2
+            and cleaned not in GENERIC_PHRASES
+            and not any(part in cleaned for part in BANNED_PHRASE_PARTS)
+        ):
+            found[cleaned] += 3
+
+    tokens = [token.strip("'") for token in words(text) if token not in STOPWORDS]
+    for n in (2, 3):
+        for i in range(0, max(0, len(tokens) - n + 1)):
+            gram = tokens[i : i + n]
+            if any(token in STOPWORDS for token in gram):
+                continue
+            if len(set(gram)) < n:
+                continue
+            phrase = " ".join(gram)
+            if (
+                len(phrase) >= 8
+                and phrase not in GENERIC_PHRASES
+                and not any(part in phrase for part in BANNED_PHRASE_PARTS)
+            ):
+                found[phrase] += 1
+
+    return [phrase for phrase, _ in found.most_common(12)]
+
+
+def classify(text: str, phrases: list[str], source_type: str) -> str:
+    haystack = f"{text.lower()} {' '.join(phrases)}"
+    scores = {card_type: 0 for card_type in CARD_TYPES}
+    for card_type, terms in TYPE_TERMS.items():
+        scores[card_type] += sum(1 for term in terms if term in haystack)
+    if source_type == "newsletter":
+        scores["reading_reference"] += 2
+    if "theatre" in haystack or "anti-pattern" in haystack or "anti pattern" in haystack:
+        scores["anti_pattern"] += 3
+    if "grc as git" in haystack or "human api" in haystack or "translation layer" in haystack:
+        scores["metaphor"] += 4
+    if re.search(r"\b(grc|compliance|evidence|control|risk)\b.+\b(should|must|isn't|is not|needs to)\b", haystack):
+        scores["thesis"] += 3
+    return max(CARD_TYPES, key=lambda card_type: (scores[card_type], -CARD_TYPES.index(card_type)))
+
+
+def primitive_hint(text: str, phrases: list[str], card_type: str) -> str:
+    haystack = f"{text.lower()} {' '.join(phrases)}"
+    if "theatre" in haystack or "checkbox" in haystack:
+        return "anti-pattern: compliance theatre"
+    if "git" in haystack or "version" in haystack or "diff" in haystack:
+        return "metaphor: GRC as Git"
+    if "api" in haystack or "interface" in haystack:
+        return "metaphor: Human API"
+    if "translation" in haystack or "framework" in haystack:
+        return "move: translate framework language into operating language"
+    if "evidence" in haystack and ("byproduct" in haystack or "work" in haystack):
+        return "thesis: evidence should be a byproduct of work"
+    if "risk" in haystack:
+        return "thesis: GRC should serve risk reasoning, not audit theatre"
+    return f"{card_type}: candidate primitive"
+
+
+def candidate_records(sources: list[dict[str, Any]], min_relevance: int) -> list[dict[str, Any]]:
+    records = []
+    for source in sources:
+        if not source["text"]:
+            continue
+        doc_score = relevance_score(source["text"], source["topics"], source["key_phrases"])
+        if doc_score < min_relevance:
+            continue
+        snippets = split_snippets(source["text"])
+        if not snippets and len(source["text"]) >= 80:
+            snippets = [source["text"][:900]]
+        for snippet in snippets:
+            snippet_score = relevance_score(snippet, source["topics"], source["key_phrases"])
+            if snippet_score < 1 and doc_score < min_relevance + 2:
+                continue
+            phrases = extract_phrases(snippet, list(source["key_phrases"]) + list(source["topics"]))
+            card_type = classify(snippet, phrases, str(source["source_type"]))
+            candidate_id = stable_id(str(source["source_id"]), snippet[:180])
+            records.append(
+                {
+                    "candidate_id": candidate_id,
+                    "source_id": source["source_id"],
+                    "source_type": source["source_type"],
+                    "source_title": source["title"],
+                    "source_timestamp": source["timestamp"],
+                    "proposed_type": card_type,
+                    "snippet": snippet,
+                    "phrases": phrases,
+                    "suggested_brain_primitive": primitive_hint(snippet, phrases, card_type),
+                }
+            )
+    return records
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Extract private corpus card candidates.")
+    parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR)
+    parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    parser.add_argument("--min-relevance", type=int, default=1)
+    args = parser.parse_args()
+
+    sources = load_sources(args.data_dir)
+    records = candidate_records(sources, args.min_relevance)
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    with args.out.open("w", encoding="utf-8") as handle:
+        for record in records:
+            handle.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n")
+
+    by_type = Counter(record["proposed_type"] for record in records)
+    print(f"read {len(sources)} sources")
+    print(f"wrote {len(records)} candidates to {args.out.relative_to(ROOT) if args.out.is_relative_to(ROOT) else args.out}")
+    print("types:", ", ".join(f"{key}={by_type[key]}" for key in CARD_TYPES))
+
+
+if __name__ == "__main__":
+    main()

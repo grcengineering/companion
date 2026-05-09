@@ -42,3 +42,7 @@ yarn-error.log
 # Personal/test files (don't commit filled-out profiles)
 my_profile.md
 test_*.md
+
+# Private corpus distillation outputs
+_candidates/
+_briefs/
