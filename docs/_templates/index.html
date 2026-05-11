@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{{meta_description}}">
+  <link rel="canonical" href="{{canonical_url}}">
+  <meta property="og:title" content="{{page_title}}">
+  <meta property="og:description" content="{{meta_description}}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{canonical_url}}">
+  <title>{{page_title}}</title>
+  <link rel="icon" href="{{favicon_path}}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{stylesheet_path}}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="{{index_href}}">The GRC Companion</a>
+    <nav aria-label="Primary">
+      <a href="{{index_href}}">Index</a>
+      <a href="{{install_href}}">Install</a>
+      <a href="{{github_href}}" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero">
+      <p class="section-label">Public knowledge layer</p>
+      <h1>The GRC Companion</h1>
+      <p class="hero-copy">The GRC Companion is a learning-only companion that teaches GRC engineering through your real work.</p>
+      <div class="feature-grid">
+        <article>
+          <h2>Learn from real work</h2>
+          <p>Use the cards to name a pattern, then bring your notes, diffs, transcripts, and artefacts into the Companion.</p>
+        </article>
+        <article>
+          <h2>Cited to a corpus</h2>
+          <p>Each card links back to source material and to more reading on grcengineer.com.</p>
+        </article>
+        <article>
+          <h2>Runs in your AI workspace</h2>
+          <p>The Companion lives in Claude Code, Cursor, Claude Projects, or Codex. The public site stays static.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="cards-index" id="card-index">
+      <div class="section-heading">
+        <div>
+          <p class="section-label">Browse cards</p>
+          <h2>31 public cards</h2>
+        </div>
+        <p id="results-count" class="results-count">{{card_count}} cards</p>
+      </div>
+
+      <div class="filter-row">
+        <label>
+          Card type
+          <select id="type-filter" name="type-filter">
+            {{type_options}}
+          </select>
+        </label>
+        <label>
+          Brain primitive
+          <select id="primitive-filter" name="primitive-filter">
+            {{primitive_options}}
+          </select>
+        </label>
+      </div>
+
+      <div class="cards-grid" id="cards-grid">
+        {{card_stub_html}}
+      </div>
+    </section>
+
+    <section class="cta-block cta-large">
+      <div>
+        <p class="section-label">Install</p>
+        <h2>Pick where you want the Companion to live</h2>
+        <p>Install it once. Then use these cards with your own work in the workspace you already use.</p>
+      </div>
+      <a class="button-link" href="{{install_href}}">Open install guide -&gt;</a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <a href="{{install_href}}">Install</a>
+      <span class="footer-separator">/</span>
+      <a href="{{github_href}}" target="_blank" rel="noopener">View the repo</a>
+    </div>
+    <p>Cards are the funnel. Install is the CTA.</p>
+  </footer>
+
+  <script id="cards" type="application/json">{{cards_json}}</script>
+  <script>
+    (function () {
+      const cards = JSON.parse(document.getElementById("cards").textContent);
+      const cardNodes = Array.from(document.querySelectorAll(".card-stub"));
+      const typeFilter = document.getElementById("type-filter");
+      const primitiveFilter = document.getElementById("primitive-filter");
+      const resultsCount = document.getElementById("results-count");
+
+      function applyFilters() {
+        let visible = 0;
+        const selectedType = typeFilter.value;
+        const selectedPrimitive = primitiveFilter.value;
+
+        cardNodes.forEach((node) => {
+          const typeMatch = !selectedType || node.dataset.cardType === selectedType;
+          const primitives = (node.dataset.primitives || "").split(/\s+/).filter(Boolean);
+          const primitiveMatch = !selectedPrimitive || primitives.includes(selectedPrimitive);
+          const show = typeMatch && primitiveMatch;
+          node.hidden = !show;
+          if (show) {
+            visible += 1;
+          }
+        });
+
+        const noun = visible === 1 ? "card" : "cards";
+        const total = cards.length;
+        resultsCount.textContent = visible === total ? `${total} ${noun}` : `${visible} of ${total} cards`;
+      }
+
+      typeFilter.addEventListener("change", applyFilters);
+      primitiveFilter.addEventListener("change", applyFilters);
+      applyFilters();
+    }());
+  </script>
+</body>
+</html>

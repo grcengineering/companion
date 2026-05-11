@@ -47,3 +47,4 @@ test_*.md
 _candidates/
 _briefs/
 _PRIVATE/
+docs/data/sitemap-cache.json

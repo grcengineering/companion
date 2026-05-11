@@ -52,10 +52,15 @@ def main() -> int:
         "demos/terminal-session.md",
         "demos/run-terminal-demo",
         "knowledge/index.json",
-        "docs/data/companion-context.json",
+        "docs/_templates/card.html",
+        "docs/_templates/index.html",
+        "docs/_templates/install.html",
+        "docs/data/cards.json",
+        "docs/install.html",
+        "docs/cards/thesis-grc-as-product.html",
         "scripts/build-adapters",
+        "scripts/build-card-pages",
         "scripts/sync-skill-manifests",
-        "scripts/build-webapp-context",
         "evals/suites.json"
     ]
     for path in required:

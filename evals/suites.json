@@ -12,8 +12,8 @@
     },
     {
       "id": "source-of-truth",
-      "description": "Generated surfaces have a canonical context path.",
-      "required_files": ["scripts/build-webapp-context", "scripts/build-adapters", "knowledge/index.json", "docs/data/companion-context.json"]
+      "description": "Generated surfaces build from canonical files into the public card pages.",
+      "required_files": ["scripts/build-card-pages", "scripts/build-adapters", "knowledge/index.json", "docs/_templates/card.html", "docs/index.html", "docs/install.html", "docs/data/cards.json"]
     },
     {
       "id": "router-retrospective-transfer",

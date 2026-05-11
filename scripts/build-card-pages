@@ -1,0 +1,788 @@
+#!/usr/bin/env python3
+"""Build the public card index, card pages, and install page."""
+
+from __future__ import annotations
+
+import html
+import json
+import re
+import shutil
+import textwrap
+import urllib.error
+import urllib.request
+import xml.etree.ElementTree as ET
+from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+DOCS = ROOT / "docs"
+TEMPLATES = DOCS / "_templates"
+CARDS_DIR = DOCS / "cards"
+DATA_DIR = DOCS / "data"
+CARDS_JSON = DATA_DIR / "cards.json"
+SITEMAP_CACHE = DATA_DIR / "sitemap-cache.json"
+SITEMAP_URL = "https://grcengineer.com/sitemap.xml"
+SITE_ROOT = "https://grc.engineering/companion"
+GITHUB_URL = "https://github.com/grcengineering/companion"
+ASSET_VERSION = "cards-funnel-v1"
+CACHE_MAX_AGE = timedelta(days=7)
+EVERGREEN_ARTICLES = [
+    "https://grcengineer.com/p/new-to-grc-engineering-start-here",
+    "https://grcengineer.com/p/where-grc-is-a-product-breaking-the-project-mindset",
+    "https://grcengineer.com/p/engineer-your-grc-process-before-you-automate-it",
+]
+STOPWORDS = {
+    "a",
+    "an",
+    "and",
+    "as",
+    "at",
+    "by",
+    "for",
+    "from",
+    "how",
+    "in",
+    "is",
+    "it",
+    "of",
+    "on",
+    "or",
+    "the",
+    "their",
+    "this",
+    "to",
+    "vs",
+    "what",
+    "when",
+    "why",
+    "with",
+    "your",
+}
+TOKEN_RE = re.compile(r"[a-z0-9]+")
+TEMPLATE_RE = re.compile(r"{{\s*([a-zA-Z0-9_]+)\s*}}")
+CARD_TYPE_LABELS = {
+    "thesis": "Thesis",
+    "concept": "Concept",
+    "metaphor": "Metaphor",
+    "anti_pattern": "Anti-pattern",
+    "reading_reference": "Reading reference",
+}
+ACRONYMS = {
+    "ai": "AI",
+    "api": "API",
+    "ciso": "CISO",
+    "cmmc": "CMMC",
+    "codex": "Codex",
+    "diy": "DIY",
+    "fedramp": "FedRAMP",
+    "git": "Git",
+    "grc": "GRC",
+    "iso": "ISO",
+    "nist": "NIST",
+    "pai": "PAI",
+    "pmf": "PMF",
+    "pve": "PVE",
+    "pvp": "PVP",
+    "rsac": "RSAC",
+    "soc": "SOC",
+    "tpm": "TPM",
+    "tprm": "TPRM",
+}
+
+
+@dataclass
+class Primitive:
+    code: str
+    title: str
+    description: str
+
+
+@dataclass
+class Card:
+    slug: str
+    title: str
+    card_type: str
+    status: str
+    source_basis: str
+    expands_brain_primitive: list[str]
+    related_cards: list[str]
+    citation_id: str
+    public_reference: list[str]
+    learn_more_urls: list[str]
+    body_markdown: str
+    body_html: str
+    summary: str
+    source_path: str
+
+
+def fail(message: str) -> None:
+    raise SystemExit(message)
+
+
+def read(path: Path) -> str:
+    return path.read_text(encoding="utf-8")
+
+
+def write(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+
+
+def ensure_list(value: object) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return [str(item) for item in value if str(item).strip()]
+    text = str(value).strip()
+    return [text] if text else []
+
+
+def parse_scalar(value: str) -> str:
+    text = value.strip()
+    if len(text) >= 2 and text[0] == text[-1] and text[0] in {"'", '"'}:
+        return text[1:-1]
+    return text
+
+
+def split_frontmatter(text: str, path: Path) -> tuple[dict[str, object], str]:
+    if not text.startswith("---\n"):
+        fail(f"{path.relative_to(ROOT)} missing YAML frontmatter")
+    parts = text.split("---", 2)
+    if len(parts) < 3:
+        fail(f"{path.relative_to(ROOT)} has invalid YAML frontmatter")
+    frontmatter = parse_frontmatter(parts[1])
+    body = parts[2].lstrip("\n")
+    return frontmatter, body
+
+
+def parse_frontmatter(frontmatter: str) -> dict[str, object]:
+    data: dict[str, object] = {}
+    lines = frontmatter.splitlines()
+    index = 0
+    while index < len(lines):
+        line = lines[index].rstrip()
+        if not line.strip():
+            index += 1
+            continue
+        if ":" not in line:
+            index += 1
+            continue
+        key, raw_value = line.split(":", 1)
+        key = key.strip()
+        value = raw_value.strip()
+        if value == "[]":
+            data[key] = []
+            index += 1
+            continue
+        if value:
+            data[key] = parse_scalar(value)
+            index += 1
+            continue
+        items: list[str] = []
+        lookahead = index + 1
+        while lookahead < len(lines):
+            next_line = lines[lookahead].rstrip()
+            if not next_line.strip():
+                lookahead += 1
+                continue
+            if next_line.startswith("- "):
+                items.append(parse_scalar(next_line[2:].strip()))
+                lookahead += 1
+                continue
+            break
+        data[key] = items if items else ""
+        index = lookahead
+    return data
+
+
+def load_primitives() -> dict[str, Primitive]:
+    primitives: dict[str, Primitive] = {}
+
+    for line in read(ROOT / "brain" / "primitives" / "theses.md").splitlines():
+        match = re.match(r"- (T\d+) — ([^:]+):\s*(.+)", line)
+        if match:
+            code, title, description = match.groups()
+            primitives[code] = Primitive(code=code, title=title.strip(), description=description.strip())
+
+    metaphor_lines = read(ROOT / "brain" / "primitives" / "metaphors.md").splitlines()
+    for idx, line in enumerate(metaphor_lines):
+        match = re.match(r"## (MP\d+) — (.+)", line)
+        if not match:
+            continue
+        code, title = match.groups()
+        description = ""
+        for follow in metaphor_lines[idx + 1 :]:
+            stripped = follow.strip()
+            if not stripped:
+                if description:
+                    break
+                continue
+            if follow.startswith("## "):
+                break
+            description = stripped
+            break
+        primitives[code] = Primitive(code=code, title=title.strip(), description=description)
+
+    tension_index = 0
+    for line in read(ROOT / "brain" / "primitives" / "tensions.md").splitlines():
+        if not line.startswith("- "):
+            continue
+        tension_index += 1
+        code = f"TN{tension_index}"
+        text = line[2:].strip().rstrip(".")
+        primitives[code] = Primitive(code=code, title=text, description=text)
+
+    move_lines = read(ROOT / "brain" / "primitives" / "moves.md").splitlines()
+    move_index = 0
+    for idx, line in enumerate(move_lines):
+        if not line.startswith("## "):
+            continue
+        move_index += 1
+        title = line[3:].strip()
+        description = ""
+        for follow in move_lines[idx + 1 :]:
+            stripped = follow.strip()
+            if not stripped:
+                if description:
+                    break
+                continue
+            if follow.startswith("## "):
+                break
+            description = stripped
+            break
+        primitives[f"M{move_index}"] = Primitive(code=f"M{move_index}", title=title, description=description)
+
+    return primitives
+
+
+def render_template(path: Path, context: dict[str, str]) -> str:
+    template = read(path)
+
+    def replace(match: re.Match[str]) -> str:
+        key = match.group(1)
+        if key not in context:
+            fail(f"{path.relative_to(ROOT)} missing template context: {key}")
+        return context[key]
+
+    return TEMPLATE_RE.sub(replace, template)
+
+
+def inline_markdown(text: str) -> str:
+    pattern = re.compile(r"\[([^\]]+)\]\(([^)]+)\)|`([^`]+)`|(https?://[^\s<]+)")
+    output: list[str] = []
+    cursor = 0
+    for match in pattern.finditer(text):
+        output.append(html.escape(text[cursor : match.start()]))
+        label, link, code, raw_url = match.groups()
+        if label and link:
+            output.append(
+                f'<a href="{html.escape(link, quote=True)}">{html.escape(label)}</a>'
+            )
+        elif code:
+            output.append(f"<code>{html.escape(code)}</code>")
+        elif raw_url:
+            url = raw_url.rstrip(".,)")
+            suffix = raw_url[len(url) :]
+            output.append(f'<a href="{html.escape(url, quote=True)}">{html.escape(url)}</a>{html.escape(suffix)}')
+        cursor = match.end()
+    output.append(html.escape(text[cursor:]))
+    return "".join(output)
+
+
+def markdown_to_html(text: str) -> str:
+    blocks: list[tuple[str, str]] = []
+    paragraph_lines: list[str] = []
+    seen_h1 = False
+
+    def collapse_lines(lines: list[str]) -> str:
+        if not lines:
+            return ""
+        output = lines[0].strip()
+        for line in lines[1:]:
+            stripped = line.strip()
+            if output.endswith("-"):
+                output += stripped
+            else:
+                output += f" {stripped}"
+        return output
+
+    def flush_paragraph() -> None:
+        if paragraph_lines:
+            blocks.append(("p", collapse_lines(paragraph_lines)))
+            paragraph_lines.clear()
+
+    for raw_line in text.splitlines():
+        line = raw_line.rstrip()
+        stripped = line.strip()
+        if not stripped:
+            flush_paragraph()
+            continue
+        if stripped.startswith("### "):
+            flush_paragraph()
+            blocks.append(("h3", stripped[4:].strip()))
+            continue
+        if stripped.startswith("## "):
+            flush_paragraph()
+            blocks.append(("h2", stripped[3:].strip()))
+            continue
+        if stripped.startswith("# "):
+            flush_paragraph()
+            if not seen_h1:
+                seen_h1 = True
+                continue
+            blocks.append(("h1", stripped[2:].strip()))
+            continue
+        paragraph_lines.append(stripped)
+
+    flush_paragraph()
+
+    rendered: list[str] = []
+    for kind, content in blocks:
+        if kind == "h1":
+            rendered.append(f"<h1>{inline_markdown(content)}</h1>")
+        elif kind == "h2":
+            rendered.append(f"<h2>{inline_markdown(content)}</h2>")
+        elif kind == "h3":
+            rendered.append(f"<h3>{inline_markdown(content)}</h3>")
+        else:
+            rendered.append(f"<p>{inline_markdown(content)}</p>")
+    return "\n".join(rendered)
+
+
+def first_paragraph(text: str) -> str:
+    lines = text.splitlines()
+    paragraph: list[str] = []
+    for raw_line in lines:
+        stripped = raw_line.strip()
+        if not stripped:
+            if paragraph:
+                break
+            continue
+        if stripped.startswith("#"):
+            if paragraph:
+                break
+            continue
+        paragraph.append(stripped)
+    if not paragraph:
+        return ""
+    output = paragraph[0]
+    for line in paragraph[1:]:
+        if output.endswith("-"):
+            output += line
+        else:
+            output += f" {line}"
+    return output
+
+
+def truncate(text: str, width: int) -> str:
+    return textwrap.shorten(" ".join(text.split()), width=width, placeholder="...")
+
+
+def load_cards() -> list[Card]:
+    card_dirs = [
+        ROOT / "knowledge" / "thesis",
+        ROOT / "knowledge" / "concept",
+        ROOT / "knowledge" / "metaphor",
+        ROOT / "knowledge" / "anti_pattern",
+        ROOT / "knowledge" / "reading_reference",
+    ]
+    cards: list[Card] = []
+    for directory in card_dirs:
+        for path in sorted(directory.glob("*.md")):
+            frontmatter, body = split_frontmatter(read(path), path)
+            if str(frontmatter.get("status", "")).strip() != "approved":
+                continue
+            card = Card(
+                slug=str(frontmatter["slug"]),
+                title=str(frontmatter["title"]),
+                card_type=str(frontmatter["card_type"]),
+                status=str(frontmatter["status"]),
+                source_basis=str(frontmatter["source_basis"]),
+                expands_brain_primitive=ensure_list(frontmatter.get("expands_brain_primitive")),
+                related_cards=ensure_list(frontmatter.get("related_cards")),
+                citation_id=str(frontmatter.get("citation_id", "")),
+                public_reference=ensure_list(frontmatter.get("public_reference")),
+                learn_more_urls=ensure_list(frontmatter.get("learn_more_urls")),
+                body_markdown=body,
+                body_html=markdown_to_html(body),
+                summary=first_paragraph(body),
+                source_path=path.relative_to(ROOT).as_posix(),
+            )
+            cards.append(card)
+    return cards
+
+
+def parse_sitemap(xml_text: str) -> list[str]:
+    root = ET.fromstring(xml_text)
+    urls: list[str] = []
+    for element in root.iter():
+        if element.tag.endswith("loc") and element.text:
+            loc = element.text.strip()
+            if loc.startswith("https://grcengineer.com/p/"):
+                urls.append(loc)
+    if not urls:
+        fail("sitemap cache did not contain any article URLs")
+    return urls
+
+
+def read_cached_sitemap() -> tuple[list[str], bool]:
+    if not SITEMAP_CACHE.exists():
+        return [], False
+    try:
+        payload = json.loads(read(SITEMAP_CACHE))
+        fetched_at = datetime.fromisoformat(str(payload["fetched_at"]))
+        urls = [str(url) for url in payload.get("urls", [])]
+    except (KeyError, ValueError, json.JSONDecodeError):
+        return [], False
+    if datetime.now(timezone.utc) - fetched_at <= CACHE_MAX_AGE and urls:
+        return urls, True
+    return urls, False
+
+
+def fetch_sitemap() -> list[str]:
+    request = urllib.request.Request(
+        SITEMAP_URL,
+        headers={"User-Agent": "grc-companion-card-builder/1.0"},
+    )
+    with urllib.request.urlopen(request, timeout=15) as response:
+        xml_text = response.read().decode("utf-8")
+    urls = parse_sitemap(xml_text)
+    write(
+        SITEMAP_CACHE,
+        json.dumps(
+            {"fetched_at": datetime.now(timezone.utc).isoformat(), "urls": urls},
+            indent=2,
+        )
+        + "\n",
+    )
+    return urls
+
+
+def load_sitemap_urls() -> list[str]:
+    cached_urls, is_fresh = read_cached_sitemap()
+    if is_fresh:
+        return cached_urls
+    try:
+        return fetch_sitemap()
+    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ET.ParseError) as exc:
+        if cached_urls:
+            print(f"warning: sitemap fetch failed, using cached data ({exc})")
+            return cached_urls
+        fail(f"sitemap fetch failed and no cache exists: {exc}")
+
+
+def tokenize(text: str) -> set[str]:
+    tokens = {token for token in TOKEN_RE.findall(text.casefold()) if token not in STOPWORDS}
+    return {token for token in tokens if len(token) > 1 or token == "g"}
+
+
+def strip_hash_suffix(slug: str) -> str:
+    return re.sub(r"-[a-z0-9]{8,}$", "", slug)
+
+
+def article_slug(url: str) -> str:
+    path = url.rstrip("/").split("/p/", 1)[-1]
+    return path.split("?", 1)[0]
+
+
+def humanize_slug(slug: str) -> str:
+    clean = strip_hash_suffix(slug)
+    tokens = [token for token in clean.split("-") if token]
+    merged: list[str] = []
+    index = 0
+    contractions = {
+        "aren": "aren't",
+        "can": "can't",
+        "couldn": "couldn't",
+        "didn": "didn't",
+        "doesn": "doesn't",
+        "don": "don't",
+        "hadn": "hadn't",
+        "hasn": "hasn't",
+        "haven": "haven't",
+        "here": "here's",
+        "isn": "isn't",
+        "it": "it's",
+        "shouldn": "shouldn't",
+        "that": "that's",
+        "wasn": "wasn't",
+        "what": "what's",
+        "where": "where's",
+        "won": "won't",
+        "wouldn": "wouldn't",
+    }
+    while index < len(tokens):
+        token = tokens[index]
+        if index + 1 < len(tokens) and tokens[index + 1] == "t" and token in contractions:
+            merged.append(contractions[token])
+            index += 2
+            continue
+        merged.append(token)
+        index += 1
+    words: list[str] = []
+    for token in merged:
+        if token in ACRONYMS:
+            words.append(ACRONYMS[token])
+        elif token.isdigit():
+            words.append(token)
+        elif "'" in token:
+            head, tail = token.split("'", 1)
+            words.append(f"{head.capitalize()}'{tail}")
+        else:
+            words.append(token.capitalize())
+    return " ".join(words)
+
+
+def primitive_chip(code: str, primitive_map: dict[str, Primitive]) -> str:
+    primitive = primitive_map.get(code)
+    if not primitive:
+        return f'<span class="chip">{html.escape(code)}</span>'
+    label = f"{primitive.code}: {primitive.title}"
+    return f'<span class="chip">{html.escape(label)}</span>'
+
+
+def learn_more_links(card: Card, sitemap_urls: list[str]) -> list[str]:
+    explicit = [url for url in card.learn_more_urls if url.startswith("https://grcengineer.com/")]
+    if explicit:
+        return explicit[:3]
+
+    primary = [url for url in card.public_reference if url.startswith("https://grcengineer.com/")]
+    if primary:
+        return primary[:3]
+
+    card_tokens = tokenize(f"{card.title} {card.slug}")
+    matches: list[tuple[int, int, str]] = []
+    for url in sitemap_urls:
+        slug = article_slug(url)
+        score = len(card_tokens & tokenize(slug))
+        if score >= 1:
+            matches.append((score, len(slug), url))
+
+    if matches:
+        matches.sort(key=lambda item: (-item[0], item[1], item[2]))
+        return [url for _, _, url in matches[:2]]
+
+    return EVERGREEN_ARTICLES
+
+
+def card_type_label(card_type: str) -> str:
+    return CARD_TYPE_LABELS.get(card_type, card_type.replace("_", " ").title())
+
+
+def primitive_sort_key(code: str) -> tuple[str, int, str]:
+    match = re.match(r"([A-Z]+)(\d+)", code)
+    if not match:
+        return (code, 0, code)
+    prefix, number = match.groups()
+    return (prefix, int(number), code)
+
+
+def link_list(items: list[str], formatter) -> str:
+    if not items:
+        return '<p class="empty-state">None listed.</p>'
+    lines = ["<ul class=\"link-list\">"]
+    for item in items:
+        rendered = formatter(item)
+        if rendered:
+            lines.append(f"  <li>{rendered}</li>")
+    lines.append("</ul>")
+    return "\n".join(lines)
+
+
+def build_card_pages(cards: list[Card], primitive_map: dict[str, Primitive], sitemap_urls: list[str]) -> list[dict[str, object]]:
+    if CARDS_DIR.exists():
+        shutil.rmtree(CARDS_DIR)
+    CARDS_DIR.mkdir(parents=True, exist_ok=True)
+
+    cards_by_slug = {card.slug: card for card in cards}
+    metadata: list[dict[str, object]] = []
+    card_template = TEMPLATES / "card.html"
+
+    for card in cards:
+        primitive_html = " ".join(primitive_chip(code, primitive_map) for code in card.expands_brain_primitive)
+        related_html = link_list(
+            card.related_cards,
+            lambda slug: (
+                f'<a href="./{html.escape(slug)}.html">{html.escape(cards_by_slug[slug].title)}</a>'
+                if slug in cards_by_slug
+                else ""
+            ),
+        )
+        source_html = link_list(
+            card.public_reference,
+            lambda url: f'<a href="{html.escape(url, quote=True)}">{html.escape(url)}</a>',
+        )
+        learn_more = learn_more_links(card, sitemap_urls)
+        learn_more_html = link_list(
+            learn_more,
+            lambda url: f'<a href="{html.escape(url, quote=True)}">{html.escape(humanize_slug(article_slug(url)))}</a>',
+        )
+        page = render_template(
+            card_template,
+            {
+                "canonical_url": html.escape(f"{SITE_ROOT}/cards/{card.slug}.html", quote=True),
+                "card_title": html.escape(card.title),
+                "meta_description": html.escape(truncate(card.summary or card.title, 160), quote=True),
+                "page_title": html.escape(f"{card.title} | The GRC Companion"),
+                "stylesheet_path": f"../css/companion.css?v={ASSET_VERSION}",
+                "favicon_path": "../favicon.svg",
+                "index_href": "../index.html",
+                "install_href": "../install.html",
+                "github_href": GITHUB_URL,
+                "breadcrumb_type": html.escape(card_type_label(card.card_type)),
+                "title": html.escape(card.title),
+                "card_type": html.escape(card_type_label(card.card_type)),
+                "primitive_chips": primitive_html,
+                "status_chip": html.escape(card.status.title()),
+                "body_html": card.body_html,
+                "related_cards_html": related_html,
+                "source_links_html": source_html,
+                "learn_more_html": learn_more_html,
+                "source_path": html.escape(card.source_path),
+            },
+        )
+        write(CARDS_DIR / f"{card.slug}.html", page)
+        metadata.append(
+            {
+                "slug": card.slug,
+                "title": card.title,
+                "card_type": card.card_type,
+                "card_type_label": card_type_label(card.card_type),
+                "status": card.status,
+                "source_basis": card.source_basis,
+                "expands_brain_primitive": card.expands_brain_primitive,
+                "primitive_labels": [
+                    f"{code}: {primitive_map[code].title}" if code in primitive_map else code
+                    for code in card.expands_brain_primitive
+                ],
+                "related_cards": card.related_cards,
+                "citation_id": card.citation_id,
+                "public_reference": card.public_reference,
+                "learn_more_urls": learn_more,
+                "summary": truncate(card.summary or card.title, 200),
+                "href": f"cards/{card.slug}.html",
+            }
+        )
+
+    return metadata
+
+
+def select_options(options: list[tuple[str, str]]) -> str:
+    lines = []
+    for value, label in options:
+        lines.append(
+            f'<option value="{html.escape(value, quote=True)}">{html.escape(label)}</option>'
+        )
+    return "\n".join(lines)
+
+
+def render_card_stubs(metadata: list[dict[str, object]], primitive_map: dict[str, Primitive]) -> str:
+    cards_html: list[str] = []
+    for item in metadata:
+        primitive_codes = list(item["expands_brain_primitive"])
+        primitive_html = " ".join(
+            primitive_chip(str(code), primitive_map) for code in primitive_codes
+        )
+        cards_html.append(
+            "\n".join(
+                [
+                    (
+                        f'<a class="card-stub" href="{html.escape(str(item["href"]), quote=True)}" '
+                        f'data-card-type="{html.escape(str(item["card_type"]), quote=True)}" '
+                        f'data-primitives="{html.escape(" ".join(primitive_codes), quote=True)}">'
+                    ),
+                    "  <div class=\"stub-meta\">",
+                    f'    <span class="chip">{html.escape(str(item["card_type_label"]))}</span>',
+                    f"    {primitive_html}",
+                    "  </div>",
+                    f'  <h2>{html.escape(str(item["title"]))}</h2>',
+                    f'  <p>{html.escape(str(item["summary"]))}</p>',
+                    "</a>",
+                ]
+            )
+        )
+    return "\n".join(cards_html)
+
+
+def build_index(metadata: list[dict[str, object]], primitive_map: dict[str, Primitive]) -> None:
+    type_options = [("", "All card types")]
+    for card_type in ("thesis", "concept", "metaphor", "anti_pattern", "reading_reference"):
+        count = sum(1 for item in metadata if item["card_type"] == card_type)
+        type_options.append((card_type, f"{card_type_label(card_type)} ({count})"))
+
+    primitive_codes = sorted(
+        {code for item in metadata for code in item["expands_brain_primitive"]},
+        key=primitive_sort_key,
+    )
+    primitive_options = [("", "All brain primitives")]
+    for code in primitive_codes:
+        primitive = primitive_map.get(code)
+        label = f"{code}: {primitive.title}" if primitive else code
+        primitive_options.append((code, label))
+
+    payload = json.dumps(metadata, indent=2)
+    write(CARDS_JSON, payload + "\n")
+
+    page = render_template(
+        TEMPLATES / "index.html",
+        {
+            "canonical_url": html.escape(f"{SITE_ROOT}/", quote=True),
+            "meta_description": html.escape(
+                "The GRC Companion publishes 31 public knowledge cards and shows you how to install the learning companion in your AI workspace.",
+                quote=True,
+            ),
+            "page_title": "The GRC Companion",
+            "stylesheet_path": f"css/companion.css?v={ASSET_VERSION}",
+            "favicon_path": "favicon.svg",
+            "index_href": "index.html",
+            "install_href": "install.html",
+            "github_href": GITHUB_URL,
+            "card_stub_html": render_card_stubs(metadata, primitive_map),
+            "type_options": select_options(type_options),
+            "primitive_options": select_options(primitive_options),
+            "cards_json": payload,
+            "card_count": str(len(metadata)),
+        },
+    )
+    write(DOCS / "index.html", page)
+
+
+def build_install() -> None:
+    page = render_template(
+        TEMPLATES / "install.html",
+        {
+            "canonical_url": html.escape(f"{SITE_ROOT}/install.html", quote=True),
+            "meta_description": html.escape(
+                "Install The GRC Companion in Claude Code, Cursor, Claude Projects, or Codex with exact commands and paths.",
+                quote=True,
+            ),
+            "page_title": "Install | The GRC Companion",
+            "stylesheet_path": f"css/companion.css?v={ASSET_VERSION}",
+            "favicon_path": "favicon.svg",
+            "index_href": "index.html",
+            "install_href": "install.html",
+            "github_href": GITHUB_URL,
+        },
+    )
+    write(DOCS / "install.html", page)
+
+
+def main() -> None:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    primitives = load_primitives()
+    cards = load_cards()
+    if not cards:
+        fail("no approved cards found")
+    sitemap_urls = load_sitemap_urls()
+    metadata = build_card_pages(cards, primitives, sitemap_urls)
+    build_index(metadata, primitives)
+    build_install()
+    print(
+        f"wrote {len(metadata)} card pages, {DOCS.relative_to(ROOT) / 'index.html'}, "
+        f"{DOCS.relative_to(ROOT) / 'install.html'}, and {CARDS_JSON.relative_to(ROOT)}"
+    )
+
+
+if __name__ == "__main__":
+    main()

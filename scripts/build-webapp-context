@@ -1,95 +1,16 @@
 #!/usr/bin/env python3
-"""Build the static webapp context from canonical files."""
+"""Compatibility wrapper for the old docs build step."""
 
 from __future__ import annotations
 
-import json
+import runpy
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "docs" / "data" / "companion-context.json"
-
-
-def read(path: str) -> str:
-    return (ROOT / path).read_text(encoding="utf-8")
-
-
-def load_json(path: Path) -> dict:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def skill_frontmatter(path: Path) -> dict:
-    text = path.read_text(encoding="utf-8")
-    if not text.startswith("---\n"):
-        raise SystemExit(f"{path.relative_to(ROOT)} missing YAML frontmatter")
-    try:
-        frontmatter = text.split("---", 2)[1]
-    except IndexError as exc:
-        raise SystemExit(f"{path.relative_to(ROOT)} has invalid YAML frontmatter") from exc
-    data = {}
-    for line in frontmatter.splitlines():
-        if ":" in line:
-            key, value = line.split(":", 1)
-            data[key.strip()] = value.strip()
-    for required in ("name", "description"):
-        if not data.get(required):
-            raise SystemExit(f"{path.relative_to(ROOT)} missing frontmatter field: {required}")
-    return data
-
-
-def command_summary(path: Path) -> dict:
-    text = path.read_text(encoding="utf-8")
-    name = path.stem
-    skill = ""
-    slash = ""
-    if text.startswith("---"):
-        frontmatter = text.split("---", 2)[1]
-        for line in frontmatter.splitlines():
-            if line.startswith("skill:"):
-                skill = line.split(":", 1)[1].strip()
-            if line.startswith("slash:"):
-                slash = line.split(":", 1)[1].strip()
-    return {"name": name, "skill": skill, "slash": slash, "path": path.relative_to(ROOT).as_posix()}
 
 
 def main() -> None:
-    knowledge_index = ROOT / "knowledge" / "index.json"
-    if not knowledge_index.exists():
-        raise SystemExit("knowledge/index.json missing; run scripts/build-knowledge-index first")
-
-    skills = []
-    for manifest in sorted((ROOT / "skills").glob("*/manifest.json")):
-        data = load_json(manifest)
-        data.update(skill_frontmatter(manifest.parent / "SKILL.md"))
-        data["path"] = manifest.parent.relative_to(ROOT).as_posix()
-        skills.append(data)
-
-    commands = [command_summary(path) for path in sorted((ROOT / "commands").glob("*.md")) if path.name != "README.md"]
-
-    brain = {
-        "persona": read("brain/persona.md"),
-        "voice": read("brain/voice.md"),
-        "learning_method": read("brain/learning-method.md"),
-        "theses": read("brain/primitives/theses.md")
-    }
-    for optional in ("skill-router", "task-extraction", "cross-domain-transfer", "local-work-learning"):
-        path = ROOT / "brain" / f"{optional}.md"
-        if path.exists():
-            brain[optional.replace("-", "_")] = path.read_text(encoding="utf-8")
-
-    context = {
-        "name": "The GRC Companion",
-        "target_url": "https://grc.engineering/companion/",
-        "brain": brain,
-        "profile_schema": load_json(ROOT / "profile" / "learner-profile.schema.json"),
-        "skills": skills,
-        "commands": commands,
-        "knowledge": load_json(knowledge_index)
-    }
-
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(context, indent=2) + "\n", encoding="utf-8")
-    print(f"wrote {OUT.relative_to(ROOT)}")
+    runpy.run_path(str(ROOT / "scripts" / "build-card-pages"), run_name="__main__")
 
 
 if __name__ == "__main__":

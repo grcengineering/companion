@@ -4,7 +4,8 @@ Scripts:
 
 - `build-knowledge-index` - build `knowledge/index.json` from markdown corpus files.
 - `sync-skill-manifests` - sync compatibility manifests from `SKILL.md` frontmatter.
-- `build-webapp-context` - build `docs/data/companion-context.json` from `brain/`, `skills/`, `commands/`, and `knowledge/index.json`.
+- `build-card-pages` - build `docs/cards/*.html`, `docs/index.html`, `docs/install.html`, and `docs/data/cards.json` from the approved card corpus and templates.
+- `build-webapp-context` - compatibility wrapper that now forwards to `build-card-pages`.
 - `build-adapters` - emit platform-specific bundles from canonical source files into `dist/adapters/`.
 - `extract-candidates` - normalize private newsletter and LinkedIn corpus exports into `_candidates/candidates.jsonl`.
 - `draft-briefs` - cluster extracted candidates and emit one private YAML brief per recurring idea into `_briefs/`.
@@ -21,7 +22,7 @@ Run the full structural build/check loop:
 ```bash
 scripts/build-knowledge-index
 scripts/sync-skill-manifests
-scripts/build-webapp-context
+scripts/build-card-pages
 scripts/build-adapters
 scripts/verify-structure
 scripts/run-evals

@@ -25,11 +25,10 @@ Run this after structural changes:
 ```bash
 scripts/build-knowledge-index
 scripts/sync-skill-manifests
-scripts/build-webapp-context
+scripts/build-card-pages
 scripts/build-adapters
 scripts/verify-structure
 scripts/run-evals
-node --check docs/js/companion.js
 ```
 
 ## Boundary
