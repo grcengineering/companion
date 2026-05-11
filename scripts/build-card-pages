@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the public card index, card pages, and install page."""
+"""Build the public landing, card browser, card pages, and install page."""
 
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ SITEMAP_CACHE = DATA_DIR / "sitemap-cache.json"
 SITEMAP_URL = "https://grcengineer.com/sitemap.xml"
 SITE_ROOT = "https://grc.engineering/companion"
 GITHUB_URL = "https://github.com/grcengineering/companion"
-ASSET_VERSION = "cards-funnel-previous-design"
+ASSET_VERSION = "product-story-cards-index"
 CACHE_MAX_AGE = timedelta(days=7)
 EVERGREEN_ARTICLES = [
     "https://grcengineer.com/p/new-to-grc-engineering-start-here",
@@ -628,6 +628,7 @@ def build_card_pages(cards: list[Card], primitive_map: dict[str, Primitive], sit
                 "stylesheet_path": f"../css/companion.css?v={ASSET_VERSION}",
                 "favicon_path": "../favicon.svg",
                 "index_href": "../index.html",
+                "cards_href": "./",
                 "install_href": "../install.html",
                 "github_href": GITHUB_URL,
                 "breadcrumb_type": html.escape(card_type_label(card.card_type)),
@@ -677,18 +678,24 @@ def select_options(options: list[tuple[str, str]]) -> str:
     return "\n".join(lines)
 
 
-def render_card_stubs(metadata: list[dict[str, object]], primitive_map: dict[str, Primitive]) -> str:
+def render_card_stubs(
+    metadata: list[dict[str, object]],
+    primitive_map: dict[str, Primitive],
+    *,
+    sibling_links: bool = False,
+) -> str:
     cards_html: list[str] = []
     for item in metadata:
         primitive_codes = list(item["expands_brain_primitive"])
         primitive_html = " ".join(
             primitive_chip(str(code), primitive_map) for code in primitive_codes
         )
+        href = f"{item['slug']}.html" if sibling_links else str(item["href"])
         cards_html.append(
             "\n".join(
                 [
                     (
-                        f'<a class="card-stub" href="{html.escape(str(item["href"]), quote=True)}" '
+                        f'<a class="card-stub" href="{html.escape(href, quote=True)}" '
                         f'data-card-type="{html.escape(str(item["card_type"]), quote=True)}" '
                         f'data-primitives="{html.escape(" ".join(primitive_codes), quote=True)}">'
                     ),
@@ -705,7 +712,7 @@ def render_card_stubs(metadata: list[dict[str, object]], primitive_map: dict[str
     return "\n".join(cards_html)
 
 
-def build_index(metadata: list[dict[str, object]], primitive_map: dict[str, Primitive]) -> None:
+def card_filter_context(metadata: list[dict[str, object]], primitive_map: dict[str, Primitive]) -> dict[str, str]:
     type_options = [("", "All card types")]
     for card_type in ("thesis", "concept", "metaphor", "anti_pattern", "reading_reference"):
         count = sum(1 for item in metadata if item["card_type"] == card_type)
@@ -721,8 +728,20 @@ def build_index(metadata: list[dict[str, object]], primitive_map: dict[str, Prim
         label = f"{code}: {primitive.title}" if primitive else code
         primitive_options.append((code, label))
 
-    payload = json.dumps(metadata, indent=2)
-    write(CARDS_JSON, payload + "\n")
+    return {
+        "type_options": select_options(type_options),
+        "primitive_options": select_options(primitive_options),
+    }
+
+
+def build_index(metadata: list[dict[str, object]], primitive_map: dict[str, Primitive]) -> None:
+    transcript_link = ""
+    if (ROOT / "demos" / "terminal-session.md").exists():
+        transcript_link = (
+            '<a class="secondary-action light" '
+            'href="https://github.com/grcengineering/companion/blob/main/demos/terminal-session.md" '
+            'target="_blank" rel="noopener">Read transcript</a>'
+        )
 
     page = render_template(
         TEMPLATES / "index.html",
@@ -736,16 +755,43 @@ def build_index(metadata: list[dict[str, object]], primitive_map: dict[str, Prim
             "stylesheet_path": f"css/companion.css?v={ASSET_VERSION}",
             "favicon_path": "favicon.svg",
             "index_href": "index.html",
+            "cards_href": "cards/",
             "install_href": "install.html",
             "github_href": GITHUB_URL,
-            "card_stub_html": render_card_stubs(metadata, primitive_map),
-            "type_options": select_options(type_options),
-            "primitive_options": select_options(primitive_options),
+            "terminal_transcript_link": transcript_link,
+        },
+    )
+    write(DOCS / "index.html", page)
+
+
+def build_cards_index(metadata: list[dict[str, object]], primitive_map: dict[str, Primitive]) -> None:
+    filter_context = card_filter_context(metadata, primitive_map)
+    payload = json.dumps(metadata, indent=2)
+    write(CARDS_JSON, payload + "\n")
+
+    page = render_template(
+        TEMPLATES / "cards-index.html",
+        {
+            "canonical_url": html.escape(f"{SITE_ROOT}/cards/", quote=True),
+            "meta_description": html.escape(
+                "Browse the public GRC Companion corpus of 31 hand-reviewed GRC engineering cards.",
+                quote=True,
+            ),
+            "page_title": "Cards | The GRC Companion",
+            "stylesheet_path": f"../css/companion.css?v={ASSET_VERSION}",
+            "favicon_path": "../favicon.svg",
+            "index_href": "../index.html",
+            "cards_href": "./",
+            "install_href": "../install.html",
+            "github_href": GITHUB_URL,
+            "card_stub_html": render_card_stubs(metadata, primitive_map, sibling_links=True),
+            "type_options": filter_context["type_options"],
+            "primitive_options": filter_context["primitive_options"],
             "cards_json": payload,
             "card_count": str(len(metadata)),
         },
     )
-    write(DOCS / "index.html", page)
+    write(CARDS_DIR / "index.html", page)
 
 
 def build_install() -> None:
@@ -761,6 +807,7 @@ def build_install() -> None:
             "stylesheet_path": f"css/companion.css?v={ASSET_VERSION}",
             "favicon_path": "favicon.svg",
             "index_href": "index.html",
+            "cards_href": "cards/",
             "install_href": "install.html",
             "github_href": GITHUB_URL,
         },
@@ -777,9 +824,11 @@ def main() -> None:
     sitemap_urls = load_sitemap_urls()
     metadata = build_card_pages(cards, primitives, sitemap_urls)
     build_index(metadata, primitives)
+    build_cards_index(metadata, primitives)
     build_install()
     print(
         f"wrote {len(metadata)} card pages, {DOCS.relative_to(ROOT) / 'index.html'}, "
+        f"{CARDS_DIR.relative_to(ROOT) / 'index.html'}, "
         f"{DOCS.relative_to(ROOT) / 'install.html'}, and {CARDS_JSON.relative_to(ROOT)}"
     )
 

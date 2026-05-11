@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{{meta_description}}">
+  <link rel="canonical" href="{{canonical_url}}">
+  <meta property="og:title" content="{{page_title}}">
+  <meta property="og:description" content="{{meta_description}}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{canonical_url}}">
+  <title>{{page_title}}</title>
+  <link rel="icon" href="{{favicon_path}}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{stylesheet_path}}">
+</head>
+<body>
+  <a class="skip-link" href="#card-index">Skip to cards</a>
+  <header class="site-header">
+    <a class="wordmark" href="{{index_href}}" aria-label="The GRC Companion home">
+      <span class="mark" aria-hidden="true"></span>
+      <span>GRC.engineering</span>
+      <span class="wordmark-divider" aria-hidden="true"></span>
+      <span>Companion</span>
+    </a>
+    <nav aria-label="Primary">
+      <a href="{{cards_href}}" aria-current="page">Cards</a>
+      <a href="{{install_href}}">Install</a>
+      <a href="{{github_href}}" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="page-shell cards-browser-page">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{{index_href}}">Companion</a>
+      <span>/</span>
+      <span>Cards</span>
+    </nav>
+
+    <section class="title-block">
+      <p class="eyebrow">Public corpus</p>
+      <h1>The GRC engineering corpus</h1>
+      <p class="hero-lede">Thirty-one hand-reviewed cards distilled from newsletters, LinkedIn posts, and podcasts. Browse here as a reference layer. The teaching happens inside the install.</p>
+      <div class="hero-actions">
+        <a class="primary-action" href="{{install_href}}">Install Companion -&gt;</a>
+      </div>
+    </section>
+
+    <section class="cards-index" id="card-index">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Browse cards</p>
+          <h2>The public card layer</h2>
+        </div>
+        <p id="results-count" class="results-count">{{card_count}} cards</p>
+      </div>
+
+      <div class="filter-row">
+        <label>
+          Card type
+          <select id="type-filter" name="type-filter">
+            {{type_options}}
+          </select>
+        </label>
+        <label>
+          Brain primitive
+          <select id="primitive-filter" name="primitive-filter">
+            {{primitive_options}}
+          </select>
+        </label>
+      </div>
+
+      <div class="cards-grid" id="cards-grid">
+        {{card_stub_html}}
+      </div>
+    </section>
+
+    <section class="cta-block cta-large">
+      <div>
+        <p class="section-kicker">Install</p>
+        <h2>Install the Companion to use these cards in your editor</h2>
+        <p>Read publicly. Practise privately inside the workspace where your real GRC work already happens.</p>
+      </div>
+      <a class="primary-action" href="{{install_href}}">Open install guide -&gt;</a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <a href="{{index_href}}">Companion</a>
+      <span class="footer-separator">/</span>
+      <a href="{{install_href}}">Install</a>
+      <span class="footer-separator">/</span>
+      <a href="{{github_href}}" target="_blank" rel="noopener">View the repo</a>
+    </div>
+    <p>Cards are the reference layer. Install is the working layer.</p>
+  </footer>
+
+  <script id="cards" type="application/json">{{cards_json}}</script>
+  <script>
+    (function () {
+      const cards = JSON.parse(document.getElementById("cards").textContent);
+      const cardNodes = Array.from(document.getElementsByClassName("card-" + "stub"));
+      const typeFilter = document.getElementById("type-filter");
+      const primitiveFilter = document.getElementById("primitive-filter");
+      const resultsCount = document.getElementById("results-count");
+
+      function applyFilters() {
+        let visible = 0;
+        const selectedType = typeFilter.value;
+        const selectedPrimitive = primitiveFilter.value;
+
+        cardNodes.forEach((node) => {
+          const typeMatch = !selectedType || node.dataset.cardType === selectedType;
+          const primitives = (node.dataset.primitives || "").split(/\s+/).filter(Boolean);
+          const primitiveMatch = !selectedPrimitive || primitives.includes(selectedPrimitive);
+          const show = typeMatch && primitiveMatch;
+          node.hidden = !show;
+          if (show) {
+            visible += 1;
+          }
+        });
+
+        const noun = visible === 1 ? "card" : "cards";
+        const total = cards.length;
+        resultsCount.textContent = visible === total ? `${total} ${noun}` : `${visible} of ${total} cards`;
+      }
+
+      typeFilter.addEventListener("change", applyFilters);
+      primitiveFilter.addEventListener("change", applyFilters);
+      applyFilters();
+    }());
+  </script>
+</body>
+</html>
