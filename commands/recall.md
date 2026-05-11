@@ -1,6 +1,6 @@
 ---
 name: recall
-slash: /grc-companion:recall
+slash: /companion:recall
 skill: recall-quiz
 description: Run active recall across prior or selected topics.
 learning_principles:

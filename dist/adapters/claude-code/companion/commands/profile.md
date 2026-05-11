@@ -1,6 +1,6 @@
 ---
 name: profile
-slash: /grc-companion:profile
+slash: /companion:profile
 skill: profile-wizard
 description: Run the cold-start learner profile wizard.
 learning_principles:

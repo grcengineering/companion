@@ -1,6 +1,6 @@
 ---
 name: feynman
-slash: /grc-companion:feynman
+slash: /companion:feynman
 skill: feynman-explainer
 description: Ask the learner to teach a concept back and grade the explanation.
 learning_principles:

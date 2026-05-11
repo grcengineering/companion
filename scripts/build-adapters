@@ -46,17 +46,17 @@ def brain_bundle() -> str:
 
 
 def build_claude_code() -> None:
-    out = DIST / "claude-code" / "grc-companion"
+    out = DIST / "claude-code" / "companion"
     reset(out)
     write(
         out / ".claude-plugin" / "plugin.json",
         json.dumps(
             {
-                "name": "grc-companion",
+                "name": "companion",
                 "description": "Learning-only GRC engineering companion: concept tutoring, practice scenarios, recall, reflection, and mini-labs.",
                 "version": "0.1.0",
                 "author": {"name": "GRC Engineering", "url": "https://grc.engineering"},
-                "repository": "https://github.com/grcengineering/grc-companion",
+                "repository": "https://github.com/grcengineering/companion",
                 "license": "MIT",
                 "keywords": ["grc", "learning", "governance", "risk", "compliance", "education"]
             },
@@ -70,7 +70,15 @@ def build_claude_code() -> None:
     copy_tree(ROOT / "knowledge", out / "knowledge")
     copy_tree(ROOT / "profile", out / "profile")
     copy_tree(ROOT / "demos", out / "demos")
-    write(out / "README.md", "# GRC Companion Claude Code Adapter\n\nInstall as a Claude Code plugin directory.\n")
+    write(
+        out / "README.md",
+        "# GRC Companion Claude Code Adapter\n\n"
+        "Install as a Claude Code plugin directory.\n\n"
+        "```bash\n"
+        "mkdir -p ~/.claude/plugins\n"
+        "ln -s \"$PWD/dist/adapters/claude-code/companion\" ~/.claude/plugins/companion\n"
+        "```\n",
+    )
 
 
 def build_codex() -> None:
@@ -92,7 +100,7 @@ def build_cursor() -> None:
     out = DIST / "cursor" / ".cursor" / "rules"
     reset(out)
     write(
-        out / "grc-companion.mdc",
+        out / "companion.mdc",
         f"---\ndescription: Learning-only GRC Companion rules\nalwaysApply: false\n---\n\n{brain_bundle()}\n",
     )
 
@@ -123,7 +131,7 @@ def build_pai_pack() -> None:
     )
     write(
         out / "src" / "SKILL.md",
-        "---\nname: GRCCompanion\npack-id: grc-companion-v0.1.0\nversion: 0.1.0\ntype: skill\nplatform: claude-code\n---\n\n"
+        "---\nname: GRCCompanion\npack-id: companion-v0.1.0\nversion: 0.1.0\ntype: skill\nplatform: claude-code\n---\n\n"
         + (ROOT / "brain" / "persona.md").read_text(encoding="utf-8"),
     )
     copy_tree(ROOT / "skills", out / "src" / "skills")

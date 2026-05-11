@@ -1,84 +1,118 @@
 # The GRC Companion
 
-A learning companion for GRC practitioners, built from the original GRC Engineering Lab Builder.
+A learning companion for GRC practitioners. It turns real GRC work - vendor reviews, audit walkthroughs, questionnaires, policy work, control discussions, terminal output - into structured learning loops. It runs where you already use Claude Code, Claude Projects, Cursor, or Codex.
 
-The companion helps users learn, practise, and internalise GRC engineering thinking from both synthetic labs and their actual day-to-day GRC work. In local adapters, the learner can intentionally point it at review notes, drafts, files, diffs, terminal output, questionnaires, policies, controls, and other work artefacts so the Companion can extract learning opportunities.
+The Companion teaches the thinking behind the work. It does not approve vendors, certify audit positions, author production policies, run controls, or operate a user's programme. It helps you get better at doing those things.
 
-It is not an operational GRC decision-maker: it does not approve vendors, certify audit positions, author final production policies, run controls, or operate a user's programme. It helps the practitioner get better at doing those things.
+Live: `https://grc.engineering/companion/`
+Release: `v0.1.0`
+Corpus: 31 distilled cards: 8 theses, 10 concepts, 4 metaphors, 4 anti-patterns, and 5 reading references drawn from grcengineer.com newsletters and the LinkedIn corpus.
 
-## Public Surface
+## Quickstart
 
-Target URL:
+**Static setup wizard**
+
+Use this if you want the simplest path. It helps you choose an adapter and generates a system prompt for the workspace you already use.
 
 ```text
 https://grc.engineering/companion/
 ```
 
-Legacy project-site URL:
+**Clone the corpus and adapters**
 
-```text
-https://grc.engineering/grc-companion/
+```bash
+git clone https://github.com/grcengineering/companion.git
+cd companion
 ```
 
-Because this is hosted on GitHub Pages, the public website stays static. It is an installer and orientation wizard, not the Companion runtime.
+**Claude Code plugin bundle**
+
+The generated Claude Code bundle lives in `dist/adapters/claude-code/companion/`.
+
+```bash
+mkdir -p ~/.claude/plugins
+ln -s "$PWD/dist/adapters/claude-code/companion" ~/.claude/plugins/companion
+```
+
+**Claude Projects**
+
+Create a Claude Project, then upload the generated project instructions and supporting folders.
+
+```bash
+open dist/adapters/claude-projects/companion-instructions.md
+open dist/adapters/claude-projects
+```
+
+**Cursor**
+
+Copy the generated rule into the workspace where you want to use the Companion.
+
+```bash
+mkdir -p .cursor/rules
+cp dist/adapters/cursor/.cursor/rules/companion.mdc .cursor/rules/companion.mdc
+```
+
+**Codex**
+
+Use the Codex adapter bundle as local context in the workspace where you want the Companion available.
+
+```bash
+cp -R dist/adapters/codex ./companion-codex
+```
+
+## What's In v0.1
+
+- 31 distilled knowledge cards covering theses, concepts, metaphors, anti-patterns, and reading references.
+- 14 learning skills: `concept-tutor`, `lab-builder`, `learning-path-designer`, `practice-scenario`, `socratic-coach`, `recall-quiz`, `feynman-explainer`, `reflection-journal`, `reading-guide`, `progress-tracker`, `profile-wizard`, `profile-refresher`, `task-retrospective`, and `cross-domain-translator`.
+- 13 portable command contracts, including 11 core learning commands plus profile/profile-refresh helpers.
+- Static setup wizard at `https://grc.engineering/companion/`.
+- Generated adapters for Claude Code, Claude Projects, Cursor, Codex, and the roadmap PAI pack.
+- Behaviour demo: a terminal transcript showing the refusal pattern and real-work learning boundary.
 
 ## Architecture
 
 ```text
-grc-companion/
+companion/
 ├── brain/          Companion persona, voice, learning method, primitives
-├── knowledge/      Structured corpus and case studies for citation grounding
+├── knowledge/      Approved corpus cards, glossary, and case studies
 ├── profile/        Learner-owned profile schema and examples
 ├── skills/         Learning skills only
 ├── commands/       Portable learning-only command contracts
 ├── demos/          Behavioural examples and terminal transcripts
 ├── webapp/         Tier 0 product surface notes/source spec
 ├── adapters/       Tier 1 and Tier 2 distribution targets
-├── docs/           GitHub Pages deployable static landing page
-└── scripts/        Corpus and adapter build entry points
+├── docs/           GitHub Pages static setup wizard
+└── scripts/        Corpus, context, and adapter build entry points
 ```
 
-## Tiers
+## Three Tiers
 
-**Tier 0: Static Setup Wizard**
+**Tier 0: live setup wizard**
 
-The first shipped surface. Static and GitHub Pages-compatible. It helps a learner pick Claude Code, Claude Projects, Cursor, Codex, or the raw files, then generates setup instructions and a system prompt.
+`https://grc.engineering/companion/` is a static GitHub Pages site. It routes users to the right package and generates a system prompt. It does not upload or process the user's GRC artefacts.
 
-**Tier 1: Portable Skill Pack**
+**Tier 1: portable skill pack**
 
-Platform-specific adapters: Claude Code, Codex, Cursor, and Claude Projects.
+The same brain, knowledge cards, skills, commands, and demos are packaged into generated platform adapters under `dist/adapters/<platform>/`:
+
+- `dist/adapters/claude-code/companion/`
+- `dist/adapters/claude-projects/`
+- `dist/adapters/cursor/`
+- `dist/adapters/codex/`
 
 **Tier 2: PAI Pack**
 
-Roadmap. Ships only after Tier 0 has active learners and Tier 1 stabilises.
+The PAI pack is generated as a roadmap adapter under `dist/adapters/pai-pack/`. It ships as a first-class distribution path after the portable adapters stabilise.
 
-## Sprint 1 Scope
+## Boundary
 
-- Repo restructured around `brain`, `knowledge`, `skills`, `webapp`, and `adapters`
-- Companion brain populated with persona, voice, learning method, and primitives
-- Existing lab-builder prompts migrated into `skills/lab-builder`
-- Profile wizard and refresher skills added for learner-owned context
-- SOC 2 parsing example migrated into `knowledge/case-studies`
-- Tier 0 static setup wizard scaffolded in `docs`
+The Companion refuses operational GRC work. It may teach a user how to think through a vendor review, audit prep pattern, policy design principle, control architecture, or trust-center pattern, but it should not perform those activities on behalf of the user.
 
-## Redesign Scope
+In local adapters, the learner can intentionally point it at review notes, drafts, files, diffs, terminal output, questionnaires, policies, controls, and other work artefacts so the Companion can extract learning opportunities from the real work.
 
-- Skills are invisible by default through `brain/skill-router.md`.
-- `task-retrospective` extracts learning from work the learner already completed.
-- `cross-domain-translator` uses adjacent-domain patterns to clarify GRC concepts.
-- The website routes users toward the right package and system prompt instead of pretending to run the Companion.
-- Local adapters can learn from real local work artefacts the learner intentionally provides; the public website does not upload those artefacts.
-- The actual Companion behaviour runs through generated adapters and canonical repo contracts.
+## Contributing
 
-Deferred:
-
-- Real signed-in cross-device profile
-- Scheduler/reminder infrastructure
-- Tier 1 adapters
-- Tier 2 PAI Pack
-- Operational GRC skills
-
-## Local Preview
+### Local Preview
 
 Open [docs/index.html](docs/index.html) directly in a browser, or serve the folder with any static server:
 
@@ -92,7 +126,7 @@ Then visit:
 http://localhost:8080/
 ```
 
-## Build Derived Context
+### Build Derived Context
 
 The canonical files live in `brain/`, `skills/`, `commands/`, and `knowledge/`. Generated surfaces are rebuilt with:
 
@@ -112,7 +146,7 @@ Generated outputs:
 - `docs/data/companion-context.json`
 - `dist/adapters/`
 
-## Behaviour Demo
+### Behaviour Demo
 
 Run the terminal transcript:
 
@@ -122,6 +156,6 @@ demos/run-terminal-demo
 
 The demo shows the expected boundary pattern: the Companion can use real local review notes as learning material, but it does not make the vendor approval decision.
 
-## Non-Goals
+## License
 
-The companion refuses operational work. It may teach a user how to think through a vendor review, audit prep pattern, policy design principle, or trust-center architecture, but it should not perform those activities on behalf of the user.
+See [LICENSE](LICENSE).

@@ -7,13 +7,13 @@ const copyButton = document.querySelector("#copy-setup");
 const platforms = {
   "claude-code": {
     label: "Claude Code",
-    path: "dist/adapters/claude-code/grc-companion/",
+    path: "dist/adapters/claude-code/companion/",
     steps: [
       "Use the generated Claude Code plugin bundle.",
       "Install or symlink the bundle according to your Claude Code plugin workflow.",
       "Start with the generated system prompt or point the Companion at local files, diffs, terminal output, or notes you want to learn from."
     ],
-    command: "/grc-companion:retro"
+    command: "/companion:retro"
   },
   "claude-projects": {
     label: "Claude Projects",
@@ -93,7 +93,7 @@ function inferRoute(text) {
   if (/(file|notes|diff|terminal|output|transcript|draft|questionnaire|walkthrough|evidence|policy|control|review)/.test(normalized)) {
     return {
       skill: "task-retrospective",
-      command: "/grc-companion:retro",
+      command: "/companion:retro",
       reason: "You are bringing real work or local outputs, so the best first move is to learn from the actual material without taking over the decision."
     };
   }
@@ -101,7 +101,7 @@ function inferRoute(text) {
   if (/(just|finished|completed|ran|did|spent|after|walkthrough|questionnaire|review)/.test(normalized)) {
     return {
       skill: "task-retrospective",
-      command: "/grc-companion:retro",
+      command: "/companion:retro",
       reason: "You described work that already happened, so the best first move is to extract learning from it."
     };
   }
@@ -109,7 +109,7 @@ function inferRoute(text) {
   if (/(analogy|metaphor|translate|pattern|like|compare|frame|lens)/.test(normalized)) {
     return {
       skill: "cross-domain-translator",
-      command: "/grc-companion:translate",
+      command: "/companion:translate",
       reason: "You are asking for a frame shift, so a cross-domain pattern can clarify the GRC move."
     };
   }
@@ -117,7 +117,7 @@ function inferRoute(text) {
   if (/(build|make|create|lab|template|artefact|artifact|practice)/.test(normalized)) {
     return {
       skill: "lab-builder",
-      command: "/grc-companion:lab",
+      command: "/companion:lab",
       reason: "You are asking to practise by building, so a learning-safe mini-lab is the right move."
     };
   }
@@ -125,7 +125,7 @@ function inferRoute(text) {
   if (/(what is|explain|understand|concept|mean|confused)/.test(normalized)) {
     return {
       skill: "concept-tutor",
-      command: "/grc-companion:concept",
+      command: "/companion:concept",
       reason: "You are asking for conceptual clarity, so the Companion should teach one concept at a time."
     };
   }
@@ -133,14 +133,14 @@ function inferRoute(text) {
   if (/(path|roadmap|curriculum|sequence|learn next)/.test(normalized)) {
     return {
       skill: "learning-path-designer",
-      command: "/grc-companion:path",
+      command: "/companion:path",
       reason: "You are asking for sequencing, so the Companion should design a learning path."
     };
   }
 
   return {
     skill: "socratic-coach",
-    command: "/grc-companion:scenario",
+    command: "/companion:scenario",
     reason: "Your input is open-ended, so the Companion should ask a sharp first question before teaching."
   };
 }

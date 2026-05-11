@@ -1,6 +1,6 @@
 ---
 name: reflect
-slash: /grc-companion:reflect
+slash: /companion:reflect
 skill: reflection-journal
 description: Close a session with structured reflection.
 learning_principles:

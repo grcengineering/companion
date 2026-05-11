@@ -245,8 +245,42 @@ nav a:hover {
 }
 
 .eyebrow {
-  margin: 0 0 16px;
+  margin: 0 0 14px;
   color: var(--orange);
+}
+
+.ship-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 18px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.ship-badges a,
+.ship-badges span {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  padding: 7px 10px;
+  color: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.055);
+  text-decoration: none;
+}
+
+.ship-badges a {
+  color: var(--ink);
+  background: var(--orange);
+  border-color: var(--orange);
+}
+
+.ship-badges a:hover {
+  background: var(--panel);
+  border-color: var(--panel);
 }
 
 .hero-lede {

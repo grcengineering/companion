@@ -1,6 +1,6 @@
 ---
 name: retro
-slash: /grc-companion:retro
+slash: /companion:retro
 skill: task-retrospective
 description: Turn completed GRC work into a learning retrospective.
 learning_principles:

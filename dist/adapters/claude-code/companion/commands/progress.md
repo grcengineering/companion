@@ -1,6 +1,6 @@
 ---
 name: progress
-slash: /grc-companion:progress
+slash: /companion:progress
 skill: progress-tracker
 description: Track what the learner has touched, practised, or internalised.
 learning_principles:

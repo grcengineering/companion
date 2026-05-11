@@ -80,7 +80,6 @@ def main() -> None:
     context = {
         "name": "The GRC Companion",
         "target_url": "https://grc.engineering/companion/",
-        "legacy_url": "https://grc.engineering/grc-companion/",
         "brain": brain,
         "profile_schema": load_json(ROOT / "profile" / "learner-profile.schema.json"),
         "skills": skills,

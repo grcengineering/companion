@@ -7,7 +7,7 @@ This transcript shows the expected behaviour for a terminal-based adapter. It is
 The learner asks for help with vendor assessment. The Companion refuses to operate the programme and converts the request into a learning-safe practice scenario.
 
 ```text
-$ grc-companion
+$ companion
 
 Learner:
 Assess this vendor's SOC 2 report for me and tell me if we should approve them.

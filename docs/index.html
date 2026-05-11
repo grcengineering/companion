@@ -13,7 +13,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <title>The GRC Companion</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/companion.css?v=real-work-system-prompt">
+  <link rel="stylesheet" href="css/companion.css?v=v010-ship-state">
 </head>
 <body>
   <a class="skip-link" href="#setup">Skip to setup wizard</a>
@@ -30,7 +30,7 @@
       <a href="#demo">Behaviour</a>
       <a href="#method">Method</a>
       <a href="#tiers">Load paths</a>
-      <a href="https://github.com/grcengineering/grc-companion" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/grcengineering/companion" target="_blank" rel="noopener">GitHub</a>
     </nav>
   </header>
 
@@ -39,6 +39,10 @@
       <div class="hero-grid installer-grid">
         <div class="hero-copy">
           <p class="eyebrow">Learn from real GRC work + GRC Engineering context</p>
+          <div class="ship-badges" aria-label="Release and corpus">
+            <a href="https://github.com/grcengineering/companion/releases/tag/v0.1.0" target="_blank" rel="noopener">v0.1.0</a>
+            <span>31 distilled cards</span>
+          </div>
           <h1>The GRC Companion</h1>
           <p class="hero-lede">Turn vendor reviews, audit walkthroughs, questionnaires, policy work, control discussions, and terminal output into learning loops. It runs where you already use Claude or Codex, so your local work becomes the curriculum.</p>
           <div class="boundary-strip" aria-label="Companion boundary">
@@ -101,11 +105,11 @@
 
     <section class="section setup-output-section">
       <div class="setup-output-copy">
-        <p class="eyebrow">Generated setup</p>
+        <p class="eyebrow">System prompt</p>
         <h2>Your local package path and system prompt.</h2>
         <p>This website does not upload your artefacts. The actual Companion runs inside the AI workspace you choose and can learn from the local files, transcripts, diffs, notes, and outputs you intentionally provide there.</p>
       </div>
-      <textarea id="setup-output" class="setup-output" readonly rows="20" aria-label="Generated setup instructions"></textarea>
+      <textarea id="setup-output" class="setup-output" readonly rows="20" aria-label="Generated system prompt and setup instructions"></textarea>
     </section>
 
     <section class="section experience-section">
@@ -138,7 +142,7 @@
         <p class="eyebrow">Behaviour proof</p>
         <h2>It learns from the work without taking over the decision.</h2>
         <p>The adapter should behave like this transcript: use the learner's real local work as material, hold the approval/audit boundary, infer the learning move, and produce a practical rep.</p>
-        <a class="secondary-action light" href="https://github.com/grcengineering/grc-companion/blob/main/demos/terminal-session.md" target="_blank" rel="noopener">Read transcript</a>
+        <a class="secondary-action light" href="https://github.com/grcengineering/companion/blob/main/demos/terminal-session.md" target="_blank" rel="noopener">Read transcript</a>
       </div>
       <div class="demo-reel" aria-label="Terminal demo reel">
         <div class="reel-chrome">
@@ -147,7 +151,7 @@
           <span></span>
           <strong>demo/run-terminal-demo</strong>
         </div>
-        <pre><code>$ grc-companion
+        <pre><code>$ companion
 
 Learner:
 Use my vendor-review-notes.md to help me learn from the review.
@@ -249,9 +253,9 @@ and one profile update about where you are getting stuck.</code></pre>
 
   <footer class="site-footer">
     <p>The GRC Companion teaches. It does not operate your programme.</p>
-    <a href="https://github.com/grcengineering/grc-companion" target="_blank" rel="noopener">View source</a>
+    <a href="https://github.com/grcengineering/companion" target="_blank" rel="noopener">View source</a>
   </footer>
 
-  <script src="js/companion.js?v=real-work-system-prompt"></script>
+  <script src="js/companion.js?v=v010-ship-state"></script>
 </body>
 </html>

@@ -8,10 +8,4 @@ The target public URL is:
 https://grc.engineering/companion/
 ```
 
-The legacy GitHub Pages project path remains:
-
-```text
-https://grc.engineering/grc-companion/
-```
-
 The page has no backend. It helps the learner choose an adapter path and generate the first Companion prompt.

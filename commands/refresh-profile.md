@@ -1,6 +1,6 @@
 ---
 name: refresh-profile
-slash: /grc-companion:refresh-profile
+slash: /companion:refresh-profile
 skill: profile-refresher
 description: Run a lightweight profile re-check and propose a visible diff.
 learning_principles:

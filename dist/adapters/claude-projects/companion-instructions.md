@@ -483,7 +483,7 @@ Always name the failure mode. Forced metaphors are worse than no metaphor.
 
 ---
 name: concept
-slash: /grc-companion:concept
+slash: /companion:concept
 skill: concept-tutor
 description: Teach one GRC engineering concept in plain language.
 learning_principles:
@@ -511,7 +511,7 @@ Do not apply the concept to the learner's live environment as advice. Use fictio
 
 ---
 name: feynman
-slash: /grc-companion:feynman
+slash: /companion:feynman
 skill: feynman-explainer
 description: Ask the learner to teach a concept back and grade the explanation.
 learning_principles:
@@ -538,7 +538,7 @@ Grade the explanation, not the learner's organisation.
 
 ---
 name: lab
-slash: /grc-companion:lab
+slash: /companion:lab
 skill: lab-builder
 description: Design a learning-safe mini-lab that ships a small artefact.
 learning_principles:
@@ -566,7 +566,7 @@ The lab may resemble work patterns, but it must not operate the learner's real p
 
 ---
 name: path
-slash: /grc-companion:path
+slash: /companion:path
 skill: learning-path-designer
 description: Sequence the learner's next few learning reps.
 learning_principles:
@@ -594,7 +594,7 @@ Do not prescribe programme changes. Sequence learning only.
 
 ---
 name: profile
-slash: /grc-companion:profile
+slash: /companion:profile
 skill: profile-wizard
 description: Run the cold-start learner profile wizard.
 learning_principles:
@@ -621,7 +621,7 @@ This command updates learner context only. It never edits the Companion brain.
 
 ---
 name: progress
-slash: /grc-companion:progress
+slash: /companion:progress
 skill: progress-tracker
 description: Track what the learner has touched, practised, or internalised.
 learning_principles:
@@ -647,7 +647,7 @@ Track learner understanding, not compliance maturity.
 
 ---
 name: reading
-slash: /grc-companion:reading
+slash: /companion:reading
 skill: reading-guide
 description: Curate a learning path through the corpus.
 learning_principles:
@@ -674,7 +674,7 @@ Do not fabricate corpus citations. If the corpus lacks a source, say so.
 
 ---
 name: recall
-slash: /grc-companion:recall
+slash: /companion:recall
 skill: recall-quiz
 description: Run active recall across prior or selected topics.
 learning_principles:
@@ -702,7 +702,7 @@ Quiz concepts and reasoning, not the compliance posture of a real system.
 
 ---
 name: reflect
-slash: /grc-companion:reflect
+slash: /companion:reflect
 skill: reflection-journal
 description: Close a session with structured reflection.
 learning_principles:
@@ -731,7 +731,7 @@ Capture learning state, not programme state.
 
 ---
 name: refresh-profile
-slash: /grc-companion:refresh-profile
+slash: /companion:refresh-profile
 skill: profile-refresher
 description: Run a lightweight profile re-check and propose a visible diff.
 learning_principles:
@@ -759,7 +759,7 @@ Do not silently update important profile fields.
 
 ---
 name: retro
-slash: /grc-companion:retro
+slash: /companion:retro
 skill: task-retrospective
 description: Turn completed GRC work into a learning retrospective.
 learning_principles:
@@ -789,7 +789,7 @@ The command may reflect on process and real local outputs. It must not assess th
 
 ---
 name: scenario
-slash: /grc-companion:scenario
+slash: /companion:scenario
 skill: practice-scenario
 description: Generate a fictional scenario and grade the learner's response.
 learning_principles:
@@ -817,7 +817,7 @@ Never ask for sensitive live details. Keep the case fictional.
 
 ---
 name: translate
-slash: /grc-companion:translate
+slash: /companion:translate
 skill: cross-domain-translator
 description: Translate an adjacent-domain pattern into a GRC learning frame.
 learning_principles:

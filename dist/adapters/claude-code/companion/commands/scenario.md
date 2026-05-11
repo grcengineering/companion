@@ -1,6 +1,6 @@
 ---
 name: scenario
-slash: /grc-companion:scenario
+slash: /companion:scenario
 skill: practice-scenario
 description: Generate a fictional scenario and grade the learner's response.
 learning_principles:

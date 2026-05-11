@@ -1,6 +1,6 @@
 ---
 name: path
-slash: /grc-companion:path
+slash: /companion:path
 skill: learning-path-designer
 description: Sequence the learner's next few learning reps.
 learning_principles:

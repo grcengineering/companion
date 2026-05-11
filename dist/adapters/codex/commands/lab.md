@@ -1,6 +1,6 @@
 ---
 name: lab
-slash: /grc-companion:lab
+slash: /companion:lab
 skill: lab-builder
 description: Design a learning-safe mini-lab that ships a small artefact.
 learning_principles:

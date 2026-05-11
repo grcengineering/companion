@@ -1,6 +1,6 @@
 ---
 name: GRCCompanion
-pack-id: grc-companion-v0.1.0
+pack-id: companion-v0.1.0
 version: 0.1.0
 type: skill
 platform: claude-code

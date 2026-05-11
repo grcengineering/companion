@@ -1,6 +1,6 @@
 ---
 name: concept
-slash: /grc-companion:concept
+slash: /companion:concept
 skill: concept-tutor
 description: Teach one GRC engineering concept in plain language.
 learning_principles:

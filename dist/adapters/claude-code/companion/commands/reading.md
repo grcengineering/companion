@@ -1,6 +1,6 @@
 ---
 name: reading
-slash: /grc-companion:reading
+slash: /companion:reading
 skill: reading-guide
 description: Curate a learning path through the corpus.
 learning_principles:

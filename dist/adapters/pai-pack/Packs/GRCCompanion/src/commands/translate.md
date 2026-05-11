@@ -1,6 +1,6 @@
 ---
 name: translate
-slash: /grc-companion:translate
+slash: /companion:translate
 skill: cross-domain-translator
 description: Translate an adjacent-domain pattern into a GRC learning frame.
 learning_principles:
