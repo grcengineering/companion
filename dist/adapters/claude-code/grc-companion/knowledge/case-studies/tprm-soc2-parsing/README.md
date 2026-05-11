@@ -162,7 +162,7 @@ The learner is now working on Phase 2:
 **Quarter 1:**
 - Extend to ISO 27001 certificates
 - Add OCR for scanned PDFs
-- Integrate with GitLab API for automated issue creation
+- Integrate with issue tracker API for automated issue creation
 
 **Quarter 2:**
 - Natural language processing for exception text analysis

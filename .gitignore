@@ -46,3 +46,4 @@ test_*.md
 # Private corpus distillation outputs
 _candidates/
 _briefs/
+_PRIVATE/

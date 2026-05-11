@@ -66,7 +66,7 @@
 
 **Vendor Ecosystem:** 500+ vendors and growing (adding 5-10 new vendors monthly), critical supplier focus on ~50 vendors
 
-**Assessment Tools:** Custom Google Sheets for tracking, GitLab issues for vendor follow-ups, no formal GRC platform yet (evaluating options)
+**Assessment Tools:** Custom Google Sheets for tracking, issue tracker for vendor follow-ups, no formal GRC platform yet (evaluating options)
 
 **Regulatory Environment:** SOC 2 Type 2 (certified 18 months ago), GDPR compliant, preparing for ISO 27001
 
@@ -82,7 +82,7 @@
 
 **Document Systems:** Google Drive (organized by vendor folders)
 
-**Workflow Tools:** Slack for team communication, Google Docs for documentation, GitLab issues for tracking
+**Workflow Tools:** Slack for team communication, Google Docs for documentation, issue tracker for tracking
 
 **Reporting Systems:** Google Sheets dashboards (manual updates), some Looker dashboards from eng team
 

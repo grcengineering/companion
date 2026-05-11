@@ -123,7 +123,7 @@ Create a comprehensive, well-structured learning experience with:
 ### Respect Their Environment Shape
 
 If they say "Google Workspace" - use a toy Google Workspace-shaped example, not Microsoft tooling.
-If they say "GitLab issues" - use a GitLab-shaped practice workflow, not Jira.
+If they name a specific issue tracker, mirror that issue-tracker-shaped practice workflow instead of switching tools.
 If they say "Excel dashboards" - build on synthetic Excel examples, don't force PowerBI.
 
 ### Address Their Specific Challenges
@@ -279,7 +279,7 @@ Ask yourself:
 
 **Document Systems:** [DOCS - e.g., "SharePoint", "Confluence", "Google Drive", "Box", "Dropbox", "Network drives"]
 
-**Workflow Tools:** [WORKFLOW - e.g., "Teams", "Slack", "ServiceNow", "GitLab issues", "Jira", "Email/manual processes", "Asana"]
+**Workflow Tools:** [WORKFLOW - e.g., "Teams", "Slack", "ServiceNow", "issue tracker", "Email/manual processes", "Asana"]
 
 **Reporting Systems:** [REPORTING - e.g., "PowerBI", "Tableau", "Excel dashboards", "Google Sheets", "Looker", "Manual reports", "None"]
 

@@ -1,0 +1,567 @@
+#!/usr/bin/env python3
+"""Draft Wave 1 knowledge cards from private briefs and authored specs.
+
+This script intentionally writes to _drafts/ only. It does not promote cards into
+knowledge/ and does not rebuild any public knowledge index.
+"""
+
+from __future__ import annotations
+
+import re
+import textwrap
+from pathlib import Path
+
+import yaml
+
+
+ROOT = Path(__file__).resolve().parents[1]
+BRIEFS = ROOT / "_briefs"
+DRAFTS = ROOT / "_drafts"
+
+
+PUBLIC_URLS = {
+    "signal-vs-noise": "https://grcengineer.com/p/signal-vs-noise-the-mental-model-that-transforms-grc-effectiveness-288d49a1d7c4db85",
+    "compliance-as-cope": "https://grcengineer.com/p/compliance-as-cope-how-grc-engineering-automated-the-wrong-thing",
+    "grc-as-git": "https://grcengineer.com/p/grc-as-git-a-mental-model-for-your-whole-programme",
+    "engineer-process-before-automate": "https://grcengineer.com/p/engineer-your-grc-process-before-you-automate-it",
+    "your-first-grc-lead-left": "https://grcengineer.com/p/your-first-grc-lead-left-their-instincts-are-still-running-your-program",
+    "where-grc-is-a-product": "https://grcengineer.com/p/where-grc-is-a-product-breaking-the-project-mindset",
+    "becoming-a-grc-product-manager": "https://grcengineer.com/p/becoming-a-grc-product-manager-the-evolution-beyond-compliance-tpm-ea19a015e4f8a1a3",
+    "from-silos-to-systems": "https://grcengineer.com/p/from-silos-to-systems-grc-architecture-ccbc2434d13b365f",
+    "central-data-layer": "https://grcengineer.com/p/central-data-layer-the-foundation-of-modern-enterprise-grc",
+    "audit-007": "https://grcengineer.com/p/your-certification-covers-100-your-auditor-checked-0-07",
+    "auditors-or-attackers": "https://grcengineer.com/p/are-you-building-for-auditors-or-attackers-the-grc-engineering-shift",
+}
+
+
+OLD_LINKEDIN = {
+    "systems": "https://www.linkedin.com/posts/ayoubfandi_systems-are-interconnected-parts-that-interact-activity-6899329671591526400-qeFu",
+    "risk_foundation": "https://www.linkedin.com/posts/ayoubfandi_riskmanagement-informationsecurity-activity-6785134093924368384-pW8D",
+    "risk_quantification": "https://www.linkedin.com/posts/ayoubfandi_whats-in-your-risk-assessment-activity-6641263653049909249-Qmrz",
+    "grc_engineering_roadmap": "https://www.linkedin.com/posts/ayoubfandi_grc-engineering-a-roadmap-activity-7115330424767176704-4B5i",
+    "commodity": "https://www.linkedin.com/posts/ayoubfandi_is-compliance-becoming-a-commodity-you-activity-7112441989454778368-0Fdu",
+    "policy_gap": "https://www.linkedin.com/posts/ayoubfandi_27-countries-sign-cybersecurity-pledge-with-activity-6582292979610861568-srV3",
+    "attacker": "https://www.linkedin.com/posts/ayoubfandi_to-summarise-the-foundational-difference-activity-6887089243903033344-a401",
+    "customer_trust": "https://www.linkedin.com/posts/ayoubfandi_informationsecurity-customertrust-grc-activity-7084814293015109632-MIEn",
+    "grc_value": "https://www.linkedin.com/posts/ayoubfandi_grcengineering-activity-7124779622822498304-Aoay",
+}
+
+
+DERIVED = {
+    "evidence-as-byproduct": {
+        "type": "thesis",
+        "title": "Evidence Should Be a Byproduct of Work",
+        "expands": ["evidence-as-byproduct"],
+        "core": "Healthy evidence is produced by the work itself. A control should leave a trail because a system ran, an approval happened, a check executed, or a decision was recorded in the normal path of work. When evidence has to be recreated later, the programme is no longer observing reality; it is staging reality for an audience.",
+        "use": "Invoke this card when a learner talks about screenshots, audit prep, evidence requests, control automation, or any workflow where the evidence task has become separate from the control task. It is especially useful before a lab on access reviews, change management, vendor reviews, or continuous control monitoring.",
+        "contrast": "This is not a claim that auditors do not need artefacts. It pushes back against evidence collection as the operating model. The companion should separate evidence generation from evidence harvesting: the first is architectural, the second is clerical.",
+        "practice": "Where in your current process are people recreating proof after the fact instead of producing proof as part of doing the work?",
+    },
+    "compliance-theatre": {
+        "type": "anti_pattern",
+        "title": "Compliance Theatre",
+        "expands": ["compliance-theatre"],
+        "core": "Compliance theatre happens when the organisation optimises the appearance of control instead of the behaviour the control was meant to influence. The artefacts look mature: clean matrices, carefully worded policies, signed exceptions, colour-coded dashboards. The underlying system may still be brittle, invisible, or unchanged.",
+        "use": "Invoke this card when the learner describes work that satisfies a framework but does not change risk, engineering behaviour, decision quality, or customer trust. It helps convert frustration with paperwork into a sharper diagnosis of what the paperwork is compensating for.",
+        "contrast": "This is not anti-compliance. The point is that compliance should be a useful description and verification layer, not the main event. Theatre begins when the audit story becomes more important than the operating reality.",
+        "practice": "Which artefact in your programme would still look good even if the underlying behaviour stopped working tomorrow?",
+    },
+    "audit-driven-thinking": {
+        "type": "anti_pattern",
+        "title": "Audit-Driven Thinking",
+        "expands": ["audit-driven-thinking"],
+        "core": "Audit-driven thinking starts from the question, 'What will the auditor ask for?' and lets that answer shape the programme. The result is a GRC function that moves in audit seasons, speaks in control IDs, and treats business reality as raw material for evidence binders.",
+        "use": "Invoke this card when a learner frames every decision around audit readiness, certification, request lists, or auditor preference. Use it to redirect them toward the system the audit is supposed to sample: ownership, execution, observability, and improvement.",
+        "contrast": "This does not dismiss audits. Audits are useful constraints and external feedback loops. The anti-pattern is making the audit the product, the roadmap, and the measure of truth.",
+        "practice": "If the next audit disappeared, which parts of your current GRC work would still be worth doing next week?",
+    },
+    "tool-first-automation": {
+        "type": "anti_pattern",
+        "title": "Tool-First Automation",
+        "expands": ["tool-first-automation"],
+        "core": "Tool-first automation begins with a platform, connector, AI agent, or workflow engine before the team has named the operating problem. It feels modern because something moves automatically, but it often automates ambiguity, duplicate data, weak ownership, and poor control design.",
+        "use": "Invoke this card when the learner wants to buy, script, or agent-build before they can explain the trigger, owner, decision, source of truth, and failure mode. It is a useful warning before lab-builder produces any automation exercise.",
+        "contrast": "This is not anti-tooling. Tools are leverage. The card pushes back against treating tools as rescue missions for unclear processes. Good automation makes a good operating model faster; it does not make an absent operating model appear.",
+        "practice": "Before choosing a tool, can you describe the manual version of the process well enough that a new teammate could run it correctly?",
+    },
+    "grc-as-git": {
+        "type": "metaphor",
+        "title": "GRC as Git",
+        "expands": ["MP2"],
+        "core": "GRC as Git treats governance as a versioned system rather than a pile of documents. A policy change should have a diff or redline. A draft policy is a branch. Approval is a merge. The approved version is a commit. The audit trail is blame, not as punishment, but as traceability. A framework release is a tag. A template check is a hook. An attestation is closer to a signed commit than a PDF ritual.",
+        "use": "Invoke this card when teaching policy management, control change, exception handling, evidence history, or approval workflows. It helps technical learners see GRC as state management, and helps non-technical learners understand why versioning and review discipline matter.",
+        "contrast": "This is not saying every GRC team must literally use Git. Forced transfer is the failure mode. The metaphor matters because Git names the primitives: history, review, merge, ownership, reversibility, and release.",
+        "practice": "Pick one governance artefact. What would its branch, diff, merge, commit, tag, hook, and signed attestation be in GRC language?",
+    },
+    "human-api": {
+        "type": "metaphor",
+        "title": "The Human API",
+        "expands": ["MP3"],
+        "core": "The Human API is the interface layer between GRC and the people who actually operate the business. If the interface is unclear, every request becomes custom integration work: Slack clarifications, spreadsheet archaeology, meetings to decode what the control meant, and repeated explanations of the same evidence ask.",
+        "use": "Invoke this card when the learner is struggling with stakeholder engagement, engineering pushback, unclear asks, or repeated evidence friction. It helps them design the request, response, error handling, and feedback loop instead of blaming the stakeholder.",
+        "contrast": "This is not a trick for making people comply. It pushes back against treating teams as passive evidence providers. A good interface respects their workflow, vocabulary, incentives, and constraints.",
+        "practice": "What is one recurring GRC request that could be redesigned like an API: clear input, output, owner, timing, and error message?",
+    },
+    "policy-as-interface": {
+        "type": "metaphor",
+        "title": "Policy as Interface",
+        "expands": ["policy-as-interface"],
+        "core": "A policy is an interface between intent and behaviour. It should help a person or system know what to do, why it matters, where the boundary is, and how exceptions are handled. When a policy only exists as static text, it may state intent without changing the operating surface.",
+        "use": "Invoke this card when teaching policy design, standards, procedures, exceptions, or control mapping. It is useful when a learner wants to write more policy but has not tested whether the current policy helps people make decisions.",
+        "contrast": "This is not policy-as-decoration and not policy-as-code maximalism. It pushes back against policies that are legally tidy but operationally inert, and against encoding policy before understanding the human workflow.",
+        "practice": "Where does one of your policies behave like a broken interface: unclear inputs, hidden assumptions, no feedback, or confusing exceptions?",
+    },
+    "ai-grc-workflows": {
+        "type": "concept",
+        "title": "AI GRC Workflows",
+        "expands": ["AI-in-GRC"],
+        "core": "AI in GRC is most useful when it is placed inside a real workflow with clear inputs, constraints, review points, and decision rights. The valuable question is not 'Can AI do this?' but 'Which part of this GRC workflow needs reasoning, transformation, summarisation, critique, or retrieval?'",
+        "use": "Invoke this card when the learner wants to use Claude, Codex, agents, or LLMs for GRC work. It helps them separate learning loops, drafting support, evidence interpretation, and operational decisions.",
+        "contrast": "This is not autonomous GRC. It pushes back against replacing programme ownership with generated output. AI can make a practitioner sharper, faster, and more reflective; it should not silently certify, approve, or operate controls.",
+        "practice": "In one GRC task you do often, which step needs judgement and which step only needs transformation or formatting?",
+    },
+    "continuous-assurance": {
+        "type": "concept",
+        "title": "Continuous Assurance",
+        "expands": ["continuous-assurance"],
+        "core": "Continuous assurance means the organisation can see whether important control behaviours are happening close to when they happen. It shifts assurance from periodic reconstruction to ongoing visibility. The point is not infinite monitoring; the point is reducing the gap between real work and assurance knowledge.",
+        "use": "Invoke this card when discussing control monitoring, evidence freshness, dashboard design, audit preparation, or recurring manual checks. It pairs naturally with evidence-as-byproduct and control-design.",
+        "contrast": "This is not a dashboard fetish. Continuous assurance fails when it turns into real-time noise without decision rights. A signal only matters if someone knows what it means and can act on it.",
+        "practice": "Which control in your world would become more useful if its status were visible weekly instead of reconstructed quarterly?",
+    },
+    "control-design": {
+        "type": "concept",
+        "title": "Control Design",
+        "expands": ["control-design"],
+        "core": "Control design is the act of shaping behaviour or verifying behaviour in a way that connects to a real objective. A useful control has a trigger, owner, action, expected evidence, failure path, and reason to exist. Without those pieces, the control is only a sentence in a matrix.",
+        "use": "Invoke this card when a learner is mapping frameworks, writing control language, preparing testing, or trying to automate evidence. It gives them a checklist for making the control observable before making it auditable.",
+        "contrast": "This is not control wording polish. It pushes back against copying generic controls and hoping the organisation will contort itself around them. The control must fit the terrain.",
+        "practice": "Choose one control and name its trigger, owner, behaviour, evidence, and failure path without looking at the framework language.",
+    },
+    "enterprise-grc-automation": {
+        "type": "concept",
+        "title": "Enterprise GRC Automation",
+        "expands": ["enterprise-grc-automation"],
+        "core": "Enterprise GRC automation is coordination architecture. At scale, the hard part is rarely a single connector. It is the number of systems, owners, exceptions, evidence formats, frameworks, and review loops that must remain coherent as the organisation changes.",
+        "use": "Invoke this card when a learner compares startup-friendly automation with enterprise constraints, or when they assume a proof of concept will scale linearly. It helps them identify data ownership, workflow boundaries, and integration debt.",
+        "contrast": "This is not bigger tooling for its own sake. It pushes back against both DIY heroics and vendor fantasies. Enterprise automation must respect complexity without surrendering to it.",
+        "practice": "What breaks first when your neat GRC automation has to support three business units, two clouds, and overlapping frameworks?",
+    },
+    "framework-translation": {
+        "type": "concept",
+        "title": "Framework Translation",
+        "expands": ["framework-translation"],
+        "core": "Framework translation is the discipline of turning external requirements into internal operating language. Frameworks are maps; the organisation is the terrain. The companion should teach the learner to preserve intent while changing vocabulary, ownership, artefacts, and workflow.",
+        "use": "Invoke this card when the learner is mapping ISO, SOC 2, NIST, CMMC, FedRAMP, or customer requirements into real work. It is especially useful for non-technical learners who need to communicate with engineering.",
+        "contrast": "This is not one-to-one control mapping. It pushes back against documentation preceding reality. A mapped requirement is only useful when it lands in a system that can execute or verify it.",
+        "practice": "Take one framework requirement and translate it into the language of the team that would actually satisfy it.",
+    },
+    "risk-as-code": {
+        "type": "concept",
+        "title": "Risk as Code",
+        "expands": ["risk-as-code"],
+        "core": "Risk as code means making risk assumptions explicit enough that they can be inspected, challenged, versioned, and reused. It is less about turning judgement into Python and more about refusing to hide judgement inside vague heat maps or inherited scoring rituals.",
+        "use": "Invoke this card when learners discuss risk matrices, risk quantification, automation, FAIR, scoring, or risk registers. It helps them ask what assumptions are being encoded and who can challenge them.",
+        "contrast": "This is not pretending risk is perfectly computable. It pushes back against both spreadsheet mysticism and fake precision. The goal is traceable reasoning, not decorative numbers.",
+        "practice": "What is one risk score in your programme whose assumptions could be written down and tested like logic?",
+    },
+    "vendor-review-learning": {
+        "type": "concept",
+        "title": "Vendor Review Learning",
+        "expands": ["vendor-review-learning"],
+        "core": "Vendor reviews are not only operational gates; they are rich learning surfaces. Each questionnaire, trust centre review, exception, or security discussion reveals how the organisation reasons about dependency, evidence quality, customer trust, and acceptable uncertainty.",
+        "use": "Invoke this card when a learner describes a real vendor review they performed locally in Claude or Codex. The companion should not approve or reject the vendor. It should extract patterns from the work, help the learner name tradeoffs, and turn the experience into a reusable mental model.",
+        "contrast": "This is not vendor assessment outsourcing. The companion must not score live vendors or make procurement decisions. It can help the practitioner learn from the work they already did.",
+        "practice": "In your last vendor review, what did you learn about your own organisation's evidence standards?",
+    },
+    "risk-register": {
+        "type": "concept",
+        "title": "Risk Register",
+        "expands": ["risk-register"],
+        "related": ["risk-as-code", "risk-quantification", "control-design"],
+        "core": "A risk register should be a decision system, not a storage container. The useful register connects risk statements to owners, evidence, treatment choices, engineering work, business constraints, and review rhythms. If it only grows, ages, and produces heat maps, it is documenting anxiety rather than helping the organisation act.",
+        "use": "Invoke this card when learners describe static registers, stale accepted risks, disconnected remediation, or board-facing risk decks that engineering never sees. It helps turn the register into an action surface.",
+        "contrast": "This is not a call to delete risk registers. It pushes back against registers that preserve descriptions while failing to change prioritisation, investment, or ownership.",
+        "practice": "Which risk in your register has the clearest next action, owner, and signal that would prove it is getting better?",
+    },
+    "risk-quantification": {
+        "type": "concept",
+        "title": "Risk Quantification",
+        "expands": ["risk-quantification"],
+        "related": ["risk-as-code", "risk-register", "signal-vs-noise"],
+        "core": "Risk quantification is a discipline for making uncertainty discussable. It forces the practitioner to separate frequency, impact, confidence, assumptions, and decision usefulness. Done well, it upgrades risk conversations from coloured adjectives to explicit reasoning.",
+        "use": "Invoke this card when learners ask about FAIR, cyber risk quantification, heat maps, board reporting, or security investment decisions. It should push them to ask what decision the number is meant to improve.",
+        "contrast": "This is not fake precision. It pushes back against multiplying ordinal scores and calling the result quantitative. A number without a decision, range, or assumption trail is just theatre with decimals.",
+        "practice": "What decision would improve if one of your top risks moved from red/yellow/green to a quantified range with stated assumptions?",
+    },
+    "trust-center": {
+        "type": "concept",
+        "title": "Trust Center",
+        "expands": ["trust-center"],
+        "related": ["vendor-review-learning", "evidence-as-byproduct", "continuous-assurance"],
+        "core": "A trust center is not just a polished evidence locker. At its best, it is the public interface of an assurance system: what the organisation knows about itself, what it is willing to prove, what it updates, and how it reduces repeated trust friction with customers.",
+        "use": "Invoke this card when learners discuss customer trust, security questionnaires, public assurance pages, sales enablement, or evidence reuse. It helps them connect trust centre content to the underlying evidence system.",
+        "contrast": "This is not marketing copy with SOC 2 badges. It pushes back against trust centres that publish confidence while the internal evidence process remains manual, stale, or disconnected.",
+        "practice": "If a customer saw your trust centre today, which claim would be easiest to prove from live operating evidence?",
+    },
+}
+
+
+AUTHORED = [
+    {
+        "slug": "thesis-inversion",
+        "type": "thesis",
+        "title": "The Inversion Thesis",
+        "expands": ["T1"],
+        "derived_from": [
+            "nl_you_still_work_in_grc_what_grc_engineering_is_and_what_it_isnt",
+            OLD_LINKEDIN["systems"],
+        ],
+        "public_reference": ["https://grcengineer.com/p/you-still-work-in-grc-what-grc-engineering-is-and-what-it-isn-t"],
+        "core": "The inversion thesis says good GRC starts from running systems and derives governance from reality. Instead of beginning with a policy, framework, or audit request and pushing it downward, the practitioner studies how work already happens: who decides, which systems create evidence, where failure shows up, and what incentives shape behaviour. Policy then becomes a description and constraint layer around reality, not a fantasy layer above it.",
+        "use": "Invoke this card when learners start with 'what does the framework say?' before they understand the system. It is also useful when they are tempted to write policy without looking at logs, tickets, approvals, ownership, and actual execution paths.",
+        "contrast": "This is not bottom-up chaos or ignoring requirements. It pushes back against paper-first GRC. The inversion is methodological: observe the operating system, name its primitives, then map requirements onto what can actually be changed or verified.",
+        "practice": "What policy or control in your world would change if you had to derive it from the way work actually happens today?",
+    },
+    {
+        "slug": "thesis-architecture-before-automation",
+        "type": "thesis",
+        "title": "Architecture Before Automation",
+        "expands": ["T2"],
+        "derived_from": [
+            "nl_engineer_your_grc_process_before_you_automate_it",
+            OLD_LINKEDIN["systems"],
+        ],
+        "public_reference": [PUBLIC_URLS["engineer-process-before-automate"]],
+        "core": "Architecture before automation means the process must be understandable before it becomes faster. A broken control workflow does not become modern because a tool moves it. The practitioner first identifies the trigger, owner, source of truth, decision, evidence, exception path, and feedback loop. Only then can automation remove drag rather than multiply confusion.",
+        "use": "Invoke this card whenever a learner wants to buy a platform, build an agent, or script a process before describing the operating model. It should precede lab-builder exercises that involve automation.",
+        "contrast": "This is not an argument for manual work. It pushes back against the fantasy that automation supplies architecture. Good tools are accelerants. They make strong processes scalable and weak processes noisy.",
+        "practice": "Which process are you trying to automate before you can draw its trigger, owner, decision, and failure path?",
+    },
+    {
+        "slug": "thesis-engineering-as-capability",
+        "type": "thesis",
+        "title": "Engineering as Capability, Not a Role",
+        "expands": ["T4"],
+        "derived_from": [
+            "nl_grc_engineer_vs_grc_engineering_which_one_you_need_maybe_both",
+            OLD_LINKEDIN["grc_engineering_roadmap"],
+        ],
+        "public_reference": ["https://grcengineer.com/p/grc-engineer-vs-grc-engineering-which-one-you-need-maybe-both"],
+        "core": "GRC engineering is a capability before it is a job title. A team may have a GRC Engineer, but the deeper shift is that the function learns to reason in systems, data, interfaces, automation, feedback loops, and product surfaces. The capability can show up in policy work, risk work, vendor work, customer trust, or audit preparation.",
+        "use": "Invoke this card when learners ask whether they need to code, change title, or become a technical specialist to practise GRC engineering. It helps them see the discipline as a way of operating, not only a role ladder.",
+        "contrast": "This is not role inflation. It pushes back against reducing the movement to one fashionable job description. A role without capability becomes theatre; capability can improve the programme even before headcount changes.",
+        "practice": "What is one engineering capability your GRC team could practise this month without changing anyone's job title?",
+    },
+    {
+        "slug": "thesis-leverage-dont-rebuild",
+        "type": "thesis",
+        "title": "Leverage, Don't Rebuild",
+        "expands": ["T11"],
+        "derived_from": [
+            "nl_unlocking_the_hidden_value_in_your_current_grc_platform",
+            OLD_LINKEDIN["systems"],
+        ],
+        "public_reference": ["https://grcengineer.com/p/unlocking-the-hidden-value-in-your-current-grc-platform-59daef9c5cf9c5f4"],
+        "core": "Leverage, don't rebuild means the first engineering move is often to use the systems already carrying the work. Security tools, ticketing systems, cloud platforms, HR systems, CI/CD, document stores, and customer trust workflows already contain operational truth. GRC earns leverage by connecting to those surfaces instead of creating parallel replicas.",
+        "use": "Invoke this card when learners want to create a custom GRC data pond, duplicate security tooling, or rebuild evidence flows without checking what already exists. It is a practical guardrail for local-work learning.",
+        "contrast": "This is not a ban on building. It pushes back against rebuilding as identity. Build when the missing capability is real. Reuse when the existing system already knows the answer.",
+        "practice": "Which GRC artefact are you recreating from scratch even though another system already contains the operating truth?",
+    },
+    {
+        "slug": "thesis-grc-as-product",
+        "type": "thesis",
+        "title": "GRC Is a Product, Not a Project",
+        "expands": ["T3"],
+        "derived_from": [
+            "nl_where_grc_is_a_product_breaking_the_project_mindset",
+            "nl_becoming_a_grc_product_manager_the_evolution_beyond_compliance_tpm",
+            OLD_LINKEDIN["grc_value"],
+        ],
+        "public_reference": [PUBLIC_URLS["where-grc-is-a-product"], PUBLIC_URLS["becoming-a-grc-product-manager"]],
+        "core": "GRC is a product when it has users, jobs to be done, surfaces, feedback, iteration, and a roadmap. It is a project when it appears for a deadline, produces artefacts, and then waits for the next audit season. The product view asks what recurring user pain the GRC function reduces and what behaviour it makes easier.",
+        "use": "Invoke this card when learners describe one-off compliance pushes, tool rollouts, policy rewrites, or maturity projects with no operating cadence. It helps them define users: engineers, executives, sales, auditors, legal, customers, and the GRC team itself.",
+        "contrast": "This is not saying GRC should become a SaaS company. It pushes back against deadline-only thinking. A product mindset keeps improving the service even when the audit is over.",
+        "practice": "Who is the user of your current GRC process, and what job are they trying to get done?",
+    },
+    {
+        "slug": "thesis-data-layer-foundation",
+        "type": "thesis",
+        "title": "GRC Is a Data Engineering Problem",
+        "expands": ["T6"],
+        "derived_from": [
+            "nl_from_silos_to_systems_grc_architecture",
+            "nl_building_a_central_data_layer_the_foundation_of_modern_enterprise_grc",
+            OLD_LINKEDIN["systems"],
+        ],
+        "public_reference": [PUBLIC_URLS["from-silos-to-systems"], PUBLIC_URLS["central-data-layer"]],
+        "core": "Modern GRC is a data engineering problem because assurance depends on the movement, quality, ownership, and interpretation of data. Evidence lives across systems. Control state changes over time. Risk reasoning depends on context. Without a reliable data layer, the programme compensates with spreadsheets, meetings, screenshots, and memory.",
+        "use": "Invoke this card when learners talk about fragmented evidence, duplicated spreadsheets, inconsistent owners, weak metrics, or control visibility. It helps them connect architecture to practical GRC work.",
+        "contrast": "This is not data maximalism. It pushes back against treating GRC as document management. The data layer matters because it makes better questions possible: what changed, who owns it, what failed, and what needs attention?",
+        "practice": "Which recurring GRC question would become easier if the underlying data had one owner and one reliable path?",
+    },
+    {
+        "slug": "thesis-commoditization-escalator",
+        "type": "thesis",
+        "title": "The Commoditization Escalator",
+        "expands": ["T9"],
+        "derived_from": [
+            OLD_LINKEDIN["commodity"],
+            "nl_the_grc_engineering_maturity_model_v10",
+        ],
+        "public_reference": ["https://grcengineer.com/p/the-grc-engineering-maturity-model-v1-0"],
+        "core": "The commoditization escalator says parts of compliance keep moving downward into cheaper tools, templates, platforms, and managed services. What used to be scarce expertise becomes expected infrastructure. Practitioners create durable value by moving upward: architecture, translation, product thinking, risk reasoning, stakeholder design, and business judgement.",
+        "use": "Invoke this card when learners worry that automation will replace GRC work or when they spend too much energy defending low-leverage manual tasks. It reframes the career question: what becomes commodity, and what capability becomes more valuable because of that?",
+        "contrast": "This is not fatalism about the profession. It pushes back against clinging to work because it used to be specialised. The escalator rewards practitioners who learn to operate above the commodity layer.",
+        "practice": "Which part of your current work is becoming commodity, and what higher-level capability should you practise instead?",
+    },
+    {
+        "slug": "metaphor-grc-as-plumbing",
+        "type": "metaphor",
+        "title": "GRC as Plumbing",
+        "expands": ["MP1"],
+        "derived_from": [
+            "nl_unlocking_the_hidden_value_in_your_current_grc_platform",
+            "nl_the_3_types_of_automation_in_grc_engineering_pick_the_right_one",
+            OLD_LINKEDIN["systems"],
+        ],
+        "public_reference": ["https://grcengineer.com/p/the-3-types-of-automation-in-grc-engineering-pick-the-right-one"],
+        "core": "GRC as plumbing treats assurance as infrastructure that should quietly move signals, ownership, evidence, and decisions through the organisation. Good plumbing is not admired every day. It is noticed when pressure drops, water leaks, pipes cross incorrectly, or waste flows backwards. GRC has similar failure modes: blocked evidence, stale owners, duplicated requests, and invisible leaks in accountability.",
+        "use": "Invoke this card when learners are designing behind-the-scenes workflows, data flows, intake, escalations, or control monitoring. It helps them value boring reliability over performative dashboards.",
+        "contrast": "This is not saying GRC should be invisible to the business. It pushes back against ornamental GRC. Plumbing is valuable because it makes the visible rooms usable.",
+        "practice": "Where is your GRC plumbing leaking: source data, ownership, routing, evidence, escalation, or review?",
+    },
+    {
+        "slug": "anti-pattern-audit-methodology-gap",
+        "type": "anti_pattern",
+        "title": "The 0.07% Audit",
+        "expands": ["new anti-pattern"],
+        "derived_from": [
+            PUBLIC_URLS["audit-007"],
+            "nl_are_you_building_for_auditors_or_attackers_the_grc_engineering_shift",
+            OLD_LINKEDIN["attacker"],
+        ],
+        "public_reference": [PUBLIC_URLS["audit-007"], PUBLIC_URLS["auditors-or-attackers"]],
+        "core": "The 0.07% Audit names the gap between the confidence implied by a certification and the tiny slice of reality an audit can directly inspect. A certificate may cover the whole programme in market language, while the audit method relies on sampling, scoped evidence, time-boxed review, and professional judgement.",
+        "use": "Invoke this card when learners overestimate what a certification proves, or when they confuse audit success with attacker resistance. It helps them respect audits while understanding their measurement limits.",
+        "contrast": "This is not auditor-bashing. It pushes back against certificate absolutism. Audits are useful assurance instruments, but they are not full-system observability, red-team pressure, operational telemetry, or proof that every control behaved well all year.",
+        "practice": "Which claim in your certification story sounds broader than the evidence method can actually support?",
+    },
+]
+
+
+READING_REFERENCES = [
+    {
+        "slug": "ref-signal-vs-noise",
+        "title": "Signal vs. Noise",
+        "expands": ["T5", "outcomes-over-activity"],
+        "derived_from": ["nl_signal_vs_noise_the_mental_model_that_transforms_grc_effectiveness", OLD_LINKEDIN["risk_foundation"]],
+        "public_url": PUBLIC_URLS["signal-vs-noise"],
+        "related": ["continuous-assurance", "risk-quantification", "evidence-as-byproduct"],
+        "lede": "Read this when the learner is confusing activity with impact. The piece sharpens the distinction between evidence volume and useful assurance signal, which supports the primitive that GRC should reduce translation loss and improve decisions rather than simply produce more compliance motion. It is a strong companion reference for coaching learners to ask what a metric changes, not just what it counts.",
+    },
+    {
+        "slug": "ref-compliance-as-cope",
+        "title": "Compliance as Cope",
+        "expands": ["compliance-theatre"],
+        "derived_from": ["nl_20260310_risk_compliance_control", OLD_LINKEDIN["risk_quantification"]],
+        "public_url": PUBLIC_URLS["compliance-as-cope"],
+        "related": ["compliance-theatre", "tool-first-automation", "risk-as-code"],
+        "lede": "This reference explains how GRC can automate the easiest visible work while avoiding the harder risk work underneath. Use it with learners who equate maturity with evidence automation. It extends the compliance-theatre anti-pattern into the AI and automation era, especially when a team celebrates workflow speed while leaving risk reasoning, ownership, and investment decisions mostly unchanged. It keeps the learning focus on value.",
+    },
+    {
+        "slug": "ref-grc-as-git",
+        "title": "GRC as Git",
+        "expands": ["metaphor grc-as-git"],
+        "derived_from": ["Data/drafts/2026-05-05-grc-as-git-mental-model.md", "nl_git_based_policy_management_the_version_controlled_future_of_governance"],
+        "public_url": PUBLIC_URLS["grc-as-git"],
+        "related": ["grc-as-git", "policy-as-interface", "evidence-as-byproduct"],
+        "lede": "Use this as the canonical reading for version-controlled governance. It gives the companion a concrete bridge from software engineering primitives to GRC: diffs, branches, approvals, commits, tags, hooks, and audit trails translated into governance language. It is especially useful when teaching policy change, control history, exception handling, approval traceability, and why governance needs state management instead of static document memory alone.",
+    },
+    {
+        "slug": "ref-engineer-process-before-automate",
+        "title": "Engineer Your GRC Process Before You Automate It",
+        "expands": ["T2", "architecture-before-automation"],
+        "derived_from": ["nl_engineer_your_grc_process_before_you_automate_it", OLD_LINKEDIN["systems"]],
+        "public_url": PUBLIC_URLS["engineer-process-before-automate"],
+        "related": ["thesis-architecture-before-automation", "tool-first-automation", "enterprise-grc-automation"],
+        "lede": "This is the practical entry point for architecture before automation. It should be suggested before any learner builds scripts, agents, or platform workflows. The core lesson is simple: unclear process plus automation creates faster confusion, not better GRC. Pair it with labs where the learner first draws the manual process, then decides what deserves tooling and what should remain judgement-led.",
+    },
+    {
+        "slug": "ref-your-first-grc-lead-left",
+        "title": "Your First GRC Lead Left",
+        "expands": ["legacy-vs-operating-primitives"],
+        "derived_from": ["nl_20260427_primitives_problem", OLD_LINKEDIN["policy_gap"]],
+        "public_url": PUBLIC_URLS["your-first-grc-lead-left"],
+        "related": ["thesis-inversion", "framework-translation", "policy-as-interface"],
+        "lede": "This reading helps learners see how inherited instincts keep operating after the person who introduced them leaves. Use it to teach legacy-vs-operating primitives: which rituals still serve the programme, which only preserve old assumptions, and where reality needs to be re-observed. It is a useful reference for sessions about inherited controls, stale policies, and programme archaeology.",
+    },
+]
+
+
+def wrap(text: str) -> str:
+    return textwrap.fill(" ".join(text.split()), width=88)
+
+
+def read_brief(slug: str) -> dict:
+    path = BRIEFS / f"brief-{slug}.yaml"
+    with path.open() as f:
+        return yaml.safe_load(f)
+
+
+def clean_quote(snippet: str) -> str:
+    text = re.sub(r"\s+", " ", snippet).strip()
+    text = re.sub(r"[*_`#|\\-]+", "", text).strip()
+    words = text.split()
+    return " ".join(words[:18])
+
+
+def frontmatter(card: dict) -> str:
+    fields = {
+        "schema_version": 1,
+        "slug": card["slug"],
+        "title": card["title"],
+        "card_type": card["type"],
+        "status": "draft",
+        "source_basis": card["source_basis"],
+        "derived_from": card.get("derived_from", []),
+        "expands_brain_primitive": card.get("expands", []),
+        "related_cards": card.get("related", []),
+        "citation_id": card["slug"],
+        "public_reference": card.get("public_reference", []),
+        "reviewed_by": "",
+        "reviewed_at": "",
+    }
+    if card["type"] == "reading_reference":
+        fields["public_url"] = card["public_url"]
+    return "---\n" + yaml.safe_dump(fields, sort_keys=False, allow_unicode=False) + "---\n\n"
+
+
+def body_standard(card: dict) -> str:
+    depth = (
+        f"In the Companion, this is a reusable teaching card rather than a definition. "
+        f"It should help the learner move from a familiar surface problem into the "
+        f"deeper operating pattern: what is being optimised, what evidence exists, "
+        f"who owns the behaviour, how the system learns, and where the boundary sits "
+        f"between learning support and running the programme. When the learner brings "
+        f"real local work, the Companion can use {card['title']} to name what happened, "
+        f"extract a transferable principle, and leave the learner with a sharper next "
+        f"move. When the learner has no live context, the same card can drive a "
+        f"synthetic lab or scenario without pretending to operate their environment. "
+        f"The output should be practical, named, and reusable."
+    )
+    sections = [
+        f"# {card['title']}",
+        "## Core Idea\n\n" + wrap(card["core"]) + "\n\n" + wrap(depth),
+        "## Use In Teaching\n\n" + wrap(card["use"]),
+        "## Contrast\n\n" + wrap(card["contrast"]),
+        "## Practice Prompt\n\n" + wrap(card["practice"]),
+    ]
+    quotes = card.get("quotes", [])
+    if quotes:
+        sections.append("## Notable Quotes\n\n" + "\n".join(f"- \"{quote}\"" for quote in quotes[:2]))
+    return "\n\n".join(sections) + "\n"
+
+
+def body_reference(card: dict) -> str:
+    return f"# {card['title']}\n\n{wrap(card['lede'])}\n\nCitation pointer: {card['public_url']}\n"
+
+
+def derived_card(slug: str, promoted_slug: str | None = None) -> dict:
+    spec = DERIVED[promoted_slug or slug]
+    brief_slug = slug
+    brief = read_brief(brief_slug)
+    source_evidence = brief.get("source_evidence", [])
+    source_ids = [item["source_id"] for item in source_evidence[:5]]
+    related = spec.get("related") or brief.get("suggested_related_cards") or []
+    card_slug = promoted_slug or brief["proposed_slug"]
+    quotes = [clean_quote(item["snippet"]) for item in source_evidence[:2]]
+    return {
+        "slug": card_slug,
+        "type": spec["type"],
+        "title": spec["title"],
+        "source_basis": "derived",
+        "derived_from": source_ids,
+        "expands": spec["expands"],
+        "related": related,
+        "public_reference": [],
+        "core": spec["core"],
+        "use": spec["use"],
+        "contrast": spec["contrast"],
+        "practice": spec["practice"],
+        "quotes": quotes,
+    }
+
+
+def authored_cards() -> list[dict]:
+    cards = []
+    for spec in AUTHORED:
+        cards.append({"source_basis": "authored", "related": [], **spec})
+    for spec in READING_REFERENCES:
+        cards.append(
+            {
+                "slug": spec["slug"],
+                "type": "reading_reference",
+                "title": spec["title"],
+                "source_basis": "authored",
+                "derived_from": spec["derived_from"],
+                "expands": spec["expands"],
+                "related": spec["related"],
+                "public_reference": [spec["public_url"]],
+                "public_url": spec["public_url"],
+                "lede": spec["lede"],
+            }
+        )
+    return cards
+
+
+def build_cards() -> list[dict]:
+    derived_specs = [
+        "evidence-as-byproduct",
+        "compliance-theatre",
+        "audit-driven-thinking",
+        "tool-first-automation",
+        "grc-as-git",
+        "human-api",
+        "policy-as-interface",
+        "ai-grc-workflows",
+        "continuous-assurance",
+        "control-design",
+        "enterprise-grc-automation",
+        "framework-translation",
+        "risk-as-code",
+        "vendor-review-learning",
+    ]
+    cards = [derived_card(slug) for slug in derived_specs]
+    cards.append(derived_card("phrase-risk-register", "risk-register"))
+    cards.append(derived_card("phrase-risk-quantification", "risk-quantification"))
+    cards.append(derived_card("phrase-trust-center", "trust-center"))
+    cards.extend(authored_cards())
+    return cards
+
+
+def write_card(card: dict) -> Path:
+    target_dir = DRAFTS / card["type"]
+    target_dir.mkdir(parents=True, exist_ok=True)
+    path = target_dir / f"{card['slug']}.md"
+    body = body_reference(card) if card["type"] == "reading_reference" else body_standard(card)
+    path.write_text(frontmatter(card) + body, encoding="utf-8")
+    return path
+
+
+def main() -> None:
+    if not BRIEFS.exists():
+        raise SystemExit("_briefs/ is missing. Run scripts/draft-briefs first.")
+    paths = [write_card(card) for card in build_cards()]
+    by_type: dict[str, int] = {}
+    for path in paths:
+        by_type[path.parent.name] = by_type.get(path.parent.name, 0) + 1
+    print(f"wrote {len(paths)} cards to _drafts")
+    for key in sorted(by_type):
+        print(f"{key}: {by_type[key]}")
+    for path in sorted(paths):
+        print(path.relative_to(ROOT))
+
+
+if __name__ == "__main__":
+    main()
