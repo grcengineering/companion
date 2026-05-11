@@ -11,11 +11,17 @@
   <meta property="og:url" content="https://grc.engineering/companion/">
   <title>The GRC Companion</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/companion.css?v=cards-funnel-v1">
+  <link rel="stylesheet" href="css/companion.css?v=cards-funnel-previous-design">
 </head>
 <body>
+  <a class="skip-link" href="#card-index">Skip to cards</a>
   <header class="site-header">
-    <a class="wordmark" href="index.html">The GRC Companion</a>
+    <a class="wordmark" href="index.html" aria-label="The GRC Companion home">
+      <span class="mark" aria-hidden="true"></span>
+      <span>GRC.engineering</span>
+      <span class="wordmark-divider" aria-hidden="true"></span>
+      <span>Companion</span>
+    </a>
     <nav aria-label="Primary">
       <a href="index.html">Index</a>
       <a href="install.html">Install</a>
@@ -23,31 +29,59 @@
     </nav>
   </header>
 
-  <main class="page-shell">
-    <section class="hero">
-      <p class="section-label">Public knowledge layer</p>
-      <h1>The GRC Companion</h1>
-      <p class="hero-copy">The GRC Companion is a learning-only companion that teaches GRC engineering through your real work.</p>
-      <div class="feature-grid">
-        <article>
-          <h2>Learn from real work</h2>
-          <p>Use the cards to name a pattern, then bring your notes, diffs, transcripts, and artefacts into the Companion.</p>
-        </article>
-        <article>
-          <h2>Cited to a corpus</h2>
-          <p>Each card links back to source material and to more reading on grcengineer.com.</p>
-        </article>
-        <article>
-          <h2>Runs in your AI workspace</h2>
-          <p>The Companion lives in Claude Code, Cursor, Claude Projects, or Codex. The public site stays static.</p>
-        </article>
+  <main>
+    <section class="hero cards-hero">
+      <div class="hero-grid installer-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Public knowledge layer</p>
+          <div class="ship-badges">
+            <span>v0.1.0</span>
+            <span>31 distilled cards</span>
+          </div>
+          <h1>The GRC Companion</h1>
+          <p class="hero-lede">A learning-only companion that teaches GRC engineering through your real work.</p>
+          <div class="hero-actions">
+            <a class="primary-action" href="#card-index">Browse cards</a>
+            <a class="secondary-action light" href="install.html">Install Companion</a>
+          </div>
+          <div class="boundary-strip" aria-label="Companion scope">
+            <span>Learns from real work</span>
+            <span>Cited to a corpus</span>
+            <span>Runs in your AI workspace</span>
+          </div>
+        </div>
+
+        <aside class="setup-card card-funnel-panel" aria-label="How the Companion works">
+          <div class="setup-card-header">
+            <span class="mini-label">How it works</span>
+            <strong>Cards are the public layer. Install is the working layer.</strong>
+            <p>Read a card, pick the pattern you want to practise, then use it with your own notes, transcripts, terminal output, and artefacts inside your AI workspace.</p>
+          </div>
+          <div class="feature-grid">
+            <article>
+              <span>01</span>
+              <h2>Learn from real work</h2>
+              <p>Use the cards to name a pattern, then bring your notes, diffs, transcripts, and artefacts into the Companion.</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h2>Cited to a corpus</h2>
+              <p>Each card links back to source material and to more reading on grcengineer.com.</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h2>Runs locally</h2>
+              <p>The Companion lives in Claude Code, Cursor, Claude Projects, or Codex. The public site stays static.</p>
+            </article>
+          </div>
+        </aside>
       </div>
     </section>
 
-    <section class="cards-index" id="card-index">
+    <section class="section cards-index" id="card-index">
       <div class="section-heading">
         <div>
-          <p class="section-label">Browse cards</p>
+          <p class="section-kicker">Browse cards</p>
           <h2>31 public cards</h2>
         </div>
         <p id="results-count" class="results-count">31 cards</p>
@@ -341,13 +375,15 @@
       </div>
     </section>
 
-    <section class="cta-block cta-large">
+    <section class="section">
+      <div class="cta-block cta-large">
       <div>
-        <p class="section-label">Install</p>
+        <p class="section-kicker">Install</p>
         <h2>Pick where you want the Companion to live</h2>
         <p>Install it once. Then use these cards with your own work in the workspace you already use.</p>
       </div>
-      <a class="button-link" href="install.html">Open install guide -&gt;</a>
+      <a class="primary-action" href="install.html">Open install guide -&gt;</a>
+      </div>
     </section>
   </main>
 

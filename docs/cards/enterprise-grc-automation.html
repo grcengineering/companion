@@ -11,11 +11,17 @@
   <meta property="og:url" content="https://grc.engineering/companion/cards/enterprise-grc-automation.html">
   <title>Enterprise GRC Automation | The GRC Companion</title>
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../css/companion.css?v=cards-funnel-v1">
+  <link rel="stylesheet" href="../css/companion.css?v=cards-funnel-previous-design">
 </head>
 <body>
+  <a class="skip-link" href="#card-body">Skip to card</a>
   <header class="site-header">
-    <a class="wordmark" href="../index.html">The GRC Companion</a>
+    <a class="wordmark" href="../index.html" aria-label="The GRC Companion home">
+      <span class="mark" aria-hidden="true"></span>
+      <span>GRC.engineering</span>
+      <span class="wordmark-divider" aria-hidden="true"></span>
+      <span>Companion</span>
+    </a>
     <nav aria-label="Primary">
       <a href="../index.html">Index</a>
       <a href="../install.html">Install</a>
@@ -35,7 +41,7 @@
     </nav>
 
     <section class="title-block">
-      <p class="section-label">Concept</p>
+      <p class="eyebrow">Concept</p>
       <h1>Enterprise GRC Automation</h1>
       <div class="chip-row">
         <span class="chip">Concept</span>
@@ -44,7 +50,7 @@
       </div>
     </section>
 
-    <article class="card-body">
+    <article class="card-body" id="card-body">
       <h2>Core Idea</h2>
 <p>Enterprise GRC automation is coordination architecture. At scale, the hard part is rarely a single connector. It is the number of systems, owners, exceptions, evidence formats, frameworks, and review loops that must remain coherent as the organisation changes.</p>
 <p>A small proof of concept might pull one AWS setting into one dashboard. Enterprise reality asks who owns the data, how exceptions travel, which business units differ, and how framework mappings survive change. The teaching consequence is to look for coordination debt before connector count.</p>
@@ -81,11 +87,11 @@
 
     <section class="cta-block">
       <div>
-        <p class="section-label">Install</p>
+        <p class="section-kicker">Install</p>
         <h2>Use this card with your own work</h2>
         <p>Install the Companion in your AI workspace, then point it at real GRC work to learn from.</p>
       </div>
-      <a class="button-link" href="../install.html">Go to install guide -&gt;</a>
+      <a class="primary-action" href="../install.html">Go to install guide -&gt;</a>
     </section>
   </main>
 

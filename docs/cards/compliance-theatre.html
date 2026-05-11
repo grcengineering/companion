@@ -11,11 +11,17 @@
   <meta property="og:url" content="https://grc.engineering/companion/cards/compliance-theatre.html">
   <title>Compliance Theatre | The GRC Companion</title>
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../css/companion.css?v=cards-funnel-v1">
+  <link rel="stylesheet" href="../css/companion.css?v=cards-funnel-previous-design">
 </head>
 <body>
+  <a class="skip-link" href="#card-body">Skip to card</a>
   <header class="site-header">
-    <a class="wordmark" href="../index.html">The GRC Companion</a>
+    <a class="wordmark" href="../index.html" aria-label="The GRC Companion home">
+      <span class="mark" aria-hidden="true"></span>
+      <span>GRC.engineering</span>
+      <span class="wordmark-divider" aria-hidden="true"></span>
+      <span>Companion</span>
+    </a>
     <nav aria-label="Primary">
       <a href="../index.html">Index</a>
       <a href="../install.html">Install</a>
@@ -35,7 +41,7 @@
     </nav>
 
     <section class="title-block">
-      <p class="section-label">Anti-pattern</p>
+      <p class="eyebrow">Anti-pattern</p>
       <h1>Compliance Theatre</h1>
       <div class="chip-row">
         <span class="chip">Anti-pattern</span>
@@ -44,7 +50,7 @@
       </div>
     </section>
 
-    <article class="card-body">
+    <article class="card-body" id="card-body">
       <h2>Core Idea</h2>
 <p>Compliance theatre happens when the organisation optimises the appearance of control instead of the behaviour the control was meant to influence. The artefacts look mature: clean matrices, carefully worded policies, signed exceptions, colour-coded dashboards. The underlying system may still be brittle, invisible, or unchanged.</p>
 <p>A common example is the control that passes because a screenshot exists, even though nobody can explain whether the underlying behaviour still happens. The teaching move is to move the learner from artefact admiration to behaviour verification: what changed, who noticed, and what would fail visibly?</p>
@@ -82,11 +88,11 @@
 
     <section class="cta-block">
       <div>
-        <p class="section-label">Install</p>
+        <p class="section-kicker">Install</p>
         <h2>Use this card with your own work</h2>
         <p>Install the Companion in your AI workspace, then point it at real GRC work to learn from.</p>
       </div>
-      <a class="button-link" href="../install.html">Go to install guide -&gt;</a>
+      <a class="primary-action" href="../install.html">Go to install guide -&gt;</a>
     </section>
   </main>
 

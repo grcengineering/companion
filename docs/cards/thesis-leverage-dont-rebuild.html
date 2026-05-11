@@ -11,11 +11,17 @@
   <meta property="og:url" content="https://grc.engineering/companion/cards/thesis-leverage-dont-rebuild.html">
   <title>Leverage, Don&#x27;t Rebuild | The GRC Companion</title>
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../css/companion.css?v=cards-funnel-v1">
+  <link rel="stylesheet" href="../css/companion.css?v=cards-funnel-previous-design">
 </head>
 <body>
+  <a class="skip-link" href="#card-body">Skip to card</a>
   <header class="site-header">
-    <a class="wordmark" href="../index.html">The GRC Companion</a>
+    <a class="wordmark" href="../index.html" aria-label="The GRC Companion home">
+      <span class="mark" aria-hidden="true"></span>
+      <span>GRC.engineering</span>
+      <span class="wordmark-divider" aria-hidden="true"></span>
+      <span>Companion</span>
+    </a>
     <nav aria-label="Primary">
       <a href="../index.html">Index</a>
       <a href="../install.html">Install</a>
@@ -35,7 +41,7 @@
     </nav>
 
     <section class="title-block">
-      <p class="section-label">Thesis</p>
+      <p class="eyebrow">Thesis</p>
       <h1>Leverage, Don&#x27;t Rebuild</h1>
       <div class="chip-row">
         <span class="chip">Thesis</span>
@@ -44,7 +50,7 @@
       </div>
     </section>
 
-    <article class="card-body">
+    <article class="card-body" id="card-body">
       <h2>Core Idea</h2>
 <p>Leverage, don&#x27;t rebuild means the first engineering move is often to use the systems already carrying the work. Security tools, ticketing systems, cloud platforms, HR systems, CI/CD, document stores, and customer trust workflows already contain operational truth. GRC earns leverage by connecting to those surfaces instead of creating parallel replicas.</p>
 <p>For example, if the CSPM already knows cloud misconfigurations, GRC should learn to consume and translate that signal before building a parallel scanner. The Companion should teach learners to find existing operating truth before designing new infrastructure. during a review session.</p>
@@ -83,11 +89,11 @@
 
     <section class="cta-block">
       <div>
-        <p class="section-label">Install</p>
+        <p class="section-kicker">Install</p>
         <h2>Use this card with your own work</h2>
         <p>Install the Companion in your AI workspace, then point it at real GRC work to learn from.</p>
       </div>
-      <a class="button-link" href="../install.html">Go to install guide -&gt;</a>
+      <a class="primary-action" href="../install.html">Go to install guide -&gt;</a>
     </section>
   </main>
 

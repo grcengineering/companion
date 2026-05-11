@@ -14,8 +14,14 @@
   <link rel="stylesheet" href="{{stylesheet_path}}">
 </head>
 <body>
+  <a class="skip-link" href="#install-options">Skip to install options</a>
   <header class="site-header">
-    <a class="wordmark" href="{{index_href}}">The GRC Companion</a>
+    <a class="wordmark" href="{{index_href}}" aria-label="The GRC Companion home">
+      <span class="mark" aria-hidden="true"></span>
+      <span>GRC.engineering</span>
+      <span class="wordmark-divider" aria-hidden="true"></span>
+      <span>Companion</span>
+    </a>
     <nav aria-label="Primary">
       <a href="{{index_href}}">Index</a>
       <a href="{{install_href}}">Install</a>
@@ -23,15 +29,27 @@
     </nav>
   </header>
 
-  <main class="page-shell page-install">
-    <section class="hero">
-      <p class="section-label">Install</p>
-      <h1>Install the Companion</h1>
-      <p class="hero-copy">The Companion lives in your local AI workspace. You install it once, then point it at real GRC work to learn from.</p>
+  <main>
+    <section class="hero install-hero">
+      <div class="hero-grid installer-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Install</p>
+          <h1>Install the Companion</h1>
+          <p class="hero-lede">The Companion lives in your local AI workspace. You install it once, then point it at real GRC work to learn from.</p>
+        </div>
+        <aside class="setup-card install-summary-card">
+          <div class="setup-card-header">
+            <span class="mini-label">Choose your surface</span>
+            <strong>Claude Code, Cursor, Claude Projects, or Codex.</strong>
+            <p>Each path below gives exact commands or paths. No prompt generator. No backend on the public site.</p>
+          </div>
+        </aside>
+      </div>
     </section>
 
+    <div class="install-options" id="install-options">
     <section class="install-section">
-      <p class="section-label">Claude Code</p>
+      <p class="section-kicker">Claude Code</p>
       <h2>Claude Code (recommended)</h2>
       <p>Run the Companion as a Claude Code plugin you invoke with slash commands.</p>
       <h3>Prerequisites</h3>
@@ -64,7 +82,7 @@ ln -s ~/Tools/companion/dist/adapters/claude-code/companion ~/.claude/plugins/co
     </section>
 
     <section class="install-section">
-      <p class="section-label">Cursor</p>
+      <p class="section-kicker">Cursor</p>
       <h2>Cursor</h2>
       <p>Drop a <code>.cursor/rules/</code> file into any workspace where you want the Companion available.</p>
       <h3>Prerequisites</h3>
@@ -92,7 +110,7 @@ cp ~/Tools/companion/dist/adapters/cursor/.cursor/rules/companion.mdc .cursor/ru
     </section>
 
     <section class="install-section">
-      <p class="section-label">Claude Projects</p>
+      <p class="section-kicker">Claude Projects</p>
       <h2>Claude Projects (no terminal needed)</h2>
       <p>Upload the Companion bundle to a Claude Project and use it in the browser.</p>
       <h3>Prerequisites</h3>
@@ -117,7 +135,7 @@ cp ~/Tools/companion/dist/adapters/cursor/.cursor/rules/companion.mdc .cursor/ru
     </section>
 
     <section class="install-section">
-      <p class="section-label">Codex</p>
+      <p class="section-kicker">Codex</p>
       <h2>Codex</h2>
       <p>Point a Codex session at the Companion bundle directory.</p>
       <h3>Prerequisites</h3>
@@ -137,6 +155,7 @@ codex</code></pre>
       <p>Ask in the Codex session: "Read AGENTS.md and tell me which skill you would use if I just finished a vendor review questionnaire and want to learn from it."</p>
       <p>Codex should name <code>task-retrospective</code> and ask for the artefact.</p>
     </section>
+    </div>
   </main>
 
   <footer class="site-footer">
