@@ -1193,20 +1193,54 @@ a:focus-visible {
 }
 
 .hero-platforms {
-  background: #fff;
-  border: 1px solid var(--border-color, #e6e6e6);
+  min-height: 520px;
+  display: grid;
+  align-content: space-between;
+  gap: 18px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(27, 149, 193, 0.18), transparent 24%),
+    radial-gradient(circle at 74% 20%, rgba(255, 168, 79, 0.16), transparent 22%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    #050505;
+  background-size: auto, auto, 38px 38px, 38px 38px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 12px;
-  padding: 1rem 1.25rem;
-  color: var(--ink);
+  padding: 24px;
+  color: var(--panel);
   box-shadow: 16px 16px 0 rgba(255, 168, 79, 0.72), var(--shadow);
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-platforms::before {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.hero-platforms::after {
+  content: "";
+  position: absolute;
+  inset: auto -18% 8% 42%;
+  height: 180px;
+  transform: rotate(-10deg);
+  background: linear-gradient(90deg, rgba(27, 149, 193, 0.72), rgba(255, 168, 79, 0.68));
+  filter: blur(42px);
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .hero-platforms .mini-label {
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.65;
-  margin-bottom: 0.75rem;
+  color: var(--orange);
+  margin: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .platform-tile-grid {
@@ -1247,7 +1281,199 @@ a:focus-visible {
 .platform-foot {
   margin: 0.75rem 0 0;
   font-size: 0.78rem;
-  opacity: 0.7;
+  position: relative;
+  z-index: 2;
+  opacity: 0.86;
+}
+
+.platform-foot a {
+  color: var(--panel);
+  text-underline-offset: 4px;
+}
+
+.platform-orbit {
+  width: min(440px, 100%);
+  aspect-ratio: 1;
+  position: relative;
+  place-self: center;
+  z-index: 2;
+}
+
+.platform-orbit-ring,
+.platform-orbit-ring-inner {
+  position: absolute;
+  inset: 12%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+.platform-orbit-ring::before,
+.platform-orbit-ring::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--orange);
+  box-shadow: 0 0 20px rgba(255, 168, 79, 0.8);
+}
+
+.platform-orbit-ring::before {
+  top: -4px;
+  left: 50%;
+}
+
+.platform-orbit-ring::after {
+  right: -4px;
+  top: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 20px rgba(27, 149, 193, 0.8);
+}
+
+.platform-orbit-ring-inner {
+  inset: 29%;
+  border-style: dashed;
+  opacity: 0.55;
+}
+
+.platform-core {
+  position: absolute;
+  inset: 35%;
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.platform-core .mark {
+  width: 22px;
+  height: 22px;
+}
+
+.platform-orbit-list {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  animation: platform-spin 24s linear infinite;
+}
+
+.platform-orbit-list li {
+  --angle: calc(var(--i) * 72deg);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: rotate(var(--angle)) translateX(min(156px, 32vw));
+  transform-origin: 0 0;
+}
+
+.platform-logo {
+  width: 112px;
+  min-height: 72px;
+  display: grid;
+  place-items: center;
+  gap: 5px;
+  transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle)));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  background: rgba(251, 250, 246, 0.96);
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow: 8px 8px 0 rgba(27, 149, 193, 0.34);
+  animation: platform-counter-spin 24s linear infinite;
+}
+
+.platform-logo span {
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.platform-logo small {
+  max-width: 90px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.platform-orbit-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  position: relative;
+  z-index: 2;
+}
+
+.platform-orbit-links a {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  padding: 6px 9px;
+  color: rgba(255, 255, 255, 0.76);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+@keyframes platform-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes platform-counter-spin {
+  to {
+    transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle) - 360deg));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .platform-orbit-list,
+  .platform-logo {
+    animation: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .hero-platforms {
+    min-height: 430px;
+  }
+
+  .platform-orbit {
+    width: min(320px, 100%);
+  }
+
+  .platform-orbit-list li {
+    transform: rotate(var(--angle)) translateX(min(112px, 28vw));
+  }
+
+  .platform-logo {
+    width: 92px;
+    min-height: 62px;
+  }
+
+  .platform-logo small {
+    max-width: 72px;
+  }
 }
 
 .play-at-home-callout {

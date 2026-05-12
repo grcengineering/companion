@@ -52,14 +52,29 @@
           </div>
         </div>
 
-        <aside class="hero-platforms" aria-label="Install paths">
+        <aside class="hero-platforms hero-platforms-orbit" aria-label="Install paths">
           <p class="mini-label">Where it runs</p>
-          <ul class="platform-tile-grid">
-            <li><a class="platform-tile" href="install.html#claude-code"><strong>Claude Code</strong><small>Slash commands in the editor</small></a></li>
-            <li><a class="platform-tile" href="install.html#cursor"><strong>Cursor</strong><small>.cursor/rules file</small></a></li>
-            <li><a class="platform-tile" href="install.html#notion"><strong>Notion</strong><small>Notion Custom Agent</small></a></li>
-            <li><a class="platform-tile" href="install.html#microsoft-365-copilot"><strong>Microsoft 365 Copilot</strong><small>Office, Teams, Outlook</small></a></li>
-            <li><a class="platform-tile" href="install.html#claude-cowork"><strong>Claude Cowork</strong><small>Anthropic for office workers</small></a></li>
+          <div class="platform-orbit" aria-hidden="true">
+            <div class="platform-orbit-ring"></div>
+            <div class="platform-orbit-ring platform-orbit-ring-inner"></div>
+            <div class="platform-core">
+              <span class="mark"></span>
+              <strong>GRC</strong>
+            </div>
+            <ul class="platform-orbit-list">
+              <li style="--i: 0"><a class="platform-logo" href="install.html#claude-code" aria-label="Claude Code"><span>CC</span><small>Claude Code</small></a></li>
+              <li style="--i: 1"><a class="platform-logo" href="install.html#cursor" aria-label="Cursor"><span>Cu</span><small>Cursor</small></a></li>
+              <li style="--i: 2"><a class="platform-logo" href="install.html#notion" aria-label="Notion"><span>No</span><small>Notion</small></a></li>
+              <li style="--i: 3"><a class="platform-logo" href="install.html#microsoft-365-copilot" aria-label="Microsoft 365 Copilot"><span>M365</span><small>Microsoft 365 Copilot</small></a></li>
+              <li style="--i: 4"><a class="platform-logo" href="install.html#claude-cowork" aria-label="Claude Cowork"><span>Cw</span><small>Claude Cowork</small></a></li>
+            </ul>
+          </div>
+          <ul class="platform-orbit-links">
+            <li><a href="install.html#claude-code">Claude Code</a></li>
+            <li><a href="install.html#cursor">Cursor</a></li>
+            <li><a href="install.html#notion">Notion</a></li>
+            <li><a href="install.html#microsoft-365-copilot">Microsoft 365 Copilot</a></li>
+            <li><a href="install.html#claude-cowork">Claude Cowork</a></li>
           </ul>
           <p class="platform-foot"><a href="{{install_href}}">All 9 install paths -&gt;</a></p>
         </aside>
