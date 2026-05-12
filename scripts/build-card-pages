@@ -25,7 +25,7 @@ SITEMAP_CACHE = DATA_DIR / "sitemap-cache.json"
 SITEMAP_URL = "https://grcengineer.com/sitemap.xml"
 SITE_ROOT = "https://grc.engineering/companion"
 GITHUB_URL = "https://github.com/grcengineering/companion"
-ASSET_VERSION = "v02-install-paths-roadmap"
+ASSET_VERSION = "v02-hero-platform-orbit"
 CACHE_MAX_AGE = timedelta(days=7)
 EVERGREEN_ARTICLES = [
     "https://grcengineer.com/p/new-to-grc-engineering-start-here",
