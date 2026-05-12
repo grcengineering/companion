@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://grc.engineering/companion/">
   <title>The GRC Companion</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/companion.css?v=product-story-cards-index">
+  <link rel="stylesheet" href="css/companion.css?v=v02-install-paths-roadmap">
 </head>
 <body>
   <a class="skip-link" href="#demo">Skip to demo</a>
@@ -25,6 +25,7 @@
     <nav aria-label="Primary">
       <a href="cards/">Cards</a>
       <a href="install.html">Install</a>
+      <a href="roadmap.html">Roadmap</a>
       <a href="https://github.com/grcengineering/companion" target="_blank" rel="noopener">GitHub</a>
     </nav>
   </header>
@@ -50,6 +51,18 @@
             <span>GRC Engineering corpus</span>
           </div>
         </div>
+
+        <aside class="hero-platforms" aria-label="Install paths">
+          <p class="mini-label">Where it runs</p>
+          <ul class="platform-tile-grid">
+            <li><a class="platform-tile" href="install.html#claude-code"><strong>Claude Code</strong><small>Slash commands in the editor</small></a></li>
+            <li><a class="platform-tile" href="install.html#cursor"><strong>Cursor</strong><small>.cursor/rules file</small></a></li>
+            <li><a class="platform-tile" href="install.html#notion"><strong>Notion</strong><small>Notion Custom Agent</small></a></li>
+            <li><a class="platform-tile" href="install.html#microsoft-365-copilot"><strong>Microsoft 365 Copilot</strong><small>Office, Teams, Outlook</small></a></li>
+            <li><a class="platform-tile" href="install.html#claude-cowork"><strong>Claude Cowork</strong><small>Anthropic for office workers</small></a></li>
+          </ul>
+          <p class="platform-foot"><a href="install.html">All 9 install paths -&gt;</a></p>
+        </aside>
       </div>
     </section>
 
@@ -123,7 +136,7 @@ and one profile update about where you are getting stuck.</code></pre>
       <div class="flow-copy">
         <p class="section-kicker">Under the hood</p>
         <h2>How the Companion is built.</h2>
-        <p>Three layers, kept separate so each can evolve without breaking the others. One source corpus generates the public site and the four runtime bundles.</p>
+        <p>Three layers, kept separate so each can evolve without breaking the others. One source corpus generates the public site and the nine runtime bundles.</p>
       </div>
       <div class="learning-flow build-grid" aria-label="Companion build layers">
         <div class="flow-step">
@@ -143,8 +156,8 @@ and one profile update about where you are getting stuck.</code></pre>
         </div>
         <div class="flow-step">
           <span>Adapters</span>
-          <strong>One corpus, four runtimes.</strong>
-          <p>Claude Code, Cursor, Claude Projects, Codex. Adding a runtime is a new adapter, not a rewrite.</p>
+          <strong>One corpus, nine runtimes.</strong>
+          <p>Claude Code, Cursor, Codex, ChatGPT, Claude Projects, Gemini Gems, Claude Cowork, Notion, and Microsoft 365 Copilot.</p>
         </div>
       </div>
     </section>
@@ -177,6 +190,8 @@ and one profile update about where you are getting stuck.</code></pre>
       <a href="cards/">Cards</a>
       <span class="footer-separator">/</span>
       <a href="install.html">Install</a>
+      <span class="footer-separator">/</span>
+      <a href="roadmap.html">Roadmap</a>
       <span class="footer-separator">/</span>
       <a href="https://github.com/grcengineering/companion" target="_blank" rel="noopener">View the repo</a>
     </div>

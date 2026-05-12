@@ -25,7 +25,7 @@ SITEMAP_CACHE = DATA_DIR / "sitemap-cache.json"
 SITEMAP_URL = "https://grcengineer.com/sitemap.xml"
 SITE_ROOT = "https://grc.engineering/companion"
 GITHUB_URL = "https://github.com/grcengineering/companion"
-ASSET_VERSION = "product-story-cards-index"
+ASSET_VERSION = "v02-install-paths-roadmap"
 CACHE_MAX_AGE = timedelta(days=7)
 EVERGREEN_ARTICLES = [
     "https://grcengineer.com/p/new-to-grc-engineering-start-here",
@@ -630,6 +630,7 @@ def build_card_pages(cards: list[Card], primitive_map: dict[str, Primitive], sit
                 "index_href": "../index.html",
                 "cards_href": "./",
                 "install_href": "../install.html",
+                "roadmap_href": "../roadmap.html",
                 "github_href": GITHUB_URL,
                 "breadcrumb_type": html.escape(card_type_label(card.card_type)),
                 "title": html.escape(card.title),
@@ -757,6 +758,7 @@ def build_index(metadata: list[dict[str, object]], primitive_map: dict[str, Prim
             "index_href": "index.html",
             "cards_href": "cards/",
             "install_href": "install.html",
+            "roadmap_href": "roadmap.html",
             "github_href": GITHUB_URL,
             "terminal_transcript_link": transcript_link,
         },
@@ -783,6 +785,7 @@ def build_cards_index(metadata: list[dict[str, object]], primitive_map: dict[str
             "index_href": "../index.html",
             "cards_href": "./",
             "install_href": "../install.html",
+            "roadmap_href": "../roadmap.html",
             "github_href": GITHUB_URL,
             "card_stub_html": render_card_stubs(metadata, primitive_map, sibling_links=True),
             "type_options": filter_context["type_options"],
@@ -800,7 +803,7 @@ def build_install() -> None:
         {
             "canonical_url": html.escape(f"{SITE_ROOT}/install.html", quote=True),
             "meta_description": html.escape(
-                "Install The GRC Companion in Claude Code, Cursor, Claude Projects, or Codex with exact commands and paths.",
+                "Install The GRC Companion across editor, IDE, chat, and workspace surfaces with exact commands and paths.",
                 quote=True,
             ),
             "page_title": "Install | The GRC Companion",
@@ -809,10 +812,43 @@ def build_install() -> None:
             "index_href": "index.html",
             "cards_href": "cards/",
             "install_href": "install.html",
+            "roadmap_href": "roadmap.html",
             "github_href": GITHUB_URL,
         },
     )
     write(DOCS / "install.html", page)
+
+
+def build_roadmap() -> None:
+    template = TEMPLATES / "roadmap.html"
+    flat_context = {
+        "canonical_url": html.escape(f"{SITE_ROOT}/roadmap.html", quote=True),
+        "meta_description": html.escape(
+            "Roadmap for The GRC Companion install paths, sample artefacts, corpus waves, and planned adapters.",
+            quote=True,
+        ),
+        "page_title": "Roadmap | The GRC Companion",
+        "stylesheet_path": f"css/companion.css?v={ASSET_VERSION}",
+        "favicon_path": "favicon.svg",
+        "index_href": "index.html",
+        "cards_href": "cards/",
+        "install_href": "install.html",
+        "roadmap_href": "roadmap.html",
+        "github_href": GITHUB_URL,
+    }
+    page = render_template(template, flat_context)
+    write(DOCS / "roadmap.html", page)
+    pretty_context = {
+        **flat_context,
+        "canonical_url": html.escape(f"{SITE_ROOT}/roadmap/", quote=True),
+        "stylesheet_path": f"../css/companion.css?v={ASSET_VERSION}",
+        "favicon_path": "../favicon.svg",
+        "index_href": "../index.html",
+        "cards_href": "../cards/",
+        "install_href": "../install.html",
+        "roadmap_href": "./",
+    }
+    write(DOCS / "roadmap" / "index.html", render_template(template, pretty_context))
 
 
 def main() -> None:
@@ -826,10 +862,13 @@ def main() -> None:
     build_index(metadata, primitives)
     build_cards_index(metadata, primitives)
     build_install()
+    build_roadmap()
     print(
         f"wrote {len(metadata)} card pages, {DOCS.relative_to(ROOT) / 'index.html'}, "
         f"{CARDS_DIR.relative_to(ROOT) / 'index.html'}, "
-        f"{DOCS.relative_to(ROOT) / 'install.html'}, and {CARDS_JSON.relative_to(ROOT)}"
+        f"{DOCS.relative_to(ROOT) / 'install.html'}, {DOCS.relative_to(ROOT) / 'roadmap.html'}, "
+        f"{DOCS.relative_to(ROOT) / 'roadmap' / 'index.html'}, "
+        f"and {CARDS_JSON.relative_to(ROOT)}"
     )
 
 

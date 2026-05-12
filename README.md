@@ -6,22 +6,29 @@ A learning companion for GRC practitioners. It turns real GRC work into structur
 
 The public site publishes the knowledge layer. The runtime lives in your local AI workspace.
 
-31 knowledge cards, 14 skills, 4 adapter bundles.
+31 knowledge cards, 14 skills, 9 adapter bundles, 1 sample artefact pack.
 
 Live pages:
 
-- Card index: `https://grc.engineering/companion/`
+- Product page: `https://grc.engineering/companion/`
+- Card index: `https://grc.engineering/companion/cards/`
 - Install guide: `https://grc.engineering/companion/install.html`
+- Roadmap: `https://grc.engineering/companion/roadmap/`
 
 ## Quickstart
 
-- Browse the public cards at `https://grc.engineering/companion/`.
+- Browse the public cards at `https://grc.engineering/companion/cards/`.
 - Open the install guide at `https://grc.engineering/companion/install.html`.
 - The generated install source lives at `docs/install.html`.
 - Claude Code: `dist/adapters/claude-code/companion/`
 - Cursor: `dist/adapters/cursor/.cursor/rules/companion.mdc`
 - Claude Projects: `dist/adapters/claude-projects/`
 - Codex: `dist/adapters/codex/`
+- ChatGPT: `dist/adapters/chatgpt/`
+- Gemini Gems: `dist/adapters/gemini-gems/`
+- Claude Cowork: `dist/adapters/claude-cowork/`
+- Notion Custom Agent: `dist/adapters/notion/`
+- Microsoft 365 Copilot: `dist/adapters/microsoft-365-copilot/`
 
 ## What Ships
 
@@ -29,15 +36,18 @@ Live pages:
 - 14 learning skills
 - 13 portable command contracts
 - A static public site built from the card corpus
-- Four installable adapter bundles: Claude Code, Cursor, Claude Projects, Codex
+- Nine installable adapter bundles: Claude Code, Cursor, Codex, ChatGPT, Claude Projects, Gemini Gems, Claude Cowork, Notion Custom Agent, Microsoft 365 Copilot
+- A sample artefact pack with synthetic GRC work for practising without real work
 
 ## Public Surface
 
 `docs/` is a static GitHub Pages site. It has three public surfaces:
 
-- `docs/index.html` is the filterable card index.
+- `docs/index.html` is the product landing page.
+- `docs/cards/index.html` is the filterable card index.
 - `docs/cards/<slug>.html` is one public page per approved card.
 - `docs/install.html` is the concrete install guide.
+- `docs/roadmap.html` is the public roadmap.
 
 The site has no backend. It does not process user artefacts.
 
@@ -97,6 +107,10 @@ Behaviour demo:
 ```bash
 demos/run-terminal-demo
 ```
+
+## Roadmap
+
+See `https://grc.engineering/companion/roadmap/` for planned adapters, update mechanisms, Wave 2 corpus work, and install-path demos.
 
 ## License
 

@@ -9,6 +9,18 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist" / "adapters"
+SAMPLE_ARTEFACTS = ROOT / "demos" / "sample-artefacts"
+ADAPTERS = [
+    "chatgpt",
+    "claude-code",
+    "claude-cowork",
+    "claude-projects",
+    "codex",
+    "cursor",
+    "gemini-gems",
+    "microsoft-365-copilot",
+    "notion",
+]
 
 
 def reset(path: Path) -> None:
@@ -23,9 +35,33 @@ def copy_tree(src: Path, dest: Path) -> None:
     shutil.copytree(src, dest, ignore=shutil.ignore_patterns("__pycache__", ".DS_Store"))
 
 
+def copy_sample_artifacts(dest: Path) -> None:
+    dest.mkdir(parents=True, exist_ok=True)
+    for path in SAMPLE_ARTEFACTS.glob("sample-*.md"):
+        shutil.copy2(path, dest / path.name)
+
+
+def copy_demos(dest: Path) -> None:
+    copy_tree(ROOT / "demos", dest)
+    copy_sample_artifacts(dest)
+
+
 def write(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
+
+
+def read(path: Path) -> str:
+    return path.read_text(encoding="utf-8")
+
+
+def approved_card_paths() -> list[Path]:
+    cards: list[Path] = []
+    for path in sorted((ROOT / "knowledge").glob("*/*.md")):
+        text = read(path)
+        if "\nstatus: approved\n" in text:
+            cards.append(path)
+    return cards
 
 
 def brain_bundle() -> str:
@@ -41,13 +77,157 @@ def brain_bundle() -> str:
     ]
     for path in ordered:
         if path.exists():
-            parts.append(path.read_text(encoding="utf-8"))
+            parts.append(read(path))
     return "\n\n".join(parts)
 
 
+def command_bundle() -> str:
+    parts = ["## Commands"]
+    for command in sorted((ROOT / "commands").glob("*.md")):
+        if command.name != "README.md":
+            parts.append(read(command))
+    return "\n\n".join(parts)
+
+
+def project_instructions(title: str, surface: str) -> str:
+    return "\n\n".join(
+        [
+            f"# {title}",
+            f"Use these instructions in {surface}.",
+            brain_bundle(),
+            command_bundle(),
+        ]
+    )
+
+
+def gem_instructions() -> str:
+    return "\n\n".join(
+        [
+            "# The GRC Companion Gem Instructions",
+            "## Persona",
+            "You are The GRC Companion, a learning-only companion carrying Ayoub Fandi's GRC engineering thinking.",
+            "## Task",
+            "Help the learner turn real GRC work or synthetic artefacts into structured learning loops. Do not operate the learner's programme.",
+            "## Context",
+            brain_bundle(),
+            "Use the uploaded corpus, learner profile, and demos files as the grounding layer.",
+            "## Format",
+            "Ask one targeted question when needed. Route to the best learning move. End with a small artefact and one reflection or explain-back prompt.",
+        ]
+    )
+
+
+def corpus_bundle() -> str:
+    parts = ["# GRC Companion Corpus", "31 approved knowledge cards."]
+    for path in approved_card_paths():
+        parts.append(f"\n---\nsource_path: {path.relative_to(ROOT)}\n---\n")
+        parts.append(read(path))
+    return "\n\n".join(parts) + "\n"
+
+
+def learner_profile_bundle() -> str:
+    parts = [
+        "# Learner Profile",
+        "Use this as the learner-owned profile structure.",
+        "## Schema",
+        "```json",
+        read(ROOT / "profile" / "learner-profile.schema.json"),
+        "```",
+    ]
+    example = ROOT / "profile" / "examples" / "anonymous-learner.json"
+    if example.exists():
+        parts.extend(["## Example", "```json", read(example), "```"])
+    return "\n\n".join(parts) + "\n"
+
+
+def demos_bundle() -> str:
+    parts = ["# GRC Companion Demos"]
+    for path in sorted((ROOT / "demos").glob("*.md")):
+        parts.append(f"\n## {path.name}\n")
+        parts.append(read(path))
+    for path in sorted(SAMPLE_ARTEFACTS.glob("*.md")):
+        parts.append(f"\n## sample-artefacts/{path.name}\n")
+        parts.append(read(path))
+    return "\n\n".join(parts) + "\n"
+
+
+def notion_database_spec() -> str:
+    return """# Notion Knowledge Database
+
+Create a Notion database named `GRC Companion Knowledge`.
+
+Columns:
+
+- Title: title
+- Type: select
+- Brain Primitive: multi-select
+- Body: text
+- Source URL: url
+
+Import source:
+
+- `knowledge/index.json`
+
+Each approved card should become one row. Put the card title in Title, card type in Type, primitive codes in Brain Primitive, the markdown body in Body, and the first public reference URL in Source URL.
+"""
+
+
+def notion_import_script() -> str:
+    return """# Import Script
+
+Use CSV import or the Notion API.
+
+## CSV path
+
+1. Open `knowledge/index.json`.
+2. Export rows with columns Title, Type, Brain Primitive, Body, Source URL.
+3. In Notion, create the database from `notion-knowledge-database.md`.
+4. Use Notion CSV import to load the rows.
+
+## API path
+
+```bash
+export NOTION_TOKEN="secret_xxx"
+export NOTION_DATABASE_ID="database_id"
+
+curl -X POST "https://api.notion.com/v1/pages" \\
+  -H "Authorization: Bearer $NOTION_TOKEN" \\
+  -H "Notion-Version: 2022-06-28" \\
+  -H "Content-Type: application/json" \\
+  --data '{
+    "parent": {"database_id": "'"$NOTION_DATABASE_ID"'"},
+    "properties": {
+      "Title": {"title": [{"text": {"content": "Control Design"}}]},
+      "Type": {"select": {"name": "concept"}},
+      "Brain Primitive": {"multi_select": [{"name": "T1"}]},
+      "Source URL": {"url": "https://grcengineer.com/"}
+    },
+    "children": [{
+      "object": "block",
+      "type": "paragraph",
+      "paragraph": {"rich_text": [{"type": "text", "text": {"content": "Paste the card body here."}}]}
+    }]
+  }'
+```
+"""
+
+
+def notion_agent_instructions() -> str:
+    return "\n\n".join(
+        [
+            "# The GRC Companion Notion Custom Agent",
+            "Use this in a Notion Custom Agent.",
+            brain_bundle(),
+            "Use Notion pages, the knowledge database, and sample artefacts as learning material. Do not approve vendors, certify audit positions, author production policies, run controls, or operate the user's programme.",
+        ]
+    )
+
+
 def build_claude_code() -> None:
-    out = DIST / "claude-code" / "companion"
-    reset(out)
+    root = DIST / "claude-code"
+    out = root / "companion"
+    reset(root)
+    out.mkdir(parents=True, exist_ok=True)
     write(
         out / ".claude-plugin" / "plugin.json",
         json.dumps(
@@ -58,7 +238,7 @@ def build_claude_code() -> None:
                 "author": {"name": "GRC Engineering", "url": "https://grc.engineering"},
                 "repository": "https://github.com/grcengineering/companion",
                 "license": "MIT",
-                "keywords": ["grc", "learning", "governance", "risk", "compliance", "education"]
+                "keywords": ["grc", "learning", "governance", "risk", "compliance", "education"],
             },
             indent=2,
         )
@@ -69,7 +249,8 @@ def build_claude_code() -> None:
     copy_tree(ROOT / "brain", out / "brain")
     copy_tree(ROOT / "knowledge", out / "knowledge")
     copy_tree(ROOT / "profile", out / "profile")
-    copy_tree(ROOT / "demos", out / "demos")
+    copy_demos(out / "demos")
+    copy_sample_artifacts(root / "demos")
     write(
         out / "README.md",
         "# GRC Companion Claude Code Adapter\n\n"
@@ -89,7 +270,7 @@ def build_codex() -> None:
     copy_tree(ROOT / "commands", out / "commands")
     copy_tree(ROOT / "knowledge", out / "knowledge")
     copy_tree(ROOT / "profile", out / "profile")
-    copy_tree(ROOT / "demos", out / "demos")
+    copy_demos(out / "demos")
     write(
         out / "AGENTS.md",
         "# The GRC Companion\n\nUse this adapter as a learning-only GRC companion. Do not operate the user's programme. Route requests through `commands/` and `skills/`.\n",
@@ -97,12 +278,15 @@ def build_codex() -> None:
 
 
 def build_cursor() -> None:
-    out = DIST / "cursor" / ".cursor" / "rules"
-    reset(out)
+    root = DIST / "cursor"
+    reset(root)
+    out = root / ".cursor" / "rules"
+    out.mkdir(parents=True, exist_ok=True)
     write(
         out / "companion.mdc",
         f"---\ndescription: Learning-only GRC Companion rules\nalwaysApply: false\n---\n\n{brain_bundle()}\n",
     )
+    copy_demos(root / "demos")
 
 
 def build_claude_projects() -> None:
@@ -111,44 +295,122 @@ def build_claude_projects() -> None:
     bundle = [
         "# The GRC Companion Project Instructions",
         brain_bundle(),
-        "## Commands",
+        command_bundle(),
     ]
-    for command in sorted((ROOT / "commands").glob("*.md")):
-        if command.name != "README.md":
-            bundle.append(command.read_text(encoding="utf-8"))
     write(out / "companion-instructions.md", "\n\n".join(bundle))
     copy_tree(ROOT / "knowledge", out / "knowledge")
     copy_tree(ROOT / "profile", out / "profile")
-    copy_tree(ROOT / "demos", out / "demos")
+    copy_demos(out / "demos")
 
 
-def build_pai_pack() -> None:
-    out = DIST / "pai-pack" / "Packs" / "GRCCompanion"
+def build_chatgpt() -> None:
+    out = DIST / "chatgpt"
     reset(out)
+    write(out / "companion-instructions.md", project_instructions("The GRC Companion ChatGPT Instructions", "a ChatGPT Project or Custom GPT"))
+    copy_tree(ROOT / "knowledge", out / "knowledge")
+    copy_tree(ROOT / "profile", out / "profile")
+    copy_demos(out / "demos")
+    write(out / "README.md", "# ChatGPT Adapter\n\nUse with a Custom GPT or ChatGPT Project. See docs/install.html#chatgpt.\n")
+
+
+def build_gemini_gems() -> None:
+    out = DIST / "gemini-gems"
+    reset(out)
+    write(out / "gem-instructions.md", gem_instructions())
+    write(out / "knowledge" / "corpus.md", corpus_bundle())
+    write(out / "knowledge" / "learner-profile.md", learner_profile_bundle())
+    write(out / "knowledge" / "demos.md", demos_bundle())
+    copy_demos(out / "demos")
+    write(out / "README.md", "# Gemini Gems Adapter\n\nCreate a Gem, paste `gem-instructions.md`, and upload the files in `knowledge/`. See docs/install.html#gemini-gems.\n")
+
+
+def build_claude_cowork() -> None:
+    out = DIST / "claude-cowork"
+    reset(out)
+    write(out / "cowork-instructions.md", project_instructions("The GRC Companion Claude Cowork Instructions", "Claude Cowork"))
+    copy_tree(ROOT / "knowledge", out / "knowledge")
+    copy_tree(ROOT / "profile", out / "profile")
+    copy_demos(out / "demos")
     write(
         out / "README.md",
-        "# GRC Companion PAI Pack\n\nRoadmap adapter generated from the canonical companion files.\n",
+        "# Claude Cowork Adapter\n\nConnect Cowork to a folder containing this bundle, then paste `cowork-instructions.md` into the plugin configuration. A manifest can be added when Anthropic publishes a public Cowork plugin schema.\n",
     )
+
+
+def build_notion() -> None:
+    out = DIST / "notion"
+    reset(out)
+    write(out / "notion-agent-instructions.md", notion_agent_instructions())
+    write(out / "notion-knowledge-database.md", notion_database_spec())
+    write(out / "import-script.md", notion_import_script())
     write(
-        out / "src" / "SKILL.md",
-        "---\nname: GRCCompanion\npack-id: companion-v0.1.0\nversion: 0.1.0\ntype: skill\nplatform: claude-code\n---\n\n"
-        + (ROOT / "brain" / "persona.md").read_text(encoding="utf-8"),
+        out / "mcp-note.md",
+        "# Notion MCP Note\n\nNotion exposes an MCP server at `https://mcp.notion.com/mcp`. Existing Companion installs, such as Claude Code or Cursor, can use that server to pull a learner's Notion content as learning material when the user grants access.\n",
     )
-    copy_tree(ROOT / "skills", out / "src" / "skills")
-    copy_tree(ROOT / "commands", out / "src" / "commands")
-    copy_tree(ROOT / "knowledge", out / "src" / "knowledge")
-    copy_tree(ROOT / "profile", out / "src" / "profile")
-    copy_tree(ROOT / "demos", out / "src" / "demos")
+    copy_tree(ROOT / "knowledge", out / "knowledge")
+    copy_demos(out / "demos")
+    write(out / "README.md", "# Notion Custom Agent Adapter\n\nUse these files with a Notion Custom Agent. See docs/install.html#notion.\n")
+
+
+def microsoft_instructions() -> str:
+    return "\n\n".join(
+        [
+            "# The GRC Companion Microsoft 365 Copilot Instructions",
+            brain_bundle(),
+            "Use SharePoint or OneDrive files as learner-provided material. Do not approve vendors, certify audit positions, author production policies, run controls, or operate the user's programme.",
+        ]
+    )
+
+
+def build_microsoft_365_copilot() -> None:
+    out = DIST / "microsoft-365-copilot"
+    reset(out)
+    instructions = microsoft_instructions()
+    write(out / "instructions.md", instructions)
+    manifest = {
+        "$schema": "https://developer.microsoft.com/json-schemas/copilot/declarative-agent/v1.4/schema.json",
+        "version": "v1.4",
+        "name": "The GRC Companion",
+        "description": "A learning-only AI companion that teaches GRC engineering by using the real work you are already doing.",
+        "instructions": instructions,
+        "conversation_starters": [
+            {"title": "Retrospective on real work", "text": "I just finished a vendor security questionnaire. Help me learn from it."},
+            {"title": "Explain a GRC concept", "text": "Explain the difference between architecture-before-automation and audit-driven thinking."},
+            {"title": "Build a learning lab", "text": "Build me a learning-safe lab for control design."},
+            {"title": "Cross-domain translation", "text": "Translate the data engineering idea of lineage into a GRC control language."},
+        ],
+        "capabilities": [
+            {"name": "WebSearch"},
+            {"name": "OneDriveAndSharePoint"},
+        ],
+    }
+    write(out / "declarative-agent.json", json.dumps(manifest, indent=2) + "\n")
+    copy_tree(ROOT / "knowledge", out / "knowledge")
+    copy_tree(ROOT / "profile", out / "profile")
+    copy_demos(out / "demos")
+    write(
+        out / "README.md",
+        "# Microsoft 365 Copilot Adapter\n\nUse `declarative-agent.json` with Agent Builder or Microsoft 365 Agents Toolkit in VS Code. See docs/install.html#microsoft-365-copilot.\n",
+    )
 
 
 def main() -> None:
+    if DIST.exists():
+        shutil.rmtree(DIST)
     DIST.mkdir(parents=True, exist_ok=True)
+    build_chatgpt()
     build_claude_code()
+    build_claude_cowork()
+    build_claude_projects()
     build_codex()
     build_cursor()
-    build_claude_projects()
-    build_pai_pack()
-    print(f"wrote adapter bundles under {DIST.relative_to(ROOT)}")
+    build_gemini_gems()
+    build_microsoft_365_copilot()
+    build_notion()
+    found = sorted(path.name for path in DIST.iterdir() if path.is_dir())
+    if found != ADAPTERS:
+        raise SystemExit(f"adapter mismatch: {found}")
+    print(f"wrote {len(found)} adapter bundles under {DIST.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":

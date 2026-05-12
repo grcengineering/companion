@@ -25,6 +25,7 @@
     <nav aria-label="Primary">
       <a href="{{cards_href}}">Cards</a>
       <a href="{{install_href}}" aria-current="page">Install</a>
+      <a href="{{roadmap_href}}">Roadmap</a>
       <a href="{{github_href}}" target="_blank" rel="noopener">GitHub</a>
     </nav>
   </header>
@@ -35,30 +36,51 @@
         <div class="hero-copy">
           <p class="eyebrow">Install</p>
           <h1>Install the Companion</h1>
-          <p class="hero-lede">The Companion lives in your local AI workspace. You install it once, then point it at real GRC work to learn from.</p>
+          <p class="hero-lede">The Companion lives in your AI workspace. Install one of nine bundles, then point it at real GRC work or sample artefacts to learn from.</p>
         </div>
         <aside class="setup-card install-summary-card">
           <div class="setup-card-header">
             <span class="mini-label">Choose your surface</span>
-            <strong>Claude Code, Cursor, Claude Projects, or Codex.</strong>
-            <p>Each path below gives exact commands or paths. No prompt generator. No backend on the public site.</p>
+            <strong>Editor, IDE, chat, or workspace.</strong>
+            <p>Each path below gives exact commands or upload steps. The public site stays static.</p>
           </div>
         </aside>
       </div>
     </section>
 
     <div class="install-options" id="install-options">
-    <section class="install-section">
-      <p class="section-kicker">Claude Code</p>
-      <h2>Claude Code (recommended)</h2>
-      <p>Run the Companion as a Claude Code plugin you invoke with slash commands.</p>
-      <h3>Prerequisites</h3>
-      <ul class="link-list">
-        <li>Claude Code installed. <code>claude --version</code> works in your terminal.</li>
-        <li><code>git</code> installed.</li>
-      </ul>
-      <h3>Install</h3>
-      <pre class="code-block"><code># 1. Clone the Companion repo somewhere you keep tools
+      <div class="play-at-home-callout">
+        <strong>Don't have AI tooling at work?</strong>
+        <p>Install the Companion on your personal machine and use the sample artefact pack to learn without bringing real work. The pack includes a synthetic vendor questionnaire, audit walkthrough, policy draft, and control review.</p>
+        <p><a href="https://github.com/grcengineering/companion/tree/main/demos/sample-artefacts">Open the sample artefact pack -&gt;</a></p>
+      </div>
+
+      <nav class="platform-jump-list" aria-label="Install platform shortcuts">
+        <a href="#claude-code">Claude Code</a>
+        <a href="#cursor">Cursor</a>
+        <a href="#codex">Codex</a>
+        <a href="#chatgpt">ChatGPT</a>
+        <a href="#claude-projects">Claude Projects</a>
+        <a href="#gemini-gems">Gemini Gems</a>
+        <a href="#claude-cowork">Claude Cowork</a>
+        <a href="#notion">Notion</a>
+        <a href="#microsoft-365-copilot">Microsoft 365 Copilot</a>
+      </nav>
+
+      <div class="install-group">
+        <h2>Editor / IDE</h2>
+
+        <section class="install-section" id="claude-code">
+          <p class="section-kicker">Claude Code</p>
+          <h2>Claude Code (recommended)</h2>
+          <p>Run the Companion as a Claude Code plugin you invoke with slash commands.</p>
+          <h3>Prerequisites</h3>
+          <ul class="link-list">
+            <li>Claude Code installed. <code>claude --version</code> works in your terminal.</li>
+            <li><code>git</code> installed.</li>
+          </ul>
+          <h3>Install</h3>
+          <pre class="code-block"><code># 1. Clone the Companion repo somewhere you keep tools
 mkdir -p ~/Tools &amp;&amp; cd ~/Tools
 git clone https://github.com/grcengineering/companion.git
 
@@ -67,31 +89,22 @@ mkdir -p ~/.claude/plugins
 ln -s ~/Tools/companion/dist/adapters/claude-code/companion ~/.claude/plugins/companion
 
 # 3. Restart Claude Code so it picks up the new plugin</code></pre>
-      <h3>Verify</h3>
-      <p>In any Claude Code session, type <code>/companion:retro</code>.</p>
-      <p>Companion should respond by asking what real work you want to learn from. If the slash command is not recognised, run <code>ls ~/.claude/plugins/companion/</code> and confirm you see <code>brain</code>, <code>skills</code>, <code>knowledge</code>, <code>profile</code>, <code>commands</code>.</p>
-      <h3>Available slash commands</h3>
-      <ul class="link-list">
-        <li><code>/companion:retro</code> - retrospective on real work</li>
-        <li><code>/companion:concept</code> - explain a GRC concept</li>
-        <li><code>/companion:lab</code> - build a learning-safe mini-lab</li>
-        <li><code>/companion:scenario</code> - generate a practice scenario</li>
-        <li><code>/companion:translate</code> - cross-domain pattern translation</li>
-        <li><code>/companion:path</code> - design a learning path</li>
-      </ul>
-    </section>
+          <h3>Verify</h3>
+          <p>In any Claude Code session, type <code>/companion:retro</code>.</p>
+          <p>Companion should respond by asking what real work you want to learn from. If the slash command is not recognised, run <code>ls ~/.claude/plugins/companion/</code> and confirm you see <code>brain</code>, <code>skills</code>, <code>knowledge</code>, <code>profile</code>, <code>commands</code>.</p>
+        </section>
 
-    <section class="install-section">
-      <p class="section-kicker">Cursor</p>
-      <h2>Cursor</h2>
-      <p>Drop a <code>.cursor/rules/</code> file into any workspace where you want the Companion available.</p>
-      <h3>Prerequisites</h3>
-      <ul class="link-list">
-        <li>Cursor installed.</li>
-        <li><code>git</code> installed.</li>
-      </ul>
-      <h3>Install</h3>
-      <pre class="code-block"><code># 1. Clone the Companion repo if you have not already
+        <section class="install-section" id="cursor">
+          <p class="section-kicker">Cursor</p>
+          <h2>Cursor</h2>
+          <p>Drop a <code>.cursor/rules/</code> file into any workspace where you want the Companion available.</p>
+          <h3>Prerequisites</h3>
+          <ul class="link-list">
+            <li>Cursor installed.</li>
+            <li><code>git</code> installed.</li>
+          </ul>
+          <h3>Install</h3>
+          <pre class="code-block"><code># 1. Clone the Companion repo if you have not already
 mkdir -p ~/Tools &amp;&amp; cd ~/Tools
 git clone https://github.com/grcengineering/companion.git
 
@@ -99,72 +112,175 @@ git clone https://github.com/grcengineering/companion.git
 cd /path/to/your-workspace
 mkdir -p .cursor/rules
 cp ~/Tools/companion/dist/adapters/cursor/.cursor/rules/companion.mdc .cursor/rules/companion.mdc</code></pre>
-      <h3>Verify</h3>
-      <ol class="link-list ordered-list">
-        <li>Open the workspace in Cursor.</li>
-        <li>Open Cursor Composer. On macOS, use <code>Cmd+I</code>.</li>
-        <li>Ask: "Apply the GRC Companion rule and ask me what I want to learn from."</li>
-        <li>The Companion persona should respond. If it does not, confirm the file exists at <code>.cursor/rules/companion.mdc</code> and that Cursor's rules feature is enabled.</li>
-      </ol>
-      <p>Note: The Cursor rule is <code>alwaysApply: false</code>, so you invoke it intentionally per chat by referencing "the GRC Companion rule" in your message.</p>
-    </section>
+          <h3>Verify</h3>
+          <ol class="link-list ordered-list">
+            <li>Open the workspace in Cursor.</li>
+            <li>Open Cursor Composer. On macOS, use <code>Cmd+I</code>.</li>
+            <li>Ask: "Apply the GRC Companion rule and ask me what I want to learn from."</li>
+            <li>The Companion persona should respond. If it does not, confirm the file exists at <code>.cursor/rules/companion.mdc</code>.</li>
+          </ol>
+        </section>
 
-    <section class="install-section">
-      <p class="section-kicker">Claude Projects</p>
-      <h2>Claude Projects (no terminal needed)</h2>
-      <p>Upload the Companion bundle to a Claude Project and use it in the browser.</p>
-      <h3>Prerequisites</h3>
-      <ul class="link-list">
-        <li>Claude.ai account with Projects access.</li>
-      </ul>
-      <h3>Install</h3>
-      <ol class="link-list ordered-list">
-        <li>Go to Claude.ai and create a new Project. Name it "GRC Companion".</li>
-        <li>Download the Companion repo as a zip from <a href="https://github.com/grcengineering/companion/archive/refs/heads/main.zip">https://github.com/grcengineering/companion/archive/refs/heads/main.zip</a> and unzip locally.</li>
-        <li>From the unzipped folder, open <code>dist/adapters/claude-projects/companion-instructions.md</code>. Copy its contents into the Project's custom instructions field.</li>
-        <li>Upload these folders to the Project's knowledge base:
+        <section class="install-section" id="codex">
+          <p class="section-kicker">Codex</p>
+          <h2>Codex</h2>
+          <p>Point a Codex session at the Companion bundle directory.</p>
+          <h3>Prerequisites</h3>
           <ul class="link-list">
-            <li><code>dist/adapters/claude-projects/knowledge/</code></li>
-            <li><code>dist/adapters/claude-projects/profile/</code></li>
-            <li><code>dist/adapters/claude-projects/demos/</code></li>
+            <li>Codex CLI installed and authenticated.</li>
+            <li><code>git</code> installed.</li>
           </ul>
-        </li>
-      </ol>
-      <h3>Verify</h3>
-      <p>Start a new chat in the Project. Ask: "What real GRC work can we learn from today?" The Companion should ask clarifying questions and reference the corpus.</p>
-    </section>
-
-    <section class="install-section">
-      <p class="section-kicker">Codex</p>
-      <h2>Codex</h2>
-      <p>Point a Codex session at the Companion bundle directory.</p>
-      <h3>Prerequisites</h3>
-      <ul class="link-list">
-        <li>Codex CLI installed and authenticated.</li>
-        <li><code>git</code> installed.</li>
-      </ul>
-      <h3>Install</h3>
-      <pre class="code-block"><code>mkdir -p ~/Tools &amp;&amp; cd ~/Tools
+          <h3>Install</h3>
+          <pre class="code-block"><code>mkdir -p ~/Tools &amp;&amp; cd ~/Tools
 git clone https://github.com/grcengineering/companion.git
 
 # Start a Codex session inside the adapter bundle
 cd ~/Tools/companion/dist/adapters/codex
 codex</code></pre>
-      <p>The bundle's <code>AGENTS.md</code> is the entry point. Codex picks it up automatically when started from this directory.</p>
-      <h3>Verify</h3>
-      <p>Ask in the Codex session: "Read AGENTS.md and tell me which skill you would use if I just finished a vendor review questionnaire and want to learn from it."</p>
-      <p>Codex should name <code>task-retrospective</code> and ask for the artefact.</p>
-    </section>
+          <h3>Verify</h3>
+          <p>Ask in the Codex session: "Read AGENTS.md and tell me which skill you would use if I just finished a vendor review questionnaire and want to learn from it."</p>
+        </section>
+      </div>
+
+      <div class="install-group">
+        <h2>Chat / Workspace</h2>
+
+        <section class="install-section" id="chatgpt">
+          <p class="section-kicker">ChatGPT</p>
+          <h2>ChatGPT</h2>
+          <p>Use the Companion as a Custom GPT or ChatGPT Project.</p>
+          <h3>Prerequisites</h3>
+          <ul class="link-list">
+            <li>ChatGPT account with Custom GPTs or Projects access.</li>
+            <li>The Companion repo downloaded or cloned locally.</li>
+          </ul>
+          <h3>Install</h3>
+          <ol class="link-list ordered-list">
+            <li>Download the repo from <a href="https://github.com/grcengineering/companion/archive/refs/heads/main.zip">https://github.com/grcengineering/companion/archive/refs/heads/main.zip</a> and unzip it.</li>
+            <li>Create a Custom GPT or ChatGPT Project named "GRC Companion".</li>
+            <li>Copy <code>dist/adapters/chatgpt/companion-instructions.md</code> into the instructions field.</li>
+            <li>Upload <code>dist/adapters/chatgpt/knowledge/</code>, <code>profile/</code>, and <code>demos/</code> as project knowledge.</li>
+          </ol>
+          <h3>Verify</h3>
+          <p>Ask: "What real GRC work can we learn from today?" The Companion should ask a targeted question and reference the corpus.</p>
+        </section>
+
+        <section class="install-section" id="claude-projects">
+          <p class="section-kicker">Claude Projects</p>
+          <h2>Claude Projects (no terminal needed)</h2>
+          <p>Upload the Companion bundle to a Claude Project and use it in the browser.</p>
+          <h3>Prerequisites</h3>
+          <ul class="link-list">
+            <li>Claude.ai account with Projects access.</li>
+          </ul>
+          <h3>Install</h3>
+          <ol class="link-list ordered-list">
+            <li>Go to Claude.ai and create a new Project. Name it "GRC Companion".</li>
+            <li>Download the Companion repo as a zip from <a href="https://github.com/grcengineering/companion/archive/refs/heads/main.zip">https://github.com/grcengineering/companion/archive/refs/heads/main.zip</a> and unzip locally.</li>
+            <li>From the unzipped folder, open <code>dist/adapters/claude-projects/companion-instructions.md</code>. Copy its contents into the Project's custom instructions field.</li>
+            <li>Upload <code>dist/adapters/claude-projects/knowledge/</code>, <code>profile/</code>, and <code>demos/</code> to the Project knowledge base.</li>
+          </ol>
+          <h3>Verify</h3>
+          <p>Start a new chat in the Project. Ask: "What real GRC work can we learn from today?"</p>
+        </section>
+
+        <section class="install-section" id="gemini-gems">
+          <p class="section-kicker">Gemini Gems</p>
+          <h2>Gemini Gems</h2>
+          <p>Use a Gem with three bundled knowledge files.</p>
+          <h3>Prerequisites</h3>
+          <ul class="link-list">
+            <li>Gemini access with Gems enabled.</li>
+            <li>The Companion repo downloaded or cloned locally.</li>
+          </ul>
+          <h3>Install</h3>
+          <ol class="link-list ordered-list">
+            <li>Open Gemini and create a new Gem named "GRC Companion".</li>
+            <li>Paste <code>dist/adapters/gemini-gems/gem-instructions.md</code> into the Gem instructions field.</li>
+            <li>Upload <code>knowledge/corpus.md</code>.</li>
+            <li>Upload <code>knowledge/learner-profile.md</code> and <code>knowledge/demos.md</code>.</li>
+            <li>Save the Gem.</li>
+          </ol>
+          <h3>Verify</h3>
+          <p>Ask: "What real GRC work can we learn from today?"</p>
+        </section>
+
+        <section class="install-section" id="claude-cowork">
+          <p class="section-kicker">Claude Cowork</p>
+          <h2>Claude Cowork</h2>
+          <p>Connect Cowork to the Companion bundle as institutional knowledge plus instructions.</p>
+          <h3>Prerequisites</h3>
+          <ul class="link-list">
+            <li>Claude Cowork desktop app access.</li>
+            <li>The Companion repo downloaded or cloned locally.</li>
+          </ul>
+          <h3>Install</h3>
+          <ol class="link-list ordered-list">
+            <li>Open the Claude Cowork desktop app.</li>
+            <li>Configure a new plugin or workspace pointing at <code>dist/adapters/claude-cowork/</code>.</li>
+            <li>Paste <code>cowork-instructions.md</code> into the plugin configuration.</li>
+            <li>Save the configuration.</li>
+          </ol>
+          <h3>Verify</h3>
+          <p>Ask: "What real GRC work can we learn from today?"</p>
+        </section>
+
+        <section class="install-section" id="notion">
+          <p class="section-kicker">Notion</p>
+          <h2>Notion Custom Agent</h2>
+          <p>Use the Companion as a Notion Custom Agent with a Notion knowledge database.</p>
+          <h3>Prerequisites</h3>
+          <ul class="link-list">
+            <li>Notion workspace with Custom Agents access.</li>
+            <li>The Companion repo downloaded or cloned locally.</li>
+          </ul>
+          <h3>Install</h3>
+          <ol class="link-list ordered-list">
+            <li>Open Notion.</li>
+            <li>Navigate to AI, then Custom Agents.</li>
+            <li>Create a new agent named "GRC Companion".</li>
+            <li>Paste <code>dist/adapters/notion/notion-agent-instructions.md</code> into the agent instructions.</li>
+            <li>Create a knowledge database using the schema in <code>notion-knowledge-database.md</code>.</li>
+            <li>Import cards from <code>knowledge/index.json</code> using <code>import-script.md</code>.</li>
+          </ol>
+          <h3>Verify</h3>
+          <p>Ask the agent in Notion to "use my last policy update page as material to learn from".</p>
+        </section>
+
+        <section class="install-section" id="microsoft-365-copilot">
+          <p class="section-kicker">Microsoft 365 Copilot</p>
+          <h2>Microsoft 365 Copilot</h2>
+          <p>Use the Companion as a Microsoft 365 Copilot declarative agent.</p>
+          <h3>Prerequisites</h3>
+          <ul class="link-list">
+            <li>Microsoft 365 Copilot access.</li>
+            <li>Agent Builder or Microsoft 365 Agents Toolkit in VS Code.</li>
+            <li>A SharePoint site or OneDrive folder the agent can read.</li>
+          </ul>
+          <h3>Install</h3>
+          <ol class="link-list ordered-list">
+            <li>Open Microsoft 365 Copilot in your browser or Teams.</li>
+            <li>Open Agent Builder from the Copilot menu, or open Microsoft 365 Agents Toolkit in VS Code.</li>
+            <li>Upload <code>declarative-agent.json</code> from <code>dist/adapters/microsoft-365-copilot/</code>.</li>
+            <li>Upload the <code>knowledge/</code> folder to a SharePoint site or OneDrive folder the agent is allowed to read.</li>
+            <li>Publish to the Microsoft 365 Copilot channel. Admins can pin to user groups through Microsoft 365 Admin Center.</li>
+          </ol>
+          <h3>Verify</h3>
+          <p>In Copilot, type <code>@ The GRC Companion</code> and ask "What real GRC work can we learn from today?"</p>
+        </section>
+      </div>
     </div>
   </main>
 
   <footer class="site-footer">
     <div>
-      <a href="{{index_href}}">Back to the card index</a>
+      <a href="{{cards_href}}">Cards</a>
+      <span class="footer-separator">/</span>
+      <a href="{{roadmap_href}}">Roadmap</a>
       <span class="footer-separator">/</span>
       <a href="{{github_href}}" target="_blank" rel="noopener">View the repo</a>
     </div>
-    <p>The public site is static. The Companion runs in your local AI workspace.</p>
+    <p>The public site is static. The Companion runs in your AI workspace.</p>
   </footer>
 </body>
 </html>

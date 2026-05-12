@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://grc.engineering/companion/profile/learner-profile.schema.json",
+  "title": "GRC Companion Learner Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "source", "role", "goals", "learning"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "0.1.0"
+    },
+    "source": {
+      "type": "string",
+      "enum": ["wizard", "import", "manual", "proposed-update"]
+    },
+    "role": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" },
+        "day_to_day": { "type": "string" },
+        "scope": { "type": "string" },
+        "seniority": { "type": "string" }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "industry": { "type": "string" },
+        "company_size": { "type": "string" },
+        "stack": { "type": "string" },
+        "regulatory_context": { "type": "string" }
+      }
+    },
+    "frameworks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "gaps": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "goals": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "learning": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "preferred_modes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["reading", "building", "watching", "conversation", "teaching-back", "scenario-practice"]
+          }
+        },
+        "time_budget": { "type": "string" },
+        "accessibility_notes": { "type": "string" }
+      }
+    },
+    "session_notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "date": { "type": "string" },
+          "topic": { "type": "string" },
+          "signal": { "type": "string" },
+          "proposed_profile_update": { "type": "string" }
+        }
+      }
+    },
+    "updated_at": {
+      "type": "string"
+    }
+  }
+}

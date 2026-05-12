@@ -1,0 +1,382 @@
+{
+  "entries": [
+    {
+      "id": "knowledge:README",
+      "title": "Knowledge Corpus",
+      "path": "knowledge/README.md",
+      "type": "knowledge",
+      "summary": "This folder is the citation-grounded source material for The GRC Companion.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:anti_pattern:anti-pattern-audit-methodology-gap",
+      "title": "The 0.07% Audit",
+      "path": "knowledge/anti_pattern/anti-pattern-audit-methodology-gap.md",
+      "type": "anti_pattern",
+      "summary": "--- schema_version: 1 slug: anti-pattern-audit-methodology-gap title: The 0.07% Audit card_type: anti_pattern status: approved source_basis: authored derived_from: - https://grcengineer.com/p/your-certification-covers-100-your-auditor-checked-0-07 - nl_are_you_building_for_auditors_or_attackers_the_grc_engineering_shift - https://www.linkedin.com/posts/ayoubfandi_to-summarise-the-foundational-difference-activity-6887089243903033344-a401 expands_brain_primitive: - T5 related_cards: - audit-driven",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:anti_pattern:audit-driven-thinking",
+      "title": "Audit-Driven Thinking",
+      "path": "knowledge/anti_pattern/audit-driven-thinking.md",
+      "type": "anti_pattern",
+      "summary": "--- schema_version: 1 slug: audit-driven-thinking title: Audit-Driven Thinking card_type: anti_pattern status: approved source_basis: derived derived_from: - nl_the_grc_engineering_implementation_framework_that_works_for_enterprises_no_more_diy_failures - nl_selling_grc_engineering_from_vision_to_executive_buy_in - nl_grc_team_topologies_when_to_centralise_distribute_or_build_platform_models - nl_the_grc_graduation_from_compliance_theatre_to_risk_driven_insights - nl_becoming_a_grc_product_manag",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:anti_pattern:compliance-theatre",
+      "title": "Compliance Theatre",
+      "path": "knowledge/anti_pattern/compliance-theatre.md",
+      "type": "anti_pattern",
+      "summary": "--- schema_version: 1 slug: compliance-theatre title: Compliance Theatre card_type: anti_pattern status: approved source_basis: derived derived_from: - nl_the_technical_foundations_every_grc_professional_needs - nl_the_grc_engineering_maturity_model_v10 - nl_you_still_work_in_grc_what_grc_engineering_is_and_what_it_isnt - nl_the_grc_graduation_from_compliance_theatre_to_risk_driven_insights - nl_becoming_a_grc_product_manager_the_evolution_beyond_compliance_tpm expands_brain_primitive: - T5 - T1",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:anti_pattern:tool-first-automation",
+      "title": "Tool-First Automation",
+      "path": "knowledge/anti_pattern/tool-first-automation.md",
+      "type": "anti_pattern",
+      "summary": "--- schema_version: 1 slug: tool-first-automation title: Tool-First Automation card_type: anti_pattern status: approved source_basis: derived derived_from: - nl_the_grc_engineering_implementation_framework_that_works_for_enterprises_no_more_diy_failures - nl_why_diy_grc_automation_breaks_at_enterprise_scale - nl_the_technical_foundations_every_grc_professional_needs - nl_the_grc_engineering_maturity_model_v10 - nl_unlocking_the_hidden_value_in_your_current_grc_platform expands_brain_primitive: -",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:case-studies:README",
+      "title": "Case Studies",
+      "path": "knowledge/case-studies/README.md",
+      "type": "case-studies",
+      "summary": "Case studies ground abstract GRC engineering concepts in practical examples.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:case-studies:tprm-soc2-parsing:README",
+      "title": "Example: Automated SOC 2 Document Parsing",
+      "path": "knowledge/case-studies/tprm-soc2-parsing/README.md",
+      "type": "case-studies",
+      "summary": "**Scenario:** Employed TPRM Lead automates vendor document review to save time",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:case-studies:tprm-soc2-parsing:persona_used",
+      "title": "GRC Baseline Context - SOC 2 Parsing Example",
+      "path": "knowledge/case-studies/tprm-soc2-parsing/persona_used.md",
+      "type": "case-studies",
+      "summary": "*This is the actual baseline context the learner submitted to generate their personalized lab.*",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:case-studies:tprm-soc2-parsing:prompt_used",
+      "title": "User Prompt - SOC 2 Parsing Example",
+      "path": "knowledge/case-studies/tprm-soc2-parsing/prompt_used.md",
+      "type": "case-studies",
+      "summary": "*This is the exact prompt the learner submitted (after filling out their baseline context) that generated the 12-week learning lab.*",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:concept:ai-grc-workflows",
+      "title": "AI GRC Workflows",
+      "path": "knowledge/concept/ai-grc-workflows.md",
+      "type": "concept",
+      "summary": "--- schema_version: 1 slug: ai-grc-workflows title: AI GRC Workflows card_type: concept status: approved source_basis: derived derived_from: - nl_the_grc_engineering_implementation_framework_that_works_for_enterprises_no_more_diy_failures - nl_why_diy_grc_automation_breaks_at_enterprise_scale - nl_selling_grc_engineering_from_vision_to_executive_buy_in - nl_the_technical_foundations_every_grc_professional_needs - nl_what_engineers_know_that_grc_professionals_dont expands_brain_primitive: - T8 re",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:concept:continuous-assurance",
+      "title": "Continuous Assurance",
+      "path": "knowledge/concept/continuous-assurance.md",
+      "type": "concept",
+      "summary": "--- schema_version: 1 slug: continuous-assurance title: Continuous Assurance card_type: concept status: approved source_basis: derived derived_from: - nl_selling_grc_engineering_from_vision_to_executive_buy_in - nl_the_technical_foundations_every_grc_professional_needs - nl_the_grc_engineering_maturity_model_v10 - nl_you_still_work_in_grc_what_grc_engineering_is_and_what_it_isnt - nl_designing_controls_where_compliance_is_an_afterthought expands_brain_primitive: - T10 related_cards: - evidence-a",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:concept:control-design",
+      "title": "Control Design",
+      "path": "knowledge/concept/control-design.md",
+      "type": "concept",
+      "summary": "--- schema_version: 1 slug: control-design title: Control Design card_type: concept status: approved source_basis: derived derived_from: - nl_the_grc_engineering_implementation_framework_that_works_for_enterprises_no_more_diy_failures - nl_why_diy_grc_automation_breaks_at_enterprise_scale - nl_selling_grc_engineering_from_vision_to_executive_buy_in - nl_the_technical_foundations_every_grc_professional_needs - nl_what_engineers_know_that_grc_professionals_dont expands_brain_primitive: - T1 relate",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:concept:enterprise-grc-automation",
+      "title": "Enterprise GRC Automation",
+      "path": "knowledge/concept/enterprise-grc-automation.md",
+      "type": "concept",
+      "summary": "--- schema_version: 1 slug: enterprise-grc-automation title: Enterprise GRC Automation card_type: concept status: approved source_basis: derived derived_from: - nl_the_grc_engineering_implementation_framework_that_works_for_enterprises_no_more_diy_failures - nl_why_diy_grc_automation_breaks_at_enterprise_scale - nl_selling_grc_engineering_from_vision_to_executive_buy_in - nl_the_technical_foundations_every_grc_professional_needs - nl_risk_registers_reimagined_from_static_inventories_to_action_en",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:concept:framework-translation",
+      "title": "Framework Translation",
+      "path": "knowledge/concept/framework-translation.md",
+      "type": "concept",
+      "summary": "--- schema_version: 1 slug: framework-translation title: Framework Translation card_type: concept status: approved source_basis: derived derived_from: - nl_the_grc_engineering_implementation_framework_that_works_for_enterprises_no_more_diy_failures - nl_why_diy_grc_automation_breaks_at_enterprise_scale - nl_risk_registers_reimagined_from_static_inventories_to_action_engines - nl_where_grc_is_a_product_breaking_the_project_mindset - nl_unlocking_the_hidden_value_in_your_current_grc_platform expan",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:concept:risk-as-code",
+      "title": "Risk as Code",
+      "path": "knowledge/concept/risk-as-code.md",
+      "type": "concept",
+      "summary": "--- schema_version: 1 slug: risk-as-code title: Risk as Code card_type: concept status: approved source_basis: derived derived_from: - nl_the_grc_engineering_implementation_framework_that_works_for_enterprises_no_more_diy_failures - nl_the_technical_foundations_every_grc_professional_needs - nl_risk_registers_reimagined_from_static_inventories_to_action_engines - nl_the_grc_engineering_maturity_model_v10 - nl_vibe_coding_for_grc_engineering_a_practitioners_guide expands_brain_primitive: - T6 - T",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:concept:risk-quantification",
+      "title": "Risk Quantification",
+      "path": "knowledge/concept/risk-quantification.md",
+      "type": "concept",
+      "summary": "--- schema_version: 1 slug: risk-quantification title: Risk Quantification card_type: concept status: approved source_basis: derived derived_from: - nl_vibe_coding_for_grc_engineering_a_practitioners_guide - nl_why_cyber_risk_quantification_is_the_mindset_shift_your_grc_program_needs_w_tony_martin_vegue - nl_grcs_ai_dilemma_strong_workflow_dumb_ai_vs_dumb_workflow_strong_ai - https://www.linkedin.com/posts/budsec_security-grc-riskmanagement-activity-7364276334656634881-_RqA?utm_source=combined_s",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:concept:risk-register",
+      "title": "Risk Register",
+      "path": "knowledge/concept/risk-register.md",
+      "type": "concept",
+      "summary": "--- schema_version: 1 slug: risk-register title: Risk Register card_type: concept status: approved source_basis: derived derived_from: - nl_the_grc_graduation_from_compliance_theatre_to_risk_driven_insights - nl_risk_registers_reimagined_from_static_inventories_to_action_engines - nl_20260310_risk_compliance_control - https://www.linkedin.com/posts/ayoubfandi_5reasonsriskregisternotreducingrisk-activity-7317590654371467264-etaQ?utm_source=combined_share_message&utm_medium=member_desktop&rcm=ACoA",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:concept:trust-center",
+      "title": "Trust Center",
+      "path": "knowledge/concept/trust-center.md",
+      "type": "concept",
+      "summary": "--- schema_version: 1 slug: trust-center title: Trust Center card_type: concept status: approved source_basis: derived derived_from: - nl_the_grc_engineering_maturity_model_v10 - nl_becoming_a_grc_product_manager_the_evolution_beyond_compliance_tpm - https://www.linkedin.com/posts/ayoubfandi_grcengineering-activity-7297946080111964160-24m8?utm_source=combined_share_message&utm_medium=member_desktop&rcm=ACoAAEU0tvgB8JPogFC02vKtYqRqseez8xxMhHw - nl_the_three_lines_of_defence_a_systems_thinking_app",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:concept:vendor-review-learning",
+      "title": "Vendor Review Learning",
+      "path": "knowledge/concept/vendor-review-learning.md",
+      "type": "concept",
+      "summary": "--- schema_version: 1 slug: vendor-review-learning title: Vendor Review Learning card_type: concept status: approved source_basis: derived derived_from: - nl_unlocking_the_hidden_value_in_your_current_grc_platform - nl_vibe_coding_for_grc_engineering_a_practitioners_guide - nl_signal_vs_noise_the_mental_model_that_transforms_grc_effectiveness - nl_becoming_a_grc_product_manager_the_evolution_beyond_compliance_tpm - nl_automating_quarterly_access_reviews_grc_engineering_in_practice expands_brain_",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:frameworks:README",
+      "title": "Framework References",
+      "path": "knowledge/frameworks/README.md",
+      "type": "frameworks",
+      "summary": "Framework material belongs here only when it supports learning.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:glossary:README",
+      "title": "Glossary",
+      "path": "knowledge/glossary/README.md",
+      "type": "glossary",
+      "summary": "Plain-language GRC explanations for learners.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:glossary:control",
+      "title": "Control",
+      "path": "knowledge/glossary/control.md",
+      "type": "glossary",
+      "summary": "A control is a designed way to prevent, detect, correct, or govern a risk.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:glossary:evidence",
+      "title": "Evidence",
+      "path": "knowledge/glossary/evidence.md",
+      "type": "glossary",
+      "summary": "Evidence is proof that a control, process, or decision happened in the real operating system.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:linkedin:README",
+      "title": "LinkedIn Corpus",
+      "path": "knowledge/linkedin/README.md",
+      "type": "linkedin",
+      "summary": "Structured LinkedIn posts belong here after ingestion from the existing JSONL source.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:metaphor:grc-as-git",
+      "title": "GRC as Git",
+      "path": "knowledge/metaphor/grc-as-git.md",
+      "type": "metaphor",
+      "summary": "--- schema_version: 1 slug: grc-as-git title: GRC as Git card_type: metaphor status: approved source_basis: derived derived_from: - nl_the_grc_engineering_maturity_model_v10 - nl_you_still_work_in_grc_what_grc_engineering_is_and_what_it_isnt - nl_control_orchestration_the_missing_link_in_enterprise_compliance_programs - nl_grc_engineer_vs_grc_engineering_which_one_you_need_maybe_both - nl_the_three_lines_of_defence_a_systems_thinking_approach expands_brain_primitive: - MP9 related_cards: - evide",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:metaphor:human-api",
+      "title": "The Human API",
+      "path": "knowledge/metaphor/human-api.md",
+      "type": "metaphor",
+      "summary": "--- schema_version: 1 slug: human-api title: The Human API card_type: metaphor status: approved source_basis: derived derived_from: - nl_the_grc_engineering_implementation_framework_that_works_for_enterprises_no_more_diy_failures - nl_selling_grc_engineering_from_vision_to_executive_buy_in - nl_risk_registers_reimagined_from_static_inventories_to_action_engines - nl_where_grc_is_a_product_breaking_the_project_mindset - nl_grc_team_topologies_when_to_centralise_distribute_or_build_platform_models",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:metaphor:metaphor-grc-as-plumbing",
+      "title": "GRC as Plumbing",
+      "path": "knowledge/metaphor/metaphor-grc-as-plumbing.md",
+      "type": "metaphor",
+      "summary": "--- schema_version: 1 slug: metaphor-grc-as-plumbing title: GRC as Plumbing card_type: metaphor status: approved source_basis: authored derived_from: - nl_unlocking_the_hidden_value_in_your_current_grc_platform - nl_the_3_types_of_automation_in_grc_engineering_pick_the_right_one - https://www.linkedin.com/posts/ayoubfandi_systems-are-interconnected-parts-that-interact-activity-6899329671591526400-qeFu expands_brain_primitive: - MP1 related_cards: - thesis-data-layer-foundation - continuous-assur",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:metaphor:policy-as-interface",
+      "title": "Policy as Interface",
+      "path": "knowledge/metaphor/policy-as-interface.md",
+      "type": "metaphor",
+      "summary": "--- schema_version: 1 slug: policy-as-interface title: Policy as Interface card_type: metaphor status: approved source_basis: derived derived_from: - nl_the_grc_engineering_implementation_framework_that_works_for_enterprises_no_more_diy_failures - nl_what_engineers_know_that_grc_professionals_dont - nl_vibe_coding_for_grc_engineering_a_practitioners_guide - nl_signal_vs_noise_the_mental_model_that_transforms_grc_effectiveness - nl_control_orchestration_the_missing_link_in_enterprise_compliance_p",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:newsletters:README",
+      "title": "Newsletters",
+      "path": "knowledge/newsletters/README.md",
+      "type": "newsletters",
+      "summary": "Structured exports from `grcengineer.com` belong here.",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:reading_reference:ref-compliance-as-cope",
+      "title": "Compliance as Cope",
+      "path": "knowledge/reading_reference/ref-compliance-as-cope.md",
+      "type": "reading_reference",
+      "summary": "--- schema_version: 1 slug: ref-compliance-as-cope title: Compliance as Cope card_type: reading_reference status: approved source_basis: authored derived_from: - nl_20260310_risk_compliance_control - https://www.linkedin.com/posts/ayoubfandi_whats-in-your-risk-assessment-activity-6641263653049909249-Qmrz expands_brain_primitive: - T5 - T2 related_cards: - compliance-theatre - tool-first-automation - risk-as-code citation_id: ref-compliance-as-cope public_reference: - https://grcengineer.com/p/co",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:reading_reference:ref-engineer-process-before-automate",
+      "title": "Engineer Your GRC Process Before You Automate It",
+      "path": "knowledge/reading_reference/ref-engineer-process-before-automate.md",
+      "type": "reading_reference",
+      "summary": "--- schema_version: 1 slug: ref-engineer-process-before-automate title: Engineer Your GRC Process Before You Automate It card_type: reading_reference status: approved source_basis: authored derived_from: - nl_engineer_your_grc_process_before_you_automate_it - https://www.linkedin.com/posts/ayoubfandi_systems-are-interconnected-parts-that-interact-activity-6899329671591526400-qeFu expands_brain_primitive: - T2 related_cards: - thesis-architecture-before-automation - tool-first-automation - enterp",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:reading_reference:ref-grc-as-git",
+      "title": "GRC as Git",
+      "path": "knowledge/reading_reference/ref-grc-as-git.md",
+      "type": "reading_reference",
+      "summary": "--- schema_version: 1 slug: ref-grc-as-git title: GRC as Git card_type: reading_reference status: approved source_basis: authored derived_from: - Data/drafts/2026-05-05-grc-as-git-mental-model.md - nl_git_based_policy_management_the_version_controlled_future_of_governance expands_brain_primitive: - MP9 related_cards: - grc-as-git - policy-as-interface - evidence-as-byproduct citation_id: ref-grc-as-git public_reference: - https://grcengineer.com/p/grc-as-git-a-mental-model-for-your-whole-program",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:reading_reference:ref-signal-vs-noise",
+      "title": "Signal vs. Noise",
+      "path": "knowledge/reading_reference/ref-signal-vs-noise.md",
+      "type": "reading_reference",
+      "summary": "--- schema_version: 1 slug: ref-signal-vs-noise title: Signal vs. Noise card_type: reading_reference status: approved source_basis: authored derived_from: - nl_signal_vs_noise_the_mental_model_that_transforms_grc_effectiveness - https://www.linkedin.com/posts/ayoubfandi_riskmanagement-informationsecurity-activity-6785134093924368384-pW8D expands_brain_primitive: - T5 related_cards: - continuous-assurance - risk-quantification - evidence-as-byproduct citation_id: ref-signal-vs-noise public_refere",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:reading_reference:ref-your-first-grc-lead-left",
+      "title": "Your First GRC Lead Left",
+      "path": "knowledge/reading_reference/ref-your-first-grc-lead-left.md",
+      "type": "reading_reference",
+      "summary": "--- schema_version: 1 slug: ref-your-first-grc-lead-left title: Your First GRC Lead Left card_type: reading_reference status: approved source_basis: authored derived_from: - nl_20260427_primitives_problem - https://www.linkedin.com/posts/ayoubfandi_27-countries-sign-cybersecurity-pledge-with-activity-6582292979610861568-srV3 expands_brain_primitive: - T1 related_cards: - thesis-inversion - framework-translation - policy-as-interface citation_id: ref-your-first-grc-lead-left public_reference: - h",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:thesis:evidence-as-byproduct",
+      "title": "Evidence Should Be a Byproduct of Work",
+      "path": "knowledge/thesis/evidence-as-byproduct.md",
+      "type": "thesis",
+      "summary": "--- schema_version: 1 slug: evidence-as-byproduct title: Evidence Should Be a Byproduct of Work card_type: thesis status: approved source_basis: derived derived_from: - nl_the_grc_engineering_implementation_framework_that_works_for_enterprises_no_more_diy_failures - nl_selling_grc_engineering_from_vision_to_executive_buy_in - nl_risk_registers_reimagined_from_static_inventories_to_action_engines - nl_the_grc_engineering_maturity_model_v10 - nl_you_still_work_in_grc_what_grc_engineering_is_and_wh",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:thesis:thesis-architecture-before-automation",
+      "title": "Architecture Before Automation",
+      "path": "knowledge/thesis/thesis-architecture-before-automation.md",
+      "type": "thesis",
+      "summary": "--- schema_version: 1 slug: thesis-architecture-before-automation title: Architecture Before Automation card_type: thesis status: approved source_basis: authored derived_from: - nl_engineer_your_grc_process_before_you_automate_it - https://www.linkedin.com/posts/ayoubfandi_systems-are-interconnected-parts-that-interact-activity-6899329671591526400-qeFu expands_brain_primitive: - T2 related_cards: - tool-first-automation - enterprise-grc-automation - ref-engineer-process-before-automate citation_",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:thesis:thesis-commoditization-escalator",
+      "title": "The Commoditization Escalator",
+      "path": "knowledge/thesis/thesis-commoditization-escalator.md",
+      "type": "thesis",
+      "summary": "--- schema_version: 1 slug: thesis-commoditization-escalator title: The Commoditization Escalator card_type: thesis status: approved source_basis: authored derived_from: - https://www.linkedin.com/posts/ayoubfandi_is-compliance-becoming-a-commodity-you-activity-7112441989454778368-0Fdu - nl_the_grc_engineering_maturity_model_v10 expands_brain_primitive: - T9 related_cards: - thesis-engineering-as-capability - ai-grc-workflows - ref-compliance-as-cope citation_id: thesis-commoditization-escalator",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:thesis:thesis-data-layer-foundation",
+      "title": "GRC Is a Data Engineering Problem",
+      "path": "knowledge/thesis/thesis-data-layer-foundation.md",
+      "type": "thesis",
+      "summary": "--- schema_version: 1 slug: thesis-data-layer-foundation title: GRC Is a Data Engineering Problem card_type: thesis status: approved source_basis: authored derived_from: - nl_from_silos_to_systems_grc_architecture - nl_building_a_central_data_layer_the_foundation_of_modern_enterprise_grc - https://www.linkedin.com/posts/ayoubfandi_systems-are-interconnected-parts-that-interact-activity-6899329671591526400-qeFu expands_brain_primitive: - T6 related_cards: - risk-as-code - continuous-assurance - m",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:thesis:thesis-engineering-as-capability",
+      "title": "Engineering as Capability, Not a Role",
+      "path": "knowledge/thesis/thesis-engineering-as-capability.md",
+      "type": "thesis",
+      "summary": "--- schema_version: 1 slug: thesis-engineering-as-capability title: Engineering as Capability, Not a Role card_type: thesis status: approved source_basis: authored derived_from: - nl_grc_engineer_vs_grc_engineering_which_one_you_need_maybe_both - https://www.linkedin.com/posts/ayoubfandi_grc-engineering-a-roadmap-activity-7115330424767176704-4B5i expands_brain_primitive: - T4 related_cards: - thesis-commoditization-escalator - human-api - vendor-review-learning citation_id: thesis-engineering-as",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:thesis:thesis-grc-as-product",
+      "title": "GRC Is a Product, Not a Project",
+      "path": "knowledge/thesis/thesis-grc-as-product.md",
+      "type": "thesis",
+      "summary": "--- schema_version: 1 slug: thesis-grc-as-product title: GRC Is a Product, Not a Project card_type: thesis status: approved source_basis: authored derived_from: - nl_where_grc_is_a_product_breaking_the_project_mindset - nl_becoming_a_grc_product_manager_the_evolution_beyond_compliance_tpm - https://www.linkedin.com/posts/ayoubfandi_grcengineering-activity-7124779622822498304-Aoay expands_brain_primitive: - T3 related_cards: - trust-center - vendor-review-learning - thesis-engineering-as-capabili",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:thesis:thesis-inversion",
+      "title": "The Inversion Thesis",
+      "path": "knowledge/thesis/thesis-inversion.md",
+      "type": "thesis",
+      "summary": "--- schema_version: 1 slug: thesis-inversion title: The Inversion Thesis card_type: thesis status: approved source_basis: authored derived_from: - nl_you_still_work_in_grc_what_grc_engineering_is_and_what_it_isnt - https://www.linkedin.com/posts/ayoubfandi_systems-are-interconnected-parts-that-interact-activity-6899329671591526400-qeFu expands_brain_primitive: - T1 related_cards: - framework-translation - control-design - ref-your-first-grc-lead-left citation_id: thesis-inversion public_referenc",
+      "topics": [],
+      "learning_uses": []
+    },
+    {
+      "id": "knowledge:thesis:thesis-leverage-dont-rebuild",
+      "title": "Leverage, Don't Rebuild",
+      "path": "knowledge/thesis/thesis-leverage-dont-rebuild.md",
+      "type": "thesis",
+      "summary": "--- schema_version: 1 slug: thesis-leverage-dont-rebuild title: Leverage, Don't Rebuild card_type: thesis status: approved source_basis: authored derived_from: - nl_unlocking_the_hidden_value_in_your_current_grc_platform - nl_20260420_compliance_query expands_brain_primitive: - T11 related_cards: - thesis-data-layer-foundation - enterprise-grc-automation - metaphor-grc-as-plumbing citation_id: thesis-leverage-dont-rebuild public_reference: - https://grcengineer.com/p/unlocking-the-hidden-value-i",
+      "topics": [],
+      "learning_uses": []
+    }
+  ]
+}
